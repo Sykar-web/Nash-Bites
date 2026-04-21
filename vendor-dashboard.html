@@ -7,8 +7,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Poppins:wght@700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <style>
-    :root{--primary:#FF4D2D;--primary-dark:#e63e20;--primary-light:#FFF0ED;--bg:#F8FAFC;--bg-card:#FFF;--bg-input:#F1F5F9;--text:#0F172A;--text-sec:#64748B;--text-muted:#94A3B8;--border:#E2E8F0;--success:#22C55E;--success-light:#F0FDF4;--success-dark:#15803D;--warning:#F59E0B;--warning-light:#FFFBEB;--warning-dark:#B45309;--danger:#EF4444;--danger-light:#FEF2F2;--info:#3B82F6;--info-light:#EFF6FF;--purple:#8B5CF6;--purple-light:#F5F3FF;--radius:16px;--radius-sm:12px;--radius-xs:8px;--shadow-sm:0 1px 2px rgba(0,0,0,.05);--shadow-md:0 4px 6px -1px rgba(0,0,0,.1);--shadow-lg:0 10px 15px -3px rgba(0,0,0,.1);--sidebar-w:270px;--topbar-h:70px}
-    [data-theme="dark"]{--bg:#0B1121;--bg-card:#1A2332;--bg-input:#243044;--text:#F1F5F9;--text-sec:#94A3B8;--text-muted:#64748B;--border:#2D3A4A;--primary-light:#2D1510;--success-light:#052E16;--warning-light:#451A03;--danger-light:#450A0A;--info-light:#1E3A5F;--purple-light:#2E1065}
+    :root{--primary:#FF4D2D;--primary-dark:#e63e20;--primary-light:#FFF0ED;--primary-shadow:rgba(255,77,45,0.35);--bg:#F8FAFC;--bg-card:#FFF;--bg-input:#F1F5F9;--text:#0F172A;--text-sec:#64748B;--text-secondary:#64748B;--text-muted:#94A3B8;--border:#E2E8F0;--border-hover:#CBD5E1;--success:#22C55E;--success-light:#F0FDF4;--success-dark:#15803D;--warning:#F59E0B;--warning-light:#FFFBEB;--warning-dark:#B45309;--danger:#EF4444;--danger-light:#FEF2F2;--info:#3B82F6;--info-light:#EFF6FF;--purple:#8B5CF6;--purple-light:#F5F3FF;--radius:16px;--radius-sm:12px;--radius-xs:8px;--shadow-sm:0 1px 2px rgba(0,0,0,.05);--shadow-md:0 4px 6px -1px rgba(0,0,0,.1);--shadow-lg:0 10px 15px -3px rgba(0,0,0,.1);--shadow-xl:0 20px 25px -5px rgba(0,0,0,.1);--sidebar-w:270px;--topbar-h:70px}
+    [data-theme="dark"]{--bg:#0B1121;--bg-card:#1A2332;--bg-input:#243044;--text:#F1F5F9;--text-sec:#94A3B8;--text-secondary:#94A3B8;--text-muted:#64748B;--border:#2D3A4A;--border-hover:#3D4A5A;--primary-light:#2D1510;--success-light:#052E16;--warning-light:#451A03;--danger-light:#450A0A;--info-light:#1E3A5F;--purple-light:#2E1065}
     *{margin:0;padding:0;box-sizing:border-box;font-family:'Plus Jakarta Sans',sans-serif}
     body{background:var(--bg);color:var(--text);line-height:1.6;transition:background .3s,color .3s}
 
@@ -288,6 +288,9 @@
     <div class="nav-sec">Account</div>
     <a class="nav-item" href="profile.html"><i class="fa-solid fa-user-gear"></i> Profile</a>
     <a class="nav-item" onclick="showPage('settings')"><i class="fa-solid fa-gear"></i> Settings</a>
+    <div class="nav-sec">Quick Links</div>
+    <a class="nav-item" href="home.html"><i class="fa-solid fa-house"></i> Customer Menu</a>
+    <a class="nav-item" href="carrier-dashboard.html"><i class="fa-solid fa-motorcycle"></i> Carrier Dashboard</a>
   </nav>
 
   <div class="sidebar-footer">
@@ -563,18 +566,17 @@ function syncStoreStatus() {
 
 // ── Orders ───────────────────────────────────────────────────────────────────
 async function loadOrders() {
-  const { data, error } = await S.from('orders')
-    .select('*, customer:profiles!orders_customer_id_fkey(full_name,phone,hostel_name,room_number,avatar_url), carrier:profiles!orders_carrier_id_fkey(full_name,phone,avatar_url)')
+  const { data, error } = await S
+    .from('orders')
+    .select('*, profiles:customer_id(full_name)')
     .eq('vendor_id', user.id)
     .order('created_at', { ascending: false });
-  if (error) { console.error(error); return; }
-  allOrders = data || [];
-  renderDashboard();
-  renderAllOrders('all');
-  renderHistory();
-  renderRevenue();
-}
 
+  if (error) return console.error('Orders fetch error:', error);
+  allOrders = data;
+  renderOrders();
+  updateStats();
+}
 function renderDashboard() {
   const today = new Date().toDateString();
   const todayOrds = allOrders.filter(o => new Date(o.created_at).toDateString() === today);
@@ -595,10 +597,14 @@ function renderDashboard() {
 function renderOrderCard(o) {
   const items = Array.isArray(o.items) ? o.items : [];
   const custName = o.customer?.full_name || 'Customer';
+  const custPhone = o.customer?.phone || '';
   const custInit = custName.charAt(0).toUpperCase();
-  const delivery = o.customer ? `${o.customer.hostel_name||''} ${o.customer.room_number||''}`.trim() : '';
+  const hostel = o.customer?.hostel_name || '';
+  const room = o.customer?.room_number || '';
+  const delivery = o.delivery_location || [hostel, room].filter(Boolean).join(' – ') || 'No address';
   const ago = timeAgo(o.created_at);
   const isNew = Date.now() - new Date(o.created_at).getTime() < 300000;
+  const carrier = o.carrier;
 
   let actions = '';
   if (o.order_status === 'pending')
@@ -610,12 +616,13 @@ function renderOrderCard(o) {
 
   return `<div class="o-card ${o.order_status}">
     <div class="o-top">
-      <div class="o-customer"><div class="c-avatar">${custInit}</div><div><div class="c-name">${custName}</div><div class="c-loc"><i class="fa-solid fa-location-dot"></i>${delivery||'No address'}</div></div></div>
+      <div class="o-customer"><div class="c-avatar">${custInit}</div><div><div class="c-name">${custName}</div><div class="c-loc"><i class="fa-solid fa-location-dot"></i>${delivery}</div>${custPhone ? `<div class="c-loc" style="margin-top:2px;"><i class="fa-solid fa-phone"></i><a href="tel:${custPhone}" style="color:inherit;text-decoration:none;">${custPhone}</a></div>` : ''}</div></div>
       <span class="o-time ${isNew?'new':'waiting'}">${ago}</span>
     </div>
-    <div class="o-items">${items.map(i=>`<span class="item-chip">${i.qty||1}x ${i.name||i}</span>`).join('')}</div>
+    <div class="o-items">${items.map(i=>`<span class="item-chip">${i.qty||1}x ${i.name||i}${i.price ? ` – ${ugx(i.price)}` : ''}</span>`).join('')}</div>
+    ${carrier ? `<div style="display:flex;align-items:center;gap:8px;padding:8px;background:var(--success-light);border-radius:8px;margin-top:6px;border:1px solid var(--success);font-size:0.78rem;"><i class="fa-solid fa-bicycle" style="color:var(--success-dark);"></i><strong>${carrier.full_name||'Carrier'}</strong>${carrier.phone ? `<a href="tel:${carrier.phone}" style="margin-left:auto;color:var(--success-dark);"><i class="fa-solid fa-phone"></i></a>` : ''}</div>` : ''}
     <div class="o-bot">
-      <div class="o-meta"><span><i class="fa-solid fa-hashtag"></i>${o.id.slice(0,8).toUpperCase()}</span><span><i class="fa-solid fa-clock"></i>${ago}</span></div>
+      <div class="o-meta"><span><i class="fa-solid fa-hashtag"></i>${o.id.slice(0,8).toUpperCase()}</span><span><i class="fa-solid fa-clock"></i>${ago}</span>${o.delivery_pin ? `<span style="font-weight:800;color:var(--primary);"><i class="fa-solid fa-key"></i>PIN: ${o.delivery_pin}</span>` : ''}</div>
       <span class="o-status ${o.order_status}">${o.order_status}</span>
       <div class="o-total">${ugx(o.total_price)}</div>
     </div>
@@ -679,14 +686,15 @@ window.closeOrderModal = () => { document.getElementById('orderModal').style.dis
 
 // ── Carrier Requests ─────────────────────────────────────────────────────────
 async function loadCarrierRequests() {
-  const { data, error } = await S.from('delivery_requests')
-    .select('*, carrier:profiles!delivery_requests_carrier_id_fkey(full_name,phone,avatar_url,rating,transport_mode,total_orders), order:orders!delivery_requests_order_id_fkey(id,items,total_price,delivery_location)')
+  // Fetch carriers who have requested to deliver for this vendor's orders
+  const { data, error } = await S
+    .from('carrier_requests')
+    .select('*, carrier:carrier_id(full_name, avatar_url)')
     .eq('vendor_id', user.id)
-    .order('created_at', { ascending: false });
-  if (error) { console.error(error); return; }
-  allRequests = data || [];
-  const pending = allRequests.filter(r => r.status === 'pending');
-  document.getElementById('carrierBadge').textContent = pending.length;
+    .eq('status', 'pending');
+
+  if (error) return console.error('Carrier fetch error:', error);
+  allRequests = data;
   renderCarrierRequests();
 }
 function renderCarrierRequests() {
@@ -720,10 +728,19 @@ window.respondRequest = async (reqId, orderId, carrierId, status) => {
   if (status === 'accepted') {
     await S.from('orders').update({ carrier_id: carrierId, order_status: 'picked_up', picked_up_at: new Date().toISOString(), updated_at: new Date().toISOString() }).eq('id', orderId);
     await S.from('delivery_requests').update({ status: 'rejected', responded_at: new Date().toISOString() }).eq('order_id', orderId).neq('id', reqId).eq('status', 'pending');
+
+    // Fetch carrier name for rich notification
+    const { data: carrierProfile } = await S.from('profiles').select('full_name, phone, vehicle_type').eq('id', carrierId).single();
+    const carrierName = carrierProfile?.full_name || 'A carrier';
+    const carrierPhone = carrierProfile?.phone || '';
+    const carrierVehicle = carrierProfile?.vehicle_type || '';
+
     await S.from('notifications').insert({ user_id: carrierId, title: 'Request Approved! ✅', message: 'Your pickup request was accepted. Head to pickup now!', type: 'carrier_request', reference_id: orderId });
     const order = allOrders.find(o => o.id === orderId);
-    if (order?.customer_id)
-      await S.from('notifications').insert({ user_id: order.customer_id, title: 'Carrier Assigned 🚴', message: 'A carrier is on the way to pick up your order!', type: 'delivery', reference_id: orderId });
+    if (order?.customer_id) {
+      const msg = `${carrierName} is on the way to pick up your order!${carrierPhone ? ` You can reach them at ${carrierPhone}.` : ''}${carrierVehicle ? ` They travel by ${carrierVehicle}.` : ''}`;
+      await S.from('notifications').insert({ user_id: order.customer_id, title: 'Carrier Assigned 🚴', message: msg, type: 'delivery', reference_id: orderId });
+    }
   } else {
     await S.from('notifications').insert({ user_id: carrierId, title: 'Request Declined', message: 'Your pickup request was declined.', type: 'carrier_request', reference_id: orderId });
   }

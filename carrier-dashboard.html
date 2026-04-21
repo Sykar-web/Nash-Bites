@@ -22,6 +22,7 @@
       --shadow-md:0 4px 6px -1px rgba(0,0,0,0.1);
       --shadow-lg:0 10px 15px -3px rgba(0,0,0,0.1);
       --shadow-xl:0 20px 25px -5px rgba(0,0,0,0.1);
+      --primary-shadow:rgba(255,77,45,0.35);
       --sidebar-w:280px; --topbar-h:70px;
     }
     [data-theme="dark"] {
@@ -1034,7 +1035,7 @@ function updateProgressUI(status) {
 
 // ============ VIEW ORDER DETAIL ============
 window.viewOrder = (id) => {
-  const order = availableOrders.find(o => o.id === id);
+  const order = availableOrders.find(o => o.id === id) || myOrders.find(o => o.id === id) || (activeOrder && activeOrder.id === id ? activeOrder : null);
   if (!order) return;
   currentModalOrder = order;
 

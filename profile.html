@@ -33,14 +33,14 @@
     }
 
     [data-theme="dark"] {
-      --bg:#0F172A;
+      --bg:#0B1121;
       --bg-card:#1E293B;
       --bg-input:#334155;
       --text:#F1F5F9;
       --text-secondary:#94A3B8;
       --text-muted:#64748B;
-      --border:#334155;
-      --border-hover:#475569;
+      --border:#2D3A4A;
+      --border-hover:#3D4A5A;
       --primary-light:#2D1510;
     }
 
@@ -125,28 +125,42 @@
     }
     .profile-header:hover { box-shadow:var(--shadow-md); }
 
-    .avatar-container {
-  position: relative; 
+/* Avatar with upload overlay */
+.avatar-upload-container {
+  position: relative;
   flex-shrink: 0;
-  width: 90px; /* Match the image width */
-  height: 90px; /* Match the image width */
+  width: 90px;
+  height: 90px;
 }
-
-.avatar-large {
-  width: 90px; 
-  height: 90px; /* Changed from 80px to 90px for a perfect circle */
-  border-radius: 50%; /* 50% is standard for circles */
+#profileAvatar {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
   object-fit: cover;
   border: 4px solid var(--primary-light);
   display: block;
   transition: border-color 0.3s;
 }
-
-/* Ensure the image doesn't "bleed" out during upload */
-#profileAvatar {
-  max-width: 70%;
-  max-height: 60%;
-  border-radius: 45%; /* 50% is standard for circles */
+.upload-btn {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.75rem;
+  border: 2px solid var(--bg-card);
+  transition: background 0.2s, transform 0.2s;
+}
+.upload-btn:hover {
+  background: var(--primary-dark);
+  transform: scale(1.1);
 }
 
     .profile-info { flex:1; }
@@ -322,11 +336,17 @@
     .status-pending { background:#FEF3C7; color:#92400E; }
     .status-cancelled { background:#FEE2E2; color:#991B1B; }
     .status-preparing { background:#DBEAFE; color:#1D4ED8; }
+    .status-ready { background:#EFF6FF; color:#1D4ED8; }
+    .status-picked_up { background:#F5F3FF; color:#7C3AED; }
+    .status-in_transit { background:#FFF7ED; color:#EA580C; }
 
     [data-theme="dark"] .status-delivered { background:#064E3B; color:#6EE7B7; }
     [data-theme="dark"] .status-pending { background:#78350F; color:#FCD34D; }
     [data-theme="dark"] .status-cancelled { background:#450A0A; color:#FCA5A5; }
     [data-theme="dark"] .status-preparing { background:#1E3A5F; color:#93C5FD; }
+    [data-theme="dark"] .status-ready { background:#1E3A5F; color:#93C5FD; }
+    [data-theme="dark"] .status-picked_up { background:#2E1065; color:#C4B5FD; }
+    [data-theme="dark"] .status-in_transit { background:#431407; color:#FDBA74; }
 
     .order-amount { font-weight:800; font-size:1.05rem; color:var(--primary); white-space:nowrap; }
     .empty-state {
@@ -510,6 +530,26 @@
     @media (min-width:641px) {
       .tab-btn .tab-label { display:inline; }
     }
+
+
+    /* ── FOOTER NAV (mobile sync with cart/checkout) ── */
+    .footer-nav {
+      position:fixed; bottom:0; left:0; width:100%;
+      background:var(--bg-card); display:flex; justify-content:space-around;
+      padding:12px 0 20px; box-shadow:0 -2px 0 var(--border);
+      z-index:2000; border-radius:24px 24px 0 0;
+      transition:background 0.3s;
+    }
+    .footer-nav a {
+      text-decoration:none; color:var(--text-muted);
+      display:flex; flex-direction:column; align-items:center;
+      font-size:.7rem; font-weight:600; gap:4px; transition:color .2s;
+    }
+    .footer-nav a.active { color:var(--primary); }
+    .footer-nav a:hover:not(.active) { color:var(--text-secondary); }
+    .footer-nav i { font-size:1.2rem; }
+    @media (min-width:768px) { .footer-nav { display:none; } }
+    @media (max-width:767px) { .page-wrapper { padding-bottom:90px; } }
 
     /* Loading skeleton */
     .skeleton { background:linear-gradient(90deg, var(--bg-input) 25%, var(--border) 50%, var(--bg-input) 75%); background-size:200% 100%; animation:shimmer 1.5s infinite; border-radius:var(--radius-xs); }
@@ -778,6 +818,33 @@
       </div>
     </div>
 
+    <div class="card" id="roleManagementCard" style="display:none;">
+      <div class="card-title"><i class="fa-solid fa-user-gear"></i> Role Management</div>
+      <p style="color:var(--text-secondary); font-size:0.85rem; margin-bottom:16px;">You can step down from your active roles at any time. Your account remains active as a customer.</p>
+      <div id="dismissVendorRow" style="display:none;">
+        <div class="setting-row">
+          <div class="setting-left">
+            <div class="setting-icon" style="background:#D1FAE5; color:#065F46;"><i class="fa-solid fa-shop"></i></div>
+            <div class="setting-info">
+              <h4>Vendor Role</h4>
+              <p>You are currently an active vendor</p>
+            </div>
+          </div>
+          <button class="btn-danger" onclick="dismissRole('vendor')" style="font-size:0.78rem; padding:8px 14px;">Dismiss</button>
+        </div>
+      </div>
+      <div id="dismissCarrierRow" style="display:none;">
+        <div class="setting-row">
+          <div class="setting-icon" style="background:#FEF3C7; color:#92400E;"><i class="fa-solid fa-bicycle"></i></div>
+          <div class="setting-info">
+            <h4>Carrier Role</h4>
+            <p>You are currently an active carrier</p>
+          </div>
+          <button class="btn-danger" onclick="dismissRole('carrier')" style="font-size:0.78rem; padding:8px 14px;">Dismiss</button>
+        </div>
+      </div>
+    </div>
+
     <div class="card danger-card">
       <div class="card-title" style="color:var(--danger);"><i class="fa-solid fa-triangle-exclamation"></i> Danger Zone</div>
       <div class="setting-row">
@@ -882,6 +949,14 @@ async function init() {
   loadOrders();
   loadTheme();
   checkRoles();
+
+  // Real-time: refresh orders when they change
+  supabase.channel('profile-orders')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, (payload) => {
+      const row = payload.new || payload.old || {};
+      if (row.customer_id === currentUser.id || row.user_id === currentUser.id) loadOrders();
+    })
+    .subscribe();
 }
 
 // ============================================
@@ -972,8 +1047,8 @@ window.updateUserRole = async (roleColumn) => {
 async function loadOrders() {
   const { data:orders, error } = await supabase
     .from('orders')
-    .select('*')
-    .eq('user_id', currentUser.id)
+    .select('*, carrier:profiles!orders_carrier_id_fkey(full_name, phone, avatar_url, vehicle_type)')
+    .or(`customer_id.eq.${currentUser.id},user_id.eq.${currentUser.id}`)
     .order('created_at', { ascending:false });
 
   if (error) { 
@@ -983,17 +1058,14 @@ async function loadOrders() {
 
   allOrders = orders || [];
 
-  // 1. Update order count stat
+  // Update order count stat
   document.getElementById('statOrders').textContent = allOrders.length;
 
-  // 2. Calculate total spent
-  // Note: Ensure 'o.total' matches your actual database column name (e.g., total_price)
+  // Calculate total spent — handle both total_price and total column names
   const totalSpent = allOrders
-    .filter(o => o.status === 'delivered' || o.status === 'completed') 
-    .reduce((sum, o) => sum + (Number(o.total) || 0), 0);
+    .filter(o => ['delivered','completed'].includes(o.order_status || o.status))
+    .reduce((sum, o) => sum + (Number(o.total_price || o.total_amount || o.total) || 0), 0);
 
-  // 3. Update the Spent stat with new currency (UGX)
-  // .toLocaleString() adds commas (e.g., 50,000 instead of 50000)
   document.getElementById('statSpent').textContent = `UGX ${totalSpent.toLocaleString()}`;
 
   renderOrders(allOrders);
@@ -1012,14 +1084,19 @@ function renderOrders(orders) {
   }
 
   container.innerHTML = orders.map(order => {
-    const status = order.status || 'pending';
-    const date = new Date(order.created_at).toLocaleDateString('en-ZA', { day:'numeric', month:'short', year:'numeric' });
-    const time = new Date(order.created_at).toLocaleTimeString('en-ZA', { hour:'2-digit', minute:'2-digit' });
+    const status = order.order_status || order.status || 'pending';
+    const date = new Date(order.created_at).toLocaleDateString('en-UG', { day:'numeric', month:'short', year:'numeric' });
+    const time = new Date(order.created_at).toLocaleTimeString('en-UG', { hour:'2-digit', minute:'2-digit' });
+    const total = Number(order.total_price || order.total_amount || order.total || 0).toLocaleString();
     const iconMap = {
       delivered:'fa-circle-check', pending:'fa-clock',
-      preparing:'fa-fire-burner', cancelled:'fa-circle-xmark'
+      preparing:'fa-fire-burner', cancelled:'fa-circle-xmark',
+      picked_up:'fa-bicycle', in_transit:'fa-truck-fast', ready:'fa-box'
     };
     const icon = iconMap[status] || 'fa-clock';
+    const carrier = order.carrier;
+    const items = Array.isArray(order.items) ? order.items : [];
+    const isConfirmed = ['picked_up','in_transit','delivered'].includes(status);
 
     return `
       <div class="order-card" data-status="${status}">
@@ -1031,11 +1108,25 @@ function renderOrders(orders) {
           <div class="order-meta">
             <span><i class="fa-regular fa-calendar"></i> ${date}</span>
             <span><i class="fa-regular fa-clock"></i> ${time}</span>
-            ${order.items_count ? `<span><i class="fa-solid fa-utensils"></i> ${order.items_count} items</span>` : ''}
+            ${items.length ? `<span><i class="fa-solid fa-utensils"></i> ${items.length} item${items.length>1?'s':''}</span>` : ''}
           </div>
+          ${order.delivery_location ? `<div style="font-size:0.75rem;color:var(--text-secondary);margin-top:3px;"><i class="fa-solid fa-location-dot" style="color:var(--primary);"></i> ${order.delivery_location}</div>` : ''}
+          ${isConfirmed && carrier ? `
+          <div style="display:flex;align-items:center;gap:8px;margin-top:8px;padding:8px;background:var(--bg-input);border-radius:10px;border:1px solid var(--border);">
+            <img src="${carrier.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(carrier.full_name||'C')}&background=22c55e&color=fff&size=80`}" 
+                 style="width:30px;height:30px;border-radius:8px;object-fit:cover;">
+            <div style="flex:1;min-width:0;">
+              <div style="font-size:0.75rem;font-weight:700;">${carrier.full_name || 'Carrier'}</div>
+              <div style="font-size:0.68rem;color:var(--text-muted);">${carrier.vehicle_type || 'Carrier assigned'}</div>
+            </div>
+            ${carrier.phone ? `<a href="tel:${carrier.phone}" style="padding:5px 10px;background:var(--success);color:white;border-radius:8px;font-size:0.7rem;font-weight:700;text-decoration:none;"><i class="fa-solid fa-phone"></i></a>` : ''}
+          </div>` : ''}
+          ${order.delivery_pin && isConfirmed ? `<div style="margin-top:6px;font-size:0.75rem;"><span style="color:var(--text-muted);">PIN: </span><strong style="color:var(--primary);letter-spacing:2px;">${order.delivery_pin}</strong></div>` : ''}
         </div>
-        <span class="order-status status-${status}">${status}</span>
-        <div class="order-amount">R${(order.total || 0).toFixed(2)}</div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0;">
+          <span class="order-status status-${status}">${status.replace(/_/g,' ')}</span>
+          <div class="order-amount">UGX ${total}</div>
+        </div>
       </div>`;
   }).join('');
 }
@@ -1048,7 +1139,7 @@ window.filterOrders = (status, btn) => {
   btn.classList.add('active');
 
   if (status === 'all') { renderOrders(allOrders); return; }
-  renderOrders(allOrders.filter(o => o.status === status));
+  renderOrders(allOrders.filter(o => (o.order_status || o.status) === status));
 };
 
 // ============================================
@@ -1189,8 +1280,10 @@ function checkRoles() {
 
   let links = '';
   let showDash = false;
+  let isVendor = role === 'vendor' || currentProfile.is_vendor;
+  let isCarrier = role === 'carrier' || currentProfile.is_carrier;
 
-  if (role === 'vendor' || currentProfile.is_vendor) {
+  if (isVendor) {
     showDash = true;
     links += `<a href="vendor-dashboard.html" class="dashboard-link" style="margin-bottom:8px;">
       <i class="fa-solid fa-shop"></i> Open Vendor Dashboard
@@ -1201,7 +1294,7 @@ function checkRoles() {
     document.getElementById('vendorUpgrade').classList.add('applied');
   }
 
-  if (role === 'carrier' || currentProfile.is_carrier) {
+  if (isCarrier) {
     showDash = true;
     links += `<a href="carrier-dashboard.html" class="dashboard-link">
       <i class="fa-solid fa-bicycle"></i> Open Carrier Dashboard
@@ -1216,7 +1309,41 @@ function checkRoles() {
     dashCard.style.display = 'block';
     dashLinks.innerHTML = links;
   }
+
+  // Show dismiss options in settings
+  const roleCard = document.getElementById('roleManagementCard');
+  const dismissVendorRow = document.getElementById('dismissVendorRow');
+  const dismissCarrierRow = document.getElementById('dismissCarrierRow');
+  if (roleCard) {
+    if (isVendor || isCarrier) roleCard.style.display = 'block';
+    if (dismissVendorRow) dismissVendorRow.style.display = isVendor ? 'block' : 'none';
+    if (dismissCarrierRow) dismissCarrierRow.style.display = isCarrier ? 'block' : 'none';
+  }
 }
+
+// ============================================
+// DISMISS ROLE
+// ============================================
+window.dismissRole = async (role) => {
+  const roleName = role === 'vendor' ? 'Vendor' : 'Carrier';
+  if (!confirm(`Are you sure you want to step down as a ${roleName}? Your ${roleName.toLowerCase()} dashboard and listings will be deactivated.`)) return;
+
+  const updates = {};
+  if (role === 'vendor') updates.is_vendor = false;
+  if (role === 'carrier') updates.is_carrier = false;
+
+  // If user has no other roles, reset role to 'user'
+  const willBeVendor = role === 'vendor' ? false : (currentProfile.is_vendor || false);
+  const willBeCarrier = role === 'carrier' ? false : (currentProfile.is_carrier || false);
+  if (!willBeVendor && !willBeCarrier) updates.role = 'user';
+
+  const { error } = await supabase.from('profiles').update(updates).eq('id', currentUser.id);
+  if (error) { alert('Could not update role: ' + error.message); return; }
+
+  currentProfile = { ...currentProfile, ...updates };
+  alert(`You have stepped down as a ${roleName}.`);
+  location.reload();
+};
 
 // ============================================
 // UPGRADE MODAL
@@ -1392,5 +1519,13 @@ document.addEventListener('keydown', (e) => {
 // ============================================
 init();
 </script>
+
+<nav class="footer-nav">
+  <a href="home.html"><i class="fa-solid fa-house"></i><span>Menu</span></a>
+  <a href="order-history.html"><i class="fa-solid fa-receipt"></i><span>Orders</span></a>
+  <a href="cart.html"><i class="fa-solid fa-bag-shopping"></i><span>Cart</span></a>
+  <a href="profile.html" class="active"><i class="fa-solid fa-user"></i><span>Profile</span></a>
+</nav>
+
 </body>
 </html>
