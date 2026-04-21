@@ -93,7 +93,23 @@
       max-width:900px; margin:0 auto;
       padding:90px 20px 40px;
     }
+#profileRoleBadge {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center; /* Center badges if your layout is centered */
+  margin-top: 10px;
+}
 
+.profile-role-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
     /* ============================================
        PROFILE HEADER CARD
        ============================================ */
@@ -870,29 +886,22 @@ async function init() {
 
 // ============================================
 // RENDER PROFILE
-// ============================================
 function renderProfile() {
   const name = currentProfile.full_name || currentUser.user_metadata?.full_name || 'User';
   const email = currentUser.email;
   const phone = currentProfile.phone || '';
   const address = currentProfile.address || '';
-  const role = currentProfile.role || 'user';
   const joined = new Date(currentUser.created_at).toLocaleDateString('en-ZA', { month:'short', year:'numeric' });
 
   // --- AVATAR LOGIC ---
   let finalAvatarUrl;
-  
   if (currentProfile.avatar_url) {
-    // Get the actual public link from Storage
     const { data } = supabase.storage.from('avatars').getPublicUrl(currentProfile.avatar_url);
-    // Add a timestamp to prevent the browser from showing an old cached image
     finalAvatarUrl = `${data.publicUrl}?t=${new Date().getTime()}`;
   } else {
-    // Fallback to UI Avatars if no photo exists
     finalAvatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=FF4D2D&color=fff&size=200`;
   }
 
-  // Update image elements once
   document.getElementById('profileAvatar').src = finalAvatarUrl;
   if (document.getElementById('navAvatar')) {
     document.getElementById('navAvatar').src = finalAvatarUrl;
@@ -903,16 +912,22 @@ function renderProfile() {
   document.getElementById('profileEmail').textContent = email;
   document.getElementById('statJoined').textContent = joined;
 
-  // Role badge
-  const badge = document.getElementById('profileRoleBadge');
-  const roleMap = {
-    user: { cls:'role-user', icon:'fa-user', label:'Customer' },
-    vendor: { cls:'role-vendor', icon:'fa-shop', label:'Vendor' },
-    carrier: { cls:'role-carrier', icon:'fa-bicycle', label:'Carrier' }
-  };
-  const r = roleMap[role] || roleMap.user;
-  badge.className = `profile-role-badge ${r.cls}`;
-  badge.innerHTML = `<i class="fa-solid ${r.icon}"></i> ${r.label}`;
+  // --- MULTI-ROLE BADGE LOGIC ---
+  const badgeContainer = document.getElementById('profileRoleBadge');
+  badgeContainer.innerHTML = ''; // Clear old badges
+  
+  // 1. Always show Customer badge
+  createBadge(badgeContainer, 'role-user', 'fa-user', 'Customer');
+
+  // 2. Show Vendor badge if active
+  if (currentProfile.is_vendor) {
+    createBadge(badgeContainer, 'role-vendor', 'fa-shop', 'Vendor');
+  }
+
+  // 3. Show Carrier badge if active
+  if (currentProfile.is_carrier) {
+    createBadge(badgeContainer, 'role-carrier', 'fa-bicycle', 'Carrier');
+  }
 
   // Fill edit form fields
   document.getElementById('editName').value = name;
@@ -920,6 +935,37 @@ function renderProfile() {
   document.getElementById('editEmail').value = email;
   document.getElementById('editAddress').value = address;
 }
+
+// Helper function to generate badges
+function createBadge(container, cls, icon, label) {
+  const span = document.createElement('span');
+  span.className = `profile-role-badge ${cls}`;
+  span.style.marginRight = '8px';
+  span.innerHTML = `<i class="fa-solid ${icon}"></i> ${label}`;
+  container.appendChild(span);
+}
+window.updateUserRole = async (roleColumn) => {
+  const roleName = roleColumn === 'is_vendor' ? 'Vendor' : 'Carrier';
+  
+  try {
+    const updates = {};
+    updates[roleColumn] = true;
+
+    const { error } = await supabase
+      .from('profiles')
+      .update(updates)
+      .eq('id', currentUser.id);
+
+    if (error) throw error;
+
+    currentProfile[roleColumn] = true;
+    renderProfile();
+    closeUpgradeModal();
+    alert(`You are now an active ${roleName}!`);
+  } catch (err) {
+    alert('Error: ' + err.message);
+  }
+};
 // ============================================
 // LOAD ORDERS
 // ============================================
