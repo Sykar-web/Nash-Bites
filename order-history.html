@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"/>
+  <title>My Orders | Nash Bites</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  
+  <style>
+    :root { 
+        --brand:#FF4D2D; 
+        --bg:#F8F9FB; 
+        --text:#1A1C1E; 
+        --muted:#94A3B8; 
+        --danger:#FF4D4D; 
+        --green:#27ae60; 
+        --whatsapp:#25d366; 
+    }
+    
+    * { box-sizing:border-box; margin:0; padding:0; font-family: 'Plus Jakarta Sans', sans-serif; }
+    body { background: var(--bg); color: var(--text); padding-bottom: 110px; }
+
+    header { 
+      background: var(--brand); color: #fff; padding: 20px; 
+      display: flex; align-items: center; position: sticky; top: 0; z-index: 1000;
+      border-radius: 0 0 25px 25px;
+    }
+    header h1 { font-size: 1.1rem; flex-grow: 1; font-weight: 800; }
+    .back-link { color: white; text-decoration: none; font-size: 0.75rem; background: rgba(255,255,255,0.2); padding: 8px 15px; border-radius: 12px; font-weight: 700; }
+
+    .main-content { padding: 20px; max-width: 600px; margin: 0 auto; }
+    .page-header { margin-bottom: 25px; }
+    .page-header h2 { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.5px; }
+
+    #historyContainer { display: flex; flex-direction: column; gap: 15px; }
+
+    .card { background: #fff; border-radius: 25px; padding: 20px; border: 1px solid #EDF2F7; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
+    
+    .status-pill { padding: 6px 12px; border-radius: 10px; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; }
+    .status-pending { background: #FFF9E6; color: #D97706; }
+    .status-preparing { background: #E0F2FE; color: #0369A1; }
+    .status-out-for-delivery { background: #F0F9FF; color: #0284C7; border: 1px dashed #0284C7; }
+    .status-delivered { background: #ECFDF5; color: #059669; }
+
+    .item-mini { display: flex; align-items: center; gap: 10px; margin: 12px 0; }
+    .item-mini img { width: 45px; height: 45px; border-radius: 12px; object-fit: cover; background: #f1f1f1; }
+    .item-name { font-weight: 700; font-size: 0.85rem; display: block; }
+    .item-qty { font-size: 0.75rem; color: var(--muted); }
+
+    .order-footer { background: #F8FAFC; padding: 15px; border-radius: 18px; margin-top: 10px; font-size: 0.8rem; }
+    .total-price { color: var(--brand); font-weight: 800; font-size: 1rem; }
+
+    .btn-group { margin-top: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .wa-btn { background: var(--whatsapp); color: white; text-decoration: none; padding: 12px; border-radius: 15px; font-size: 0.75rem; font-weight: 800; text-align: center; display: flex; align-items: center; justify-content: center; gap: 5px; }
+    .cancel-btn { background: #fff; color: var(--danger); border: 1px solid #fee2e2; border-radius: 15px; padding: 12px; font-weight: 800; font-size: 0.75rem; cursor: pointer; }
+
+    /* Footer Nav */
+    .footer-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; display: flex; justify-content: space-around; padding: 15px 0 30px; box-shadow: 0 -10px 30px rgba(0,0,0,0.05); border-radius: 25px 25px 0 0; }
+    .nav-item { text-decoration: none; color: #B0B5BB; display: flex; flex-direction: column; align-items: center; font-size: 0.7rem; font-weight: 600; }
+    .nav-item i { font-size: 1.2rem; margin-bottom: 5px; }
+    .nav-item.active { color: var(--brand); }
+  </style>
+</head>
+
+<body>
+<header>
+  <h1>Nash Bites</h1>
+  <a href="home.html" class="back-link">Back</a>
+</header>
+
+<div class="main-content">
+  <div class="page-header">
+    <h2>Order History</h2>
+    <p style="color: var(--muted); font-size: 0.85rem; font-weight: 500;">Track your Muni campus deliveries.</p>
+  </div>
+
+  <div id="historyContainer">
+      <div style="text-align: center; padding: 50px;">
+          <i class="fa fa-spinner fa-spin" style="color: var(--brand);"></i>
+      </div>
+  </div>
+</div>
+
+<nav class="footer-nav">
+  <a href="home.html" class="nav-item"><i class="fa-solid fa-house"></i><span>Menu</span></a>
+  <a href="order-history.html" class="nav-item active"><i class="fa-solid fa-receipt"></i><span>History</span></a>
+  <a href="cart.html" class="nav-item"><i class="fa-solid fa-bag-shopping"></i><span>Cart</span></a>
+  <a href="profile.html" class="nav-item"><i class="fa-solid fa-user"></i><span>Profile</span></a>
+</nav>
+
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+  const supabaseUrl = 'https://lwpwicajcbcmzkyecnbv.supabase.co'
+  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx3cHdpY2FqY2JjbXpreWVjbmJ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzNDgxNjAsImV4cCI6MjA5MTkyNDE2MH0.BF2azgoZPOmo4OP9Zo1-QNpXX-EJ23BWQx-lf3GgW68'
+  const supabase = createClient(supabaseUrl, supabaseKey)
+
+  const SUPPORT_PHONE = "256748372023"; 
+  let userId = null;
+
+  async function init() {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      userId = user.id;
+      fetchOrders();
+      
+      // Real-time listener for status updates
+      supabase.channel('my-orders')
+        .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'orders', filter: `user_id=eq.${userId}` }, fetchOrders)
+        .subscribe();
+    } else {
+      location.href = "index.html";
+    }
+  }
+
+  async function fetchOrders() {
+    const { data: orders, error } = await supabase
+      .from('orders')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false });
+
+    if (!error) renderOrders(orders);
+  }
+
+  function renderOrders(orders) {
+    const container = document.getElementById("historyContainer");
+    if (!orders.length) {
+        container.innerHTML = `<div style="text-align:center; padding-top:40px; color:var(--muted);">No orders found.</div>`;
+        return;
+    }
+
+    container.innerHTML = orders.map(o => {
+      const statusClass = `status-${o.status.replace(/\s+/g, '-')}`;
+      const time = new Date(o.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+      const isCancelable = o.status === 'pending';
+
+      return `
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-weight:800; font-size:0.75rem;">#${o.id.slice(0,8).toUpperCase()}</span>
+            <span class="status-pill ${statusClass}">${o.status}</span>
+          </div>
+          
+          <div class="items-list">
+            ${o.items.map(i => `
+              <div class="item-mini">
+                <img src="${i.image_url || 'https://via.placeholder.com/50'}" onerror="this.src='https://via.placeholder.com/50'">
+                <div style="flex:1;">
+                    <span class="item-name">${i.name}</span>
+                    <span class="item-qty">${i.qty} unit(s)</span>
+                </div>
+                <span style="font-weight:700; font-size:0.8rem;">UGX ${i.price.toLocaleString()}</span>
+              </div>
+            `).join('')}
+          </div>
+
+          <div class="order-footer">
+            <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                <span>Deliver to:</span>
+                <span style="font-weight:700;">${o.delivery_location}</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; padding-top:10px; border-top:1px solid #eee;">
+                <span>Total Paid:</span>
+                <span class="total-price">UGX ${o.total_amount.toLocaleString()}</span>
+            </div>
+          </div>
+
+          <div class="btn-group">
+            <a href="https://wa.me/${SUPPORT_PHONE}?text=Query regarding Order #${o.id.slice(0,8)}" class="wa-btn">
+                <i class="fab fa-whatsapp"></i> Chat Support
+            </a>
+            ${isCancelable ? `<button class="cancel-btn" onclick="cancelOrder('${o.id}')">Cancel</button>` : `<button class="cancel-btn" style="opacity:0.3; cursor:default;" disabled>History</button>`}
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  window.cancelOrder = async (id) => {
+    if (confirm("Cancel this order? This can only be done while status is 'Pending'.")) {
+      const { error } = await supabase.from('orders').update({ status: 'cancelled' }).eq('id', id).eq('status', 'pending');
+      if (error) alert("Could not cancel order.");
+      fetchOrders();
+    }
+  };
+
+  init();
+</script>
+</body>
+</html>

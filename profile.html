@@ -1,0 +1,1350 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Nash Bites | My Profile</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Poppins:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    :root {
+      --primary:#FF4D2D;
+      --primary-dark:#e63e20;
+      --primary-light:#FFF0ED;
+      --bg:#F8FAFC;
+      --bg-card:#FFFFFF;
+      --bg-input:#F1F5F9;
+      --text:#0F172A;
+      --text-secondary:#64748B;
+      --text-muted:#94A3B8;
+      --border:#E2E8F0;
+      --border-hover:#CBD5E1;
+      --shadow-sm:0 1px 2px rgba(0,0,0,0.05);
+      --shadow-md:0 4px 6px -1px rgba(0,0,0,0.1);
+      --shadow-lg:0 10px 15px -3px rgba(0,0,0,0.1);
+      --shadow-xl:0 20px 25px -5px rgba(0,0,0,0.1);
+      --radius:16px;
+      --radius-sm:12px;
+      --radius-xs:8px;
+      --success:#22C55E;
+      --warning:#F59E0B;
+      --danger:#EF4444;
+      --info:#3B82F6;
+    }
+
+    [data-theme="dark"] {
+      --bg:#0F172A;
+      --bg-card:#1E293B;
+      --bg-input:#334155;
+      --text:#F1F5F9;
+      --text-secondary:#94A3B8;
+      --text-muted:#64748B;
+      --border:#334155;
+      --border-hover:#475569;
+      --primary-light:#2D1510;
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; font-family:'Plus Jakarta Sans',sans-serif; }
+    body { background:var(--bg); color:var(--text); line-height:1.6; transition:background 0.3s, color 0.3s; min-height:100vh; }
+
+    /* ============================================
+       TOP NAVBAR
+       ============================================ */
+    .top-nav {
+      position:fixed; top:0; left:0; right:0;
+      height:70px;
+      background:var(--bg-card);
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 24px;
+      z-index:100;
+      transition:background 0.3s, border 0.3s;
+    }
+    .top-nav .logo {
+      font-size:1.5rem; font-weight:800; color:var(--primary); font-family:'Poppins';
+      text-decoration:none;
+    }
+    .nav-actions { display:flex; align-items:center; gap:12px; }
+    .nav-icon-btn {
+      width:40px; height:40px; border-radius:50%; border:1px solid var(--border);
+      background:var(--bg-input); color:var(--text-secondary);
+      display:flex; align-items:center; justify-content:center;
+      cursor:pointer; transition:all 0.2s; font-size:1rem;
+      position:relative;
+    }
+    .nav-icon-btn:hover { border-color:var(--primary); color:var(--primary); background:var(--primary-light); }
+    .notification-badge {
+      position:absolute; top:-2px; right:-2px;
+      width:18px; height:18px; border-radius:50%;
+      background:var(--primary); color:white; font-size:0.65rem;
+      display:flex; align-items:center; justify-content:center; font-weight:700;
+    }
+    .nav-avatar {
+      width:40px; height:40px; border-radius:50%;
+      object-fit:cover; border:2px solid var(--border);
+      cursor:pointer; transition:border-color 0.2s;
+    }
+    .nav-avatar:hover { border-color:var(--primary); }
+
+    /* ============================================
+       LAYOUT
+       ============================================ */
+    .page-wrapper {
+      max-width:900px; margin:0 auto;
+      padding:90px 20px 40px;
+    }
+
+    /* ============================================
+       PROFILE HEADER CARD
+       ============================================ */
+    .profile-header {
+      background:var(--bg-card);
+      border-radius:var(--radius);
+      border:1px solid var(--border);
+      padding:32px;
+      display:flex; align-items:center; gap:24px;
+      position:relative;
+      transition:all 0.3s;
+      box-shadow:var(--shadow-sm);
+    }
+    .profile-header:hover { box-shadow:var(--shadow-md); }
+
+    .avatar-container {
+  position: relative; 
+  flex-shrink: 0;
+  width: 90px; /* Match the image width */
+  height: 90px; /* Match the image width */
+}
+
+.avatar-large {
+  width: 90px; 
+  height: 90px; /* Changed from 80px to 90px for a perfect circle */
+  border-radius: 50%; /* 50% is standard for circles */
+  object-fit: cover;
+  border: 4px solid var(--primary-light);
+  display: block;
+  transition: border-color 0.3s;
+}
+
+/* Ensure the image doesn't "bleed" out during upload */
+#profileAvatar {
+  max-width: 70%;
+  max-height: 60%;
+  border-radius: 45%; /* 50% is standard for circles */
+}
+
+    .profile-info { flex:1; }
+    .profile-name {
+      font-size:1.5rem; font-weight:800; margin-bottom:2px; letter-spacing:-0.5px;
+    }
+    .profile-email { color:var(--text-secondary); font-size:0.95rem; font-weight:500; }
+    .profile-role-badge {
+      display:inline-flex; align-items:center; gap:5px;
+      padding:4px 12px; border-radius:20px; font-size:0.78rem; font-weight:700;
+      margin-top:8px; text-transform:uppercase; letter-spacing:0.5px;
+    }
+    .role-user { background:#DBEAFE; color:#1D4ED8; }
+    .role-vendor { background:#D1FAE5; color:#065F46; }
+    .role-carrier { background:#FEF3C7; color:#92400E; }
+
+    [data-theme="dark"] .role-user { background:#1E3A5F; color:#60A5FA; }
+    [data-theme="dark"] .role-vendor { background:#064E3B; color:#6EE7B7; }
+    [data-theme="dark"] .role-carrier { background:#78350F; color:#FCD34D; }
+
+    .profile-stats {
+      display:flex; gap:24px; margin-top:12px;
+    }
+    .stat-item { text-align:center; }
+    .stat-value { font-size:1.2rem; font-weight:800; color:var(--primary); }
+    .stat-label { font-size:0.75rem; color:var(--text-muted); font-weight:600; text-transform:uppercase; letter-spacing:0.5px; }
+
+    /* ============================================
+       TABS NAVIGATION
+       ============================================ */
+    .tabs-nav {
+      display:flex; gap:4px;
+      background:var(--bg-card);
+      border-radius:var(--radius);
+      border:1px solid var(--border);
+      padding:6px;
+      margin-top:24px;
+      overflow-x:auto;
+      box-shadow:var(--shadow-sm);
+    }
+    .tab-btn {
+      flex:1; padding:12px 16px; border:none; border-radius:var(--radius-sm);
+      background:transparent; color:var(--text-secondary); font-weight:600;
+      font-size:0.88rem; cursor:pointer; transition:all 0.25s;
+      display:flex; align-items:center; justify-content:center; gap:8px;
+      white-space:nowrap;
+    }
+    .tab-btn:hover { background:var(--bg-input); color:var(--text); }
+    .tab-btn.active {
+      background:var(--primary); color:white;
+      box-shadow:0 4px 12px rgba(255,77,45,0.3);
+    }
+    .tab-btn i { font-size:0.9rem; }
+
+    /* ============================================
+       TAB CONTENT
+       ============================================ */
+    .tab-content { display:none; margin-top:24px; }
+    .tab-content.active { display:block; animation:fadeSlide 0.4s ease; }
+
+    @keyframes fadeSlide {
+      from { opacity:0; transform:translateY(12px); }
+      to { opacity:1; transform:translateY(0); }
+    }
+
+    /* ============================================
+       CARD COMPONENT
+       ============================================ */
+    .card {
+      background:var(--bg-card);
+      border-radius:var(--radius);
+      border:1px solid var(--border);
+      padding:28px;
+      margin-bottom:20px;
+      transition:all 0.3s;
+      box-shadow:var(--shadow-sm);
+    }
+    .card:hover { box-shadow:var(--shadow-md); }
+    .card-title {
+      font-size:1.1rem; font-weight:700; margin-bottom:20px;
+      display:flex; align-items:center; gap:10px;
+    }
+    .card-title i { color:var(--primary); font-size:1rem; }
+
+    /* ============================================
+       FORM STYLES
+       ============================================ */
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }
+    .form-group { margin-bottom:16px; }
+    .form-group.full { grid-column:1/-1; }
+    .form-label {
+      display:block; font-size:0.82rem; font-weight:600; color:var(--text-secondary);
+      margin-bottom:6px; text-transform:uppercase; letter-spacing:0.5px;
+    }
+    .form-input-wrap { position:relative; }
+    .form-input-wrap i.field-icon {
+      position:absolute; left:14px; top:50%; transform:translateY(-50%);
+      color:var(--text-muted); font-size:0.9rem; pointer-events:none;
+      transition:color 0.2s;
+    }
+    .form-input {
+      width:100%; padding:12px 14px 12px 42px;
+      border:2px solid var(--border); border-radius:var(--radius-sm);
+      font-size:0.95rem; font-weight:500; color:var(--text);
+      background:var(--bg-input); transition:all 0.25s; outline:none;
+    }
+    .form-input::placeholder { color:var(--text-muted); }
+    .form-input:focus {
+      border-color:var(--primary); background:var(--bg-card);
+      box-shadow:0 0 0 4px rgba(255,77,45,0.1);
+    }
+    .form-input-wrap:focus-within i.field-icon { color:var(--primary); }
+
+    .btn-save {
+      padding:13px 32px; border:none; border-radius:var(--radius-sm);
+      background:var(--primary); color:white; font-weight:700;
+      font-size:0.95rem; cursor:pointer; transition:all 0.3s;
+      display:inline-flex; align-items:center; gap:8px;
+    }
+    .btn-save:hover { background:var(--primary-dark); transform:translateY(-1px); box-shadow:0 8px 20px rgba(255,77,45,0.3); }
+    .btn-save:disabled { opacity:0.6; cursor:not-allowed; transform:none; }
+    .btn-save .spinner { width:18px; height:18px; border:2px solid rgba(255,255,255,0.3); border-top-color:white; border-radius:50%; animation:spin 0.6s linear infinite; display:none; }
+    .btn-save.loading .spinner { display:block; }
+    .btn-save.loading .btn-label { display:none; }
+
+    @keyframes spin { to { transform:rotate(360deg); } }
+
+    .form-message {
+      padding:10px 14px; border-radius:var(--radius-xs); font-size:0.85rem;
+      font-weight:500; margin-top:14px; display:none;
+    }
+    .form-message.success { background:#F0FDF4; border:1px solid #BBF7D0; color:#16A34A; }
+    .form-message.error { background:#FEF2F2; border:1px solid #FECACA; color:#DC2626; }
+    .form-message.show { display:flex; align-items:center; gap:8px; }
+
+    [data-theme="dark"] .form-message.success { background:#052E16; border-color:#166534; }
+    [data-theme="dark"] .form-message.error { background:#450A0A; border-color:#991B1B; }
+
+    /* ============================================
+       ORDER HISTORY
+       ============================================ */
+    .orders-list { display:flex; flex-direction:column; gap:12px; }
+    .order-card {
+      display:flex; align-items:center; gap:16px;
+      padding:16px; border-radius:var(--radius-sm);
+      background:var(--bg-input); border:1px solid var(--border);
+      transition:all 0.2s; cursor:pointer;
+    }
+    .order-card:hover { border-color:var(--primary); transform:translateX(4px); }
+    .order-icon {
+      width:48px; height:48px; border-radius:12px;
+      display:flex; align-items:center; justify-content:center;
+      font-size:1.2rem; flex-shrink:0;
+    }
+    .order-icon.delivered { background:#D1FAE5; color:#065F46; }
+    .order-icon.pending { background:#FEF3C7; color:#92400E; }
+    .order-icon.cancelled { background:#FEE2E2; color:#991B1B; }
+    .order-icon.preparing { background:#DBEAFE; color:#1D4ED8; }
+
+    [data-theme="dark"] .order-icon.delivered { background:#064E3B; color:#6EE7B7; }
+    [data-theme="dark"] .order-icon.pending { background:#78350F; color:#FCD34D; }
+    [data-theme="dark"] .order-icon.cancelled { background:#450A0A; color:#FCA5A5; }
+    [data-theme="dark"] .order-icon.preparing { background:#1E3A5F; color:#93C5FD; }
+
+    .order-details { flex:1; }
+    .order-id { font-weight:700; font-size:0.95rem; margin-bottom:2px; }
+    .order-meta { font-size:0.82rem; color:var(--text-secondary); display:flex; gap:12px; flex-wrap:wrap; }
+    .order-status {
+      padding:4px 10px; border-radius:20px; font-size:0.72rem;
+      font-weight:700; text-transform:uppercase; letter-spacing:0.5px;
+    }
+    .status-delivered { background:#D1FAE5; color:#065F46; }
+    .status-pending { background:#FEF3C7; color:#92400E; }
+    .status-cancelled { background:#FEE2E2; color:#991B1B; }
+    .status-preparing { background:#DBEAFE; color:#1D4ED8; }
+
+    [data-theme="dark"] .status-delivered { background:#064E3B; color:#6EE7B7; }
+    [data-theme="dark"] .status-pending { background:#78350F; color:#FCD34D; }
+    [data-theme="dark"] .status-cancelled { background:#450A0A; color:#FCA5A5; }
+    [data-theme="dark"] .status-preparing { background:#1E3A5F; color:#93C5FD; }
+
+    .order-amount { font-weight:800; font-size:1.05rem; color:var(--primary); white-space:nowrap; }
+    .empty-state {
+      text-align:center; padding:48px 24px;
+      color:var(--text-muted);
+    }
+    .empty-state i { font-size:3rem; margin-bottom:16px; opacity:0.4; }
+    .empty-state h3 { font-size:1.1rem; font-weight:700; color:var(--text-secondary); margin-bottom:6px; }
+    .empty-state p { font-size:0.9rem; }
+
+    .order-filter-bar {
+      display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap;
+    }
+    .filter-chip {
+      padding:6px 14px; border-radius:20px; border:1px solid var(--border);
+      background:var(--bg-input); color:var(--text-secondary); font-size:0.82rem;
+      font-weight:600; cursor:pointer; transition:all 0.2s;
+    }
+    .filter-chip:hover { border-color:var(--primary); color:var(--primary); }
+    .filter-chip.active { background:var(--primary); color:white; border-color:var(--primary); }
+
+    /* ============================================
+       ROLE UPGRADE CARDS
+       ============================================ */
+    .upgrade-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    .upgrade-card {
+      padding:28px; border-radius:var(--radius);
+      border:2px solid var(--border); background:var(--bg-input);
+      text-align:center; transition:all 0.3s; cursor:pointer;
+      position:relative; overflow:hidden;
+    }
+    .upgrade-card::before {
+      content:''; position:absolute; top:0; left:0; right:0; height:4px;
+      background:var(--primary); transform:scaleX(0); transition:transform 0.3s;
+    }
+    .upgrade-card:hover { border-color:var(--primary); transform:translateY(-4px); box-shadow:var(--shadow-lg); }
+    .upgrade-card:hover::before { transform:scaleX(1); }
+    .upgrade-card.applied { border-color:var(--success); }
+    .upgrade-card.applied::before { background:var(--success); transform:scaleX(1); }
+
+    .upgrade-icon {
+      width:60px; height:60px; border-radius:16px;
+      display:inline-flex; align-items:center; justify-content:center;
+      font-size:1.5rem; margin-bottom:16px;
+    }
+    .upgrade-icon.vendor { background:#D1FAE5; color:#065F46; }
+    .upgrade-icon.carrier { background:#FEF3C7; color:#92400E; }
+    [data-theme="dark"] .upgrade-icon.vendor { background:#064E3B; color:#6EE7B7; }
+    [data-theme="dark"] .upgrade-icon.carrier { background:#78350F; color:#FCD34D; }
+
+    .upgrade-card h3 { font-size:1.1rem; font-weight:700; margin-bottom:6px; }
+    .upgrade-card p { font-size:0.85rem; color:var(--text-secondary); margin-bottom:16px; }
+    .upgrade-btn {
+      padding:10px 24px; border-radius:var(--radius-xs); border:2px solid var(--primary);
+      background:transparent; color:var(--primary); font-weight:700;
+      font-size:0.88rem; cursor:pointer; transition:all 0.2s;
+    }
+    .upgrade-btn:hover { background:var(--primary); color:white; }
+    .upgrade-btn.active-role { background:var(--success); border-color:var(--success); color:white; cursor:default; }
+
+    .dashboard-link {
+      display:flex; align-items:center; gap:10px;
+      padding:14px 20px; border-radius:var(--radius-sm);
+      background:var(--primary); color:white; font-weight:700;
+      text-decoration:none; transition:all 0.3s; margin-top:12px;
+      justify-content:center; font-size:0.95rem;
+    }
+    .dashboard-link:hover { background:var(--primary-dark); transform:translateY(-2px); box-shadow:0 8px 20px rgba(255,77,45,0.3); }
+
+    /* ============================================
+       SETTINGS
+       ============================================ */
+    .setting-row {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:16px 0; border-bottom:1px solid var(--border);
+    }
+    .setting-row:last-child { border-bottom:none; }
+    .setting-left { display:flex; align-items:center; gap:14px; }
+    .setting-icon {
+      width:42px; height:42px; border-radius:12px;
+      display:flex; align-items:center; justify-content:center;
+      font-size:1rem; background:var(--bg-input); color:var(--text-secondary);
+    }
+    .setting-info h4 { font-size:0.95rem; font-weight:600; }
+    .setting-info p { font-size:0.8rem; color:var(--text-muted); }
+
+    /* Toggle switch */
+    .toggle {
+      width:52px; height:28px; border-radius:14px;
+      background:var(--border); cursor:pointer; position:relative;
+      transition:background 0.3s; border:none; padding:0;
+    }
+    .toggle::after {
+      content:''; position:absolute; top:3px; left:3px;
+      width:22px; height:22px; border-radius:50%;
+      background:white; transition:transform 0.3s;
+      box-shadow:0 2px 4px rgba(0,0,0,0.15);
+    }
+    .toggle.active { background:var(--primary); }
+    .toggle.active::after { transform:translateX(24px); }
+
+    /* Danger zone */
+    .danger-card {
+      border-color:var(--danger); background:rgba(239,68,68,0.04);
+    }
+    [data-theme="dark"] .danger-card { background:rgba(239,68,68,0.08); }
+    .btn-danger {
+      padding:10px 24px; border-radius:var(--radius-xs); border:2px solid var(--danger);
+      background:transparent; color:var(--danger); font-weight:700;
+      font-size:0.88rem; cursor:pointer; transition:all 0.2s;
+    }
+    .btn-danger:hover { background:var(--danger); color:white; }
+
+    .btn-logout {
+      width:100%; padding:14px; border:2px solid var(--border);
+      border-radius:var(--radius-sm); background:var(--bg-input);
+      color:var(--text); font-weight:700; font-size:0.95rem;
+      cursor:pointer; transition:all 0.2s;
+      display:flex; align-items:center; justify-content:center; gap:8px;
+    }
+    .btn-logout:hover { border-color:var(--danger); color:var(--danger); background:rgba(239,68,68,0.05); }
+
+    /* ============================================
+       MODAL (reuse)
+       ============================================ */
+    .modal-overlay {
+      display:none; position:fixed; z-index:2000;
+      left:0; top:0; width:100%; height:100%;
+      background:rgba(15,23,42,0.6); backdrop-filter:blur(8px);
+      justify-content:center; align-items:center;
+    }
+    .modal-card {
+      background:var(--bg-card); border-radius:24px;
+      width:90%; max-width:480px; box-shadow:var(--shadow-xl);
+      position:relative; overflow:hidden;
+      animation:slideUp 0.4s cubic-bezier(0.16,1,0.3,1);
+      max-height:90vh; overflow-y:auto;
+    }
+    .modal-card::before {
+      content:''; position:absolute; top:0; left:0; right:0; height:4px;
+      background:linear-gradient(90deg, var(--primary), #FF6B4D, var(--primary));
+    }
+    .modal-body { padding:36px; }
+    .modal-close {
+      position:absolute; top:16px; right:16px;
+      width:36px; height:36px; border-radius:50%; border:none;
+      background:var(--bg-input); color:var(--text-secondary);
+      font-size:1.1rem; cursor:pointer;
+      display:flex; align-items:center; justify-content:center;
+      transition:all 0.2s; z-index:1;
+    }
+    .modal-close:hover { background:var(--primary-light); color:var(--primary); transform:rotate(90deg); }
+    .modal-header { text-align:center; margin-bottom:24px; }
+    .modal-header .modal-icon {
+      width:56px; height:56px; background:var(--primary-light);
+      border-radius:16px; display:inline-flex; align-items:center;
+      justify-content:center; margin-bottom:12px;
+    }
+    .modal-header .modal-icon i { font-size:1.5rem; color:var(--primary); }
+    .modal-header h2 { font-size:1.4rem; font-weight:800; margin-bottom:4px; }
+    .modal-header p { font-size:0.9rem; color:var(--text-secondary); }
+
+    @keyframes slideUp {
+      from { opacity:0; transform:translateY(30px) scale(0.96); }
+      to { opacity:1; transform:translateY(0) scale(1); }
+    }
+
+    /* ============================================
+       RESPONSIVE
+       ============================================ */
+    @media (max-width:640px) {
+      .profile-header { flex-direction:column; text-align:center; }
+      .profile-stats { justify-content:center; }
+      .form-row { grid-template-columns:1fr; }
+      .upgrade-grid { grid-template-columns:1fr; }
+      .tabs-nav { gap:2px; padding:4px; }
+      .tab-btn { padding:10px 12px; font-size:0.8rem; }
+      .tab-btn span.tab-label { display:none; }
+      .order-card { flex-direction:column; text-align:center; }
+    }
+    @media (min-width:641px) {
+      .tab-btn .tab-label { display:inline; }
+    }
+
+    /* Loading skeleton */
+    .skeleton { background:linear-gradient(90deg, var(--bg-input) 25%, var(--border) 50%, var(--bg-input) 75%); background-size:200% 100%; animation:shimmer 1.5s infinite; border-radius:var(--radius-xs); }
+    @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+    /* Scroll bar */
+    ::-webkit-scrollbar { width:6px; }
+    ::-webkit-scrollbar-track { background:var(--bg); }
+    ::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+    ::-webkit-scrollbar-thumb:hover { background:var(--text-muted); }
+  </style>
+</head>
+<body>
+
+<!-- TOP NAVBAR -->
+<nav class="top-nav">
+  <a href="index.html" class="logo">Nash Bites</a>
+  <div class="nav-actions">
+    <button class="nav-icon-btn" onclick="toggleTheme()" title="Toggle theme" id="themeToggleBtn">
+      <i class="fa-solid fa-moon"></i>
+    </button>
+    <button class="nav-icon-btn" title="Notifications">
+      <i class="fa-solid fa-bell"></i>
+      <span class="notification-badge" id="notifBadge" style="display:none;">0</span>
+    </button>
+    <img src="https://ui-avatars.com/api/?name=User&background=FF4D2D&color=fff&size=80" alt="avatar" class="nav-avatar" id="navAvatar">
+  </div>
+</nav>
+
+<!-- PAGE WRAPPER -->
+<div class="page-wrapper">
+
+  <!-- PROFILE HEADER -->
+  <div class="profile-header">
+    <div class="avatar-upload-container">
+    <img id="profileAvatar" src="default-avatar.png" alt="Profile">
+    <label for="avatarInput" class="upload-btn" id="uploadBtn">
+        <i class="fa-solid fa-camera"></i>
+        <input type="file" id="avatarInput" hidden accept="image/*" onchange="uploadAvatar(event)">
+    </label>
+</div>
+    <div class="profile-info">
+      <h1 class="profile-name" id="profileName">Loading...</h1>
+      <p class="profile-email" id="profileEmail">loading@email.com</p>
+      <span class="profile-role-badge role-user" id="profileRoleBadge">
+        <i class="fa-solid fa-user"></i> Customer
+      </span>
+      <div class="profile-stats">
+        <div class="stat-item">
+          <div class="stat-value" id="statOrders">0</div>
+          <div class="stat-label">Orders</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" id="statSpent">UGX </div>
+          <div class="stat-label">Spent</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" id="statJoined">-</div>
+          <div class="stat-label">Joined</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs-nav">
+    <button class="tab-btn active" onclick="switchTab('profile')">
+      <i class="fa-solid fa-user-pen"></i> <span class="tab-label">Profile</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('orders')">
+      <i class="fa-solid fa-clock-rotate-left"></i> <span class="tab-label">Orders</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('roles')">
+      <i class="fa-solid fa-users-gear"></i> <span class="tab-label">Roles</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('settings')">
+      <i class="fa-solid fa-gear"></i> <span class="tab-label">Settings</span>
+    </button>
+  </div>
+
+  <!-- ============================================
+       TAB 1: EDIT PROFILE
+       ============================================ -->
+  <div id="tab-profile" class="tab-content active">
+    <div class="card">
+      <div class="card-title"><i class="fa-solid fa-user-pen"></i> Personal Information</div>
+      <form id="profileForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Full Name</label>
+            <div class="form-input-wrap">
+              <i class="fa-solid fa-user field-icon"></i>
+              <input type="text" class="form-input" id="editName" placeholder="Your full name">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Phone Number</label>
+            <div class="form-input-wrap">
+              <i class="fa-solid fa-phone field-icon"></i>
+              <input type="tel" class="form-input" id="editPhone" placeholder="+27 XX XXX XXXX">
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <div class="form-input-wrap">
+            <i class="fa-solid fa-envelope field-icon"></i>
+            <input type="email" class="form-input" id="editEmail" placeholder="you@example.com" disabled style="opacity:0.6; cursor:not-allowed;">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Delivery Address</label>
+          <div class="form-input-wrap">
+            <i class="fa-solid fa-location-dot field-icon"></i>
+            <input type="text" class="form-input" id="editAddress" placeholder="Campus, Building, Room">
+          </div>
+        </div>
+        <button type="submit" class="btn-save" id="saveProfileBtn">
+          <span class="spinner"></span>
+          <span class="btn-label"><i class="fa-solid fa-check"></i> Save Changes</span>
+        </button>
+        <div class="form-message success" id="profileSuccess"><i class="fa-solid fa-circle-check"></i> <span></span></div>
+        <div class="form-message error" id="profileError"><i class="fa-solid fa-circle-exclamation"></i> <span></span></div>
+      </form>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><i class="fa-solid fa-lock"></i> Change Password</div>
+      <form id="passwordForm">
+        <div class="form-group">
+          <label class="form-label">New Password</label>
+          <div class="form-input-wrap">
+            <i class="fa-solid fa-lock field-icon"></i>
+            <input type="password" class="form-input" id="newPassword" placeholder="Min. 8 characters">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Confirm New Password</label>
+          <div class="form-input-wrap">
+            <i class="fa-solid fa-lock field-icon"></i>
+            <input type="password" class="form-input" id="confirmPassword" placeholder="Repeat password">
+          </div>
+        </div>
+        <button type="submit" class="btn-save" id="savePasswordBtn">
+          <span class="spinner"></span>
+          <span class="btn-label"><i class="fa-solid fa-key"></i> Update Password</span>
+        </button>
+        <div class="form-message success" id="passwordSuccess"><i class="fa-solid fa-circle-check"></i> <span></span></div>
+        <div class="form-message error" id="passwordError"><i class="fa-solid fa-circle-exclamation"></i> <span></span></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================================
+       TAB 2: ORDER HISTORY
+       ============================================ -->
+  <div id="tab-orders" class="tab-content">
+    <div class="card">
+      <div class="card-title"><i class="fa-solid fa-clock-rotate-left"></i> Order History</div>
+      <div class="order-filter-bar">
+        <button class="filter-chip active" onclick="filterOrders('all', this)">All</button>
+        <button class="filter-chip" onclick="filterOrders('delivered', this)">Delivered</button>
+        <button class="filter-chip" onclick="filterOrders('pending', this)">Pending</button>
+        <button class="filter-chip" onclick="filterOrders('preparing', this)">Preparing</button>
+        <button class="filter-chip" onclick="filterOrders('cancelled', this)">Cancelled</button>
+      </div>
+      <div class="orders-list" id="ordersList">
+        <div class="empty-state">
+          <i class="fa-solid fa-box-open"></i>
+          <h3>No orders yet</h3>
+          <p>When you place orders, they'll appear here</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================
+       TAB 3: ROLES & DASHBOARDS
+       ============================================ -->
+  <div id="tab-roles" class="tab-content">
+    <!-- Dashboard shortcuts (shown if user has vendor/carrier roles) -->
+    <div class="card" id="dashboardCard" style="display:none;">
+      <div class="card-title"><i class="fa-solid fa-gauge-high"></i> Your Dashboards</div>
+      <div id="dashboardLinks"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><i class="fa-solid fa-rocket"></i> Expand Your Role</div>
+      <p style="color:var(--text-secondary); font-size:0.9rem; margin-bottom:20px;">
+        Unlock more features by becoming a vendor or carrier alongside your customer account.
+      </p>
+      <div class="upgrade-grid">
+        <div class="upgrade-card" id="vendorUpgrade">
+          <div class="upgrade-icon vendor"><i class="fa-solid fa-shop"></i></div>
+          <h3>Become a Vendor</h3>
+          <p>List your meals, manage orders & grow your food business on campus.</p>
+          <button class="upgrade-btn" id="vendorUpgradeBtn" onclick="openUpgradeModal('vendor')">
+            <i class="fa-solid fa-arrow-right"></i> Apply Now
+          </button>
+        </div>
+        <div class="upgrade-card" id="carrierUpgrade">
+          <div class="upgrade-icon carrier"><i class="fa-solid fa-bicycle"></i></div>
+          <h3>Become a Carrier</h3>
+          <p>Deliver orders on your own schedule & earn flexible income.</p>
+          <button class="upgrade-btn" id="carrierUpgradeBtn" onclick="openUpgradeModal('carrier')">
+            <i class="fa-solid fa-arrow-right"></i> Apply Now
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================
+       TAB 4: SETTINGS
+       ============================================ -->
+  <div id="tab-settings" class="tab-content">
+    <div class="card">
+      <div class="card-title"><i class="fa-solid fa-palette"></i> Appearance</div>
+      <div class="setting-row">
+        <div class="setting-left">
+          <div class="setting-icon"><i class="fa-solid fa-moon"></i></div>
+          <div class="setting-info">
+            <h4>Dark Mode</h4>
+            <p>Switch between light and dark theme</p>
+          </div>
+        </div>
+        <button class="toggle" id="darkModeToggle" onclick="toggleTheme()"></button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><i class="fa-solid fa-bell"></i> Notifications</div>
+      <div class="setting-row">
+        <div class="setting-left">
+          <div class="setting-icon"><i class="fa-solid fa-envelope"></i></div>
+          <div class="setting-info">
+            <h4>Email Notifications</h4>
+            <p>Order updates and promotions</p>
+          </div>
+        </div>
+        <button class="toggle active" id="emailNotifToggle" onclick="this.classList.toggle('active')"></button>
+      </div>
+      <div class="setting-row">
+        <div class="setting-left">
+          <div class="setting-icon"><i class="fa-solid fa-mobile-screen"></i></div>
+          <div class="setting-info">
+            <h4>Push Notifications</h4>
+            <p>Real-time delivery updates</p>
+          </div>
+        </div>
+        <button class="toggle active" id="pushNotifToggle" onclick="this.classList.toggle('active')"></button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><i class="fa-solid fa-shield-halved"></i> Privacy & Security</div>
+      <div class="setting-row">
+        <div class="setting-left">
+          <div class="setting-icon"><i class="fa-solid fa-eye"></i></div>
+          <div class="setting-info">
+            <h4>Profile Visibility</h4>
+            <p>Allow vendors to see your name on orders</p>
+          </div>
+        </div>
+        <button class="toggle active" onclick="this.classList.toggle('active')"></button>
+      </div>
+    </div>
+
+    <div class="card danger-card">
+      <div class="card-title" style="color:var(--danger);"><i class="fa-solid fa-triangle-exclamation"></i> Danger Zone</div>
+      <div class="setting-row">
+        <div class="setting-left">
+          <div class="setting-icon" style="background:rgba(239,68,68,0.1); color:var(--danger);">
+            <i class="fa-solid fa-trash"></i>
+          </div>
+          <div class="setting-info">
+            <h4>Delete Account</h4>
+            <p>Permanently remove your account and all data</p>
+          </div>
+        </div>
+        <button class="btn-danger" onclick="confirmDelete()">Delete</button>
+      </div>
+    </div>
+
+    <button class="btn-logout" onclick="handleLogout()">
+      <i class="fa-solid fa-right-from-bracket"></i> Sign Out
+    </button>
+  </div>
+
+</div> <!-- end page-wrapper -->
+
+
+<!-- ============================================
+     UPGRADE ROLE MODAL
+     ============================================ -->
+<div id="upgradeModal" class="modal-overlay" onclick="if(event.target===this)closeUpgradeModal()">
+  <div class="modal-card" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeUpgradeModal()"><i class="fa-solid fa-xmark"></i></button>
+    <div class="modal-body">
+      <div class="modal-header">
+        <div class="modal-icon"><i id="upgradeModalIcon" class="fa-solid fa-shop"></i></div>
+        <h2 id="upgradeModalTitle">Become a Vendor</h2>
+        <p id="upgradeModalDesc">Fill in your details to get started</p>
+      </div>
+      <form id="upgradeForm">
+        <input type="hidden" id="upgradeRole" value="">
+        <div class="form-group">
+          <label class="form-label">Business / Display Name</label>
+          <div class="form-input-wrap">
+            <i class="fa-solid fa-store field-icon"></i>
+            <input type="text" class="form-input" id="upgradeBizName" placeholder="e.g. Mom's Kitchen" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" id="upgradeExtraLabel">Kitchen Location</label>
+          <div class="form-input-wrap">
+            <i class="fa-solid fa-location-dot field-icon" id="upgradeExtraIcon"></i>
+            <input type="text" class="form-input" id="upgradeExtra" placeholder="e.g. Block C, Room 12" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">ID / Student Number</label>
+          <div class="form-input-wrap">
+            <i class="fa-solid fa-id-card field-icon"></i>
+            <input type="text" class="form-input" id="upgradeId" placeholder="For verification" required>
+          </div>
+        </div>
+        <button type="submit" class="btn-save" style="width:100%; justify-content:center;" id="upgradeSubmitBtn">
+          <span class="spinner"></span>
+          <span class="btn-label"><i class="fa-solid fa-paper-plane"></i> Submit Application</span>
+        </button>
+        <div class="form-message success" id="upgradeSuccess"><i class="fa-solid fa-circle-check"></i> <span></span></div>
+        <div class="form-message error" id="upgradeError"><i class="fa-solid fa-circle-exclamation"></i> <span></span></div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+const supabaseUrl = 'https://lwpwicajcbcmzkyecnbv.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx3cHdpY2FqY2JjbXpreWVjbmJ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzNDgxNjAsImV4cCI6MjA5MTkyNDE2MH0.BF2azgoZPOmo4OP9Zo1-QNpXX-EJ23BWQx-lf3GgW68';
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+let currentUser = null;
+let currentProfile = null;
+let allOrders = [];
+
+// ============================================
+// INIT — Load user data
+// ============================================
+async function init() {
+  const { data:{ session } } = await supabase.auth.getSession();
+  if (!session) { window.location.href = 'index.html'; return; }
+
+  currentUser = session.user;
+
+  // Load profile
+  const { data:profile } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', currentUser.id)
+    .single();
+
+  currentProfile = profile || {};
+
+  renderProfile();
+  loadOrders();
+  loadTheme();
+  checkRoles();
+}
+
+// ============================================
+// RENDER PROFILE
+// ============================================
+function renderProfile() {
+  const name = currentProfile.full_name || currentUser.user_metadata?.full_name || 'User';
+  const email = currentUser.email;
+  const phone = currentProfile.phone || '';
+  const address = currentProfile.address || '';
+  const role = currentProfile.role || 'user';
+  const joined = new Date(currentUser.created_at).toLocaleDateString('en-ZA', { month:'short', year:'numeric' });
+
+  // --- AVATAR LOGIC ---
+  let finalAvatarUrl;
+  
+  if (currentProfile.avatar_url) {
+    // Get the actual public link from Storage
+    const { data } = supabase.storage.from('avatars').getPublicUrl(currentProfile.avatar_url);
+    // Add a timestamp to prevent the browser from showing an old cached image
+    finalAvatarUrl = `${data.publicUrl}?t=${new Date().getTime()}`;
+  } else {
+    // Fallback to UI Avatars if no photo exists
+    finalAvatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=FF4D2D&color=fff&size=200`;
+  }
+
+  // Update image elements once
+  document.getElementById('profileAvatar').src = finalAvatarUrl;
+  if (document.getElementById('navAvatar')) {
+    document.getElementById('navAvatar').src = finalAvatarUrl;
+  }
+
+  // --- TEXT ELEMENTS ---
+  document.getElementById('profileName').textContent = name;
+  document.getElementById('profileEmail').textContent = email;
+  document.getElementById('statJoined').textContent = joined;
+
+  // Role badge
+  const badge = document.getElementById('profileRoleBadge');
+  const roleMap = {
+    user: { cls:'role-user', icon:'fa-user', label:'Customer' },
+    vendor: { cls:'role-vendor', icon:'fa-shop', label:'Vendor' },
+    carrier: { cls:'role-carrier', icon:'fa-bicycle', label:'Carrier' }
+  };
+  const r = roleMap[role] || roleMap.user;
+  badge.className = `profile-role-badge ${r.cls}`;
+  badge.innerHTML = `<i class="fa-solid ${r.icon}"></i> ${r.label}`;
+
+  // Fill edit form fields
+  document.getElementById('editName').value = name;
+  document.getElementById('editPhone').value = phone;
+  document.getElementById('editEmail').value = email;
+  document.getElementById('editAddress').value = address;
+}
+// ============================================
+// LOAD ORDERS
+// ============================================
+async function loadOrders() {
+  const { data:orders, error } = await supabase
+    .from('orders')
+    .select('*')
+    .eq('user_id', currentUser.id)
+    .order('created_at', { ascending:false });
+
+  if (error) { 
+    console.error('Orders error:', error); 
+    return; 
+  }
+
+  allOrders = orders || [];
+
+  // 1. Update order count stat
+  document.getElementById('statOrders').textContent = allOrders.length;
+
+  // 2. Calculate total spent
+  // Note: Ensure 'o.total' matches your actual database column name (e.g., total_price)
+  const totalSpent = allOrders
+    .filter(o => o.status === 'delivered' || o.status === 'completed') 
+    .reduce((sum, o) => sum + (Number(o.total) || 0), 0);
+
+  // 3. Update the Spent stat with new currency (UGX)
+  // .toLocaleString() adds commas (e.g., 50,000 instead of 50000)
+  document.getElementById('statSpent').textContent = `UGX ${totalSpent.toLocaleString()}`;
+
+  renderOrders(allOrders);
+}
+function renderOrders(orders) {
+  const container = document.getElementById('ordersList');
+
+  if (!orders.length) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <i class="fa-solid fa-box-open"></i>
+        <h3>No orders found</h3>
+        <p>When you place orders, they'll appear here</p>
+      </div>`;
+    return;
+  }
+
+  container.innerHTML = orders.map(order => {
+    const status = order.status || 'pending';
+    const date = new Date(order.created_at).toLocaleDateString('en-ZA', { day:'numeric', month:'short', year:'numeric' });
+    const time = new Date(order.created_at).toLocaleTimeString('en-ZA', { hour:'2-digit', minute:'2-digit' });
+    const iconMap = {
+      delivered:'fa-circle-check', pending:'fa-clock',
+      preparing:'fa-fire-burner', cancelled:'fa-circle-xmark'
+    };
+    const icon = iconMap[status] || 'fa-clock';
+
+    return `
+      <div class="order-card" data-status="${status}">
+        <div class="order-icon ${status}">
+          <i class="fa-solid ${icon}"></i>
+        </div>
+        <div class="order-details">
+          <div class="order-id">Order #${(order.id || '').toString().slice(0,8).toUpperCase()}</div>
+          <div class="order-meta">
+            <span><i class="fa-regular fa-calendar"></i> ${date}</span>
+            <span><i class="fa-regular fa-clock"></i> ${time}</span>
+            ${order.items_count ? `<span><i class="fa-solid fa-utensils"></i> ${order.items_count} items</span>` : ''}
+          </div>
+        </div>
+        <span class="order-status status-${status}">${status}</span>
+        <div class="order-amount">R${(order.total || 0).toFixed(2)}</div>
+      </div>`;
+  }).join('');
+}
+
+// ============================================
+// FILTER ORDERS
+// ============================================
+window.filterOrders = (status, btn) => {
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+
+  if (status === 'all') { renderOrders(allOrders); return; }
+  renderOrders(allOrders.filter(o => o.status === status));
+};
+
+// ============================================
+// SAVE PROFILE
+// ============================================
+document.getElementById('profileForm').onsubmit = async (e) => {
+  e.preventDefault();
+  const btn = document.getElementById('saveProfileBtn');
+  setLoading(btn, true);
+  hideMsg('profileSuccess'); hideMsg('profileError');
+
+  const updates = {
+    full_name: document.getElementById('editName').value.trim(),
+    phone: document.getElementById('editPhone').value.trim(),
+    address: document.getElementById('editAddress').value.trim(),
+    updated_at: new Date().toISOString()
+  };
+
+  try {
+    const { error } = await supabase.from('profiles').update(updates).eq('id', currentUser.id);
+    if (error) throw error;
+
+    // Also update auth metadata
+    await supabase.auth.updateUser({ data:{ full_name:updates.full_name } });
+
+    currentProfile = { ...currentProfile, ...updates };
+    renderProfile();
+    showMsg('profileSuccess', 'Profile updated successfully!');
+  } catch(err) {
+    showMsg('profileError', err.message);
+  }
+  setLoading(btn, false);
+};
+
+// ============================================
+// CHANGE PASSWORD
+// ============================================
+document.getElementById('passwordForm').onsubmit = async (e) => {
+  e.preventDefault();
+  const btn = document.getElementById('savePasswordBtn');
+  const newPwd = document.getElementById('newPassword').value;
+  const confirmPwd = document.getElementById('confirmPassword').value;
+  hideMsg('passwordSuccess'); hideMsg('passwordError');
+
+  if (newPwd.length < 8) { showMsg('passwordError', 'Password must be at least 8 characters'); return; }
+  if (newPwd !== confirmPwd) { showMsg('passwordError', 'Passwords do not match'); return; }
+
+  setLoading(btn, true);
+  try {
+    const { error } = await supabase.auth.updateUser({ password:newPwd });
+    if (error) throw error;
+    showMsg('passwordSuccess', 'Password updated successfully!');
+    document.getElementById('passwordForm').reset();
+  } catch(err) {
+    showMsg('passwordError', err.message);
+  }
+  setLoading(btn, false);
+};
+
+// ============================================
+// AVATAR UPLOAD
+// ============================================
+window.uploadAvatar = async (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  try {
+    setLoading(document.getElementById('uploadBtn'), true);
+
+    // 1. Convert to PNG and Resize
+    const pngBlob = await processToPNG(file);
+
+    // 2. Generate a clean path (always .png)
+    const filePath = `${currentUser.id}/${Date.now()}.png`;
+
+    // 3. CLEANUP: Delete old file if it exists
+    if (currentProfile.avatar_url) {
+      await supabase.storage.from('avatars').remove([currentProfile.avatar_url]);
+    }
+
+    // 4. UPLOAD new PNG
+    const { error: uploadError } = await supabase.storage
+      .from('avatars')
+      .upload(filePath, pngBlob, { contentType: 'image/png' });
+
+    if (uploadError) throw uploadError;
+
+    // 5. UPDATE DATABASE
+    await supabase.from('profiles').update({ avatar_url: filePath }).eq('id', currentUser.id);
+
+    // 6. REFRESH
+    currentProfile.avatar_url = filePath;
+    renderProfile();
+    
+  } catch (err) {
+    console.error("Upload failed:", err.message);
+  } finally {
+    setLoading(document.getElementById('uploadBtn'), false);
+  }
+};
+async function processToPNG(file) {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (e) => {
+      const img = new Image();
+      img.src = e.target.result;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        // Standardize size for avatars (e.g., 250x250 for quality but small file size)
+        canvas.width = 250;
+        canvas.height = 250;
+        
+        const ctx = canvas.getContext('2d');
+        // This draws the image perfectly centered in a square
+        const minSide = Math.min(img.width, img.height);
+        const offsetX = (img.width - minSide) / 2;
+        const offsetY = (img.height - minSide) / 2;
+        
+        ctx.drawImage(img, offsetX, offsetY, minSide, minSide, 0, 0, 250, 250);
+        
+        canvas.toBlob((blob) => {
+          resolve(blob);
+        }, 'image/png');
+      };
+    };
+  });
+}
+// ============================================
+// CHECK ROLES & SHOW DASHBOARDS
+// ============================================
+function checkRoles() {
+  const role = currentProfile.role || 'user';
+  const dashCard = document.getElementById('dashboardCard');
+  const dashLinks = document.getElementById('dashboardLinks');
+  const vendorBtn = document.getElementById('vendorUpgradeBtn');
+  const carrierBtn = document.getElementById('carrierUpgradeBtn');
+
+  let links = '';
+  let showDash = false;
+
+  if (role === 'vendor' || currentProfile.is_vendor) {
+    showDash = true;
+    links += `<a href="vendor-dashboard.html" class="dashboard-link" style="margin-bottom:8px;">
+      <i class="fa-solid fa-shop"></i> Open Vendor Dashboard
+    </a>`;
+    vendorBtn.textContent = '✓ Active';
+    vendorBtn.classList.add('active-role');
+    vendorBtn.disabled = true;
+    document.getElementById('vendorUpgrade').classList.add('applied');
+  }
+
+  if (role === 'carrier' || currentProfile.is_carrier) {
+    showDash = true;
+    links += `<a href="carrier-dashboard.html" class="dashboard-link">
+      <i class="fa-solid fa-bicycle"></i> Open Carrier Dashboard
+    </a>`;
+    carrierBtn.textContent = '✓ Active';
+    carrierBtn.classList.add('active-role');
+    carrierBtn.disabled = true;
+    document.getElementById('carrierUpgrade').classList.add('applied');
+  }
+
+  if (showDash) {
+    dashCard.style.display = 'block';
+    dashLinks.innerHTML = links;
+  }
+}
+
+// ============================================
+// UPGRADE MODAL
+// ============================================
+window.openUpgradeModal = (role) => {
+  document.getElementById('upgradeRole').value = role;
+  const icon = document.getElementById('upgradeModalIcon');
+  const title = document.getElementById('upgradeModalTitle');
+  const desc = document.getElementById('upgradeModalDesc');
+  const extraLabel = document.getElementById('upgradeExtraLabel');
+  const extraIcon = document.getElementById('upgradeExtraIcon');
+
+  if (role === 'vendor') {
+    icon.className = 'fa-solid fa-shop';
+    title.textContent = 'Become a Vendor';
+    desc.textContent = 'Start selling meals on Nash Bites';
+    extraLabel.textContent = 'Kitchen / Pickup Location';
+    extraIcon.className = 'fa-solid fa-location-dot field-icon';
+    document.getElementById('upgradeExtra').placeholder = 'e.g. Block C, Room 12';
+    document.getElementById('upgradeBizName').placeholder = "e.g. Mom's Kitchen";
+  } else {
+    icon.className = 'fa-solid fa-bicycle';
+    title.textContent = 'Become a Carrier';
+    desc.textContent = 'Deliver food and earn on your schedule';
+    extraLabel.textContent = 'Vehicle / Transport Type';
+    extraIcon.className = 'fa-solid fa-motorcycle field-icon';
+    document.getElementById('upgradeExtra').placeholder = 'e.g. Bicycle, Scooter, On foot';
+    document.getElementById('upgradeBizName').placeholder = 'Your display name';
+  }
+
+  document.getElementById('upgradeModal').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+};
+
+window.closeUpgradeModal = () => {
+  document.getElementById('upgradeModal').style.display = 'none';
+  document.body.style.overflow = '';
+};
+
+document.getElementById('upgradeForm').onsubmit = async (e) => {
+  e.preventDefault();
+  const btn = document.getElementById('upgradeSubmitBtn');
+  const role = document.getElementById('upgradeRole').value;
+  const bizName = document.getElementById('upgradeBizName').value.trim();
+  const extra = document.getElementById('upgradeExtra').value.trim();
+  const idNumber = document.getElementById('upgradeId').value.trim();
+  hideMsg('upgradeSuccess'); hideMsg('upgradeError');
+  setLoading(btn, true);
+
+  try {
+    // Update profile role
+    const updates = { role };
+    if (role === 'vendor') {
+      updates.is_vendor = true;
+      updates.business_name = bizName;
+      updates.kitchen_location = extra;
+    } else {
+      updates.is_carrier = true;
+      updates.carrier_name = bizName;
+      updates.vehicle_type = extra;
+    }
+    updates.id_number = idNumber;
+
+    const { error } = await supabase.from('profiles').update(updates).eq('id', currentUser.id);
+    if (error) throw error;
+
+    currentProfile = { ...currentProfile, ...updates };
+    showMsg('upgradeSuccess', `You're now registered as a ${role}! Redirecting...`);
+
+    setTimeout(() => {
+      closeUpgradeModal();
+      renderProfile();
+      checkRoles();
+    }, 2000);
+  } catch(err) {
+    showMsg('upgradeError', err.message);
+  }
+  setLoading(btn, false);
+};
+
+// ============================================
+// THEME TOGGLE
+// ============================================
+window.toggleTheme = () => {
+  const html = document.documentElement;
+  const current = html.getAttribute('data-theme');
+  const next = current === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  localStorage.setItem('nash-theme', next);
+  updateThemeUI(next);
+};
+
+function loadTheme() {
+  const saved = localStorage.getItem('nash-theme') || 'light';
+  document.documentElement.setAttribute('data-theme', saved);
+  updateThemeUI(saved);
+}
+
+function updateThemeUI(theme) {
+  const toggle = document.getElementById('darkModeToggle');
+  const navIcon = document.querySelector('#themeToggleBtn i');
+  if (theme === 'dark') {
+    toggle?.classList.add('active');
+    navIcon.className = 'fa-solid fa-sun';
+  } else {
+    toggle?.classList.remove('active');
+    navIcon.className = 'fa-solid fa-moon';
+  }
+}
+
+// ============================================
+// TABS
+// ============================================
+window.switchTab = (name) => {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelector(`.tab-btn[onclick="switchTab('${name}')"]`).classList.add('active');
+  document.getElementById(`tab-${name}`).classList.add('active');
+};
+
+// ============================================
+// LOGOUT
+// ============================================
+window.handleLogout = async () => {
+  if (!confirm('Are you sure you want to sign out?')) return;
+  await supabase.auth.signOut();
+  localStorage.removeItem('nash-theme');
+  window.location.href = 'index.html';
+};
+
+// ============================================
+// DELETE ACCOUNT
+// ============================================
+window.confirmDelete = async () => {
+  const confirmed = prompt('Type DELETE to permanently remove your account:');
+  if (confirmed !== 'DELETE') return;
+
+  try {
+    await supabase.from('profiles').delete().eq('id', currentUser.id);
+    await supabase.auth.signOut();
+    window.location.href = 'index.html';
+  } catch(err) {
+    alert('Failed to delete account: ' + err.message);
+  }
+};
+
+// ============================================
+// HELPERS
+// ============================================
+function setLoading(btn, loading) {
+  btn.disabled = loading;
+  btn.classList.toggle('loading', loading);
+}
+function showMsg(id, msg) {
+  const el = document.getElementById(id);
+  el.querySelector('span').textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 5000);
+}
+function hideMsg(id) {
+  document.getElementById(id).classList.remove('show');
+}
+
+// ============================================
+// ESCAPE KEY
+// ============================================
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeUpgradeModal();
+});
+
+// ============================================
+// START
+// ============================================
+init();
+</script>
+</body>
+</html>

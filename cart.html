@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Your Basket | Nash Bites</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <style>
+        :root { --primary: #FF4D2D; --bg: #F8F9FB; --white: #ffffff; --dark: #1A1C1E; --muted: #94A3B8; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background: var(--bg); color: var(--dark); padding-bottom: 180px; }
+
+        header { 
+            background: var(--white); padding: 20px; display: flex; align-items: center; 
+            justify-content: space-between; position: sticky; top: 0; z-index: 100;
+            border-bottom: 1px solid #EDF2F7;
+        }
+        .back-btn { font-size: 1.2rem; color: var(--dark); cursor: pointer; }
+        header h1 { font-size: 1.1rem; font-weight: 800; color: var(--dark); }
+
+        .container { padding: 20px; max-width: 600px; margin: 0 auto; }
+
+        /* Cart Items */
+        .cart-item {
+            background: var(--white); border-radius: 25px; padding: 15px;
+            display: flex; gap: 15px; margin-bottom: 15px; align-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02); border: 1px solid #EDF2F7;
+        }
+        .item-img { width: 70px; height: 70px; border-radius: 18px; object-fit: cover; background: #eee; }
+        .item-details { flex: 1; }
+        .item-details h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 4px; }
+        .item-details p { color: var(--primary); font-weight: 800; font-size: 0.85rem; margin-bottom: 8px; }
+
+        .qty-controls { display: flex; align-items: center; gap: 12px; }
+        .qty-btn { 
+            width: 28px; height: 28px; border-radius: 10px; border: none; 
+            background: #F1F3F5; color: var(--dark); font-weight: 800; cursor: pointer;
+        }
+        .remove-btn { color: #FF4D4D; margin-left: auto; cursor: pointer; padding: 10px; opacity: 0.6; }
+
+        /* Checkout Bar */
+        .checkout-bar {
+            position: fixed; bottom: 0; left: 0; width: 100%; background: var(--white);
+            padding: 25px 25px 40px 25px; border-radius: 30px 30px 0 0;
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.05); z-index: 1000;
+        }
+        .total-row { display: flex; justify-content: space-between; margin-bottom: 20px; }
+        .total-label { color: var(--muted); font-weight: 600; font-size: 0.9rem; }
+        .total-price { font-size: 1.4rem; font-weight: 800; color: var(--dark); }
+        
+        .btn-pay {
+            background: var(--dark); color: white; width: 100%; border: none;
+            padding: 20px; border-radius: 20px; font-size: 1rem; font-weight: 800;
+            cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+            transition: 0.3s;
+        }
+        .btn-pay:active { transform: scale(0.96); }
+
+        #loader { 
+            position: fixed; inset: 0; background: rgba(255,255,255,0.9); 
+            display: flex; align-items: center; justify-content: center; z-index: 9999;
+        }
+        
+        .empty-cart { text-align: center; padding: 80px 20px; }
+        .empty-cart i { font-size: 4rem; color: #E2E8F0; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+
+<div id="loader"><i class="fas fa-spinner fa-spin fa-2x" style="color: var(--primary);"></i></div>
+
+<header>
+    <i class="fa-solid fa-arrow-left back-btn" onclick="location.href='home.html'"></i>
+    <h1>Your Basket</h1>
+    <div style="width: 24px;"></div>
+</header>
+
+<div class="container" id="cartContainer"></div>
+
+<div class="checkout-bar" id="checkoutBar" style="display: none;">
+    <div class="total-row">
+        <span class="total-label">Subtotal</span>
+        <span class="total-price" id="grandTotal">UGX 0</span>
+    </div>
+    <button class="btn-pay" onclick="proceedToCheckout()">
+        <span>Review Order</span>
+        <i class="fa-solid fa-chevron-right"></i>
+    </button>
+</div>
+
+<script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+    const supabaseUrl = 'https://lwpwicajcbcmzkyecnbv.supabase.co'
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx3cHdpY2FqY2JjbXpreWVjbmJ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzNDgxNjAsImV4cCI6MjA5MTkyNDE2MH0.BF2azgoZPOmo4OP9Zo1-QNpXX-EJ23BWQx-lf3GgW68'
+    const supabase = createClient(supabaseUrl, supabaseKey)
+
+    let cartItems = [];
+    let userId = null;
+
+    async function init() {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return window.location.href = 'index.html';
+        userId = user.id;
+
+        // 1. Check Local Storage first (from home.html)
+        const localCart = JSON.parse(localStorage.getItem('nash_cart') || '[]');
+        
+        // 2. Fetch DB Cart
+        const { data, error } = await supabase.from('carts').select('items').eq('user_id', userId).single();
+
+        if (localCart.length > 0) {
+            // Merge local into DB if local is newer
+            cartItems = localCart.map(item => typeof item === 'string' ? {id: item, qty: 1, name: 'Meal', price: 0} : item);
+            // Deduplicate and group quantities
+            cartItems = groupCartItems(cartItems);
+            await syncDB();
+            localStorage.removeItem('nash_cart'); // Clear local once synced
+        } else if (data) {
+            cartItems = data.items;
+        }
+
+        document.getElementById('loader').style.display = 'none';
+        renderUI();
+    }
+
+    function groupCartItems(items) {
+        const grouped = [];
+        items.forEach(item => {
+            const existing = grouped.find(g => g.id === item.id);
+            if (existing) existing.qty += (item.qty || 1);
+            else grouped.push({ ...item, qty: item.qty || 1 });
+        });
+        return grouped;
+    }
+
+    function renderUI() {
+        const container = document.getElementById('cartContainer');
+        const bar = document.getElementById('checkoutBar');
+        
+        if (cartItems.length === 0) {
+            container.innerHTML = `
+                <div class="empty-cart">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                    <h3>Basket is empty</h3>
+                    <p style="color:var(--muted); margin-top:10px;">Find your favorite Muni meals.</p>
+                    <button onclick="location.href='home.html'" style="margin-top:25px; background:var(--primary); color:white; border:none; padding:15px 30px; border-radius:15px; font-weight:800;">Browse Menu</button>
+                </div>`;
+            bar.style.display = 'none';
+            return;
+        }
+
+        bar.style.display = 'block';
+        container.innerHTML = cartItems.map((item, index) => `
+            <div class="cart-item">
+                <div class="item-details">
+                    <h4>${item.name || 'Delicious Meal'}</h4>
+                    <p>UGX ${(item.price || 0).toLocaleString()}</p>
+                    <div class="qty-controls">
+                        <button class="qty-btn" onclick="updateQty(${index}, -1)">-</button>
+                        <span style="font-weight:800">${item.qty}</span>
+                        <button class="qty-btn" onclick="updateQty(${index}, 1)">+</button>
+                    </div>
+                </div>
+                <i class="fa-solid fa-trash-can remove-btn" onclick="removeItem(${index})"></i>
+            </div>
+        `).join('');
+
+        const total = cartItems.reduce((acc, item) => acc + (item.price * item.qty), 0);
+        document.getElementById('grandTotal').innerText = `UGX ${total.toLocaleString()}`;
+    }
+
+    window.updateQty = async (index, change) => {
+        cartItems[index].qty += change;
+        if (cartItems[index].qty <= 0) cartItems.splice(index, 1);
+        renderUI();
+        await syncDB();
+    }
+
+    window.removeItem = async (index) => {
+        cartItems.splice(index, 1);
+        renderUI();
+        await syncDB();
+    }
+
+    async function syncDB() {
+        await supabase.from('carts').upsert({ 
+            user_id: userId, 
+            items: cartItems, 
+            updated_at: new Date() 
+        }, { onConflict: 'user_id' });
+    }
+
+    window.proceedToCheckout = () => {
+        location.href = 'confirm-order.html';
+    }
+
+    init();
+</script>
+</body>
+</html>

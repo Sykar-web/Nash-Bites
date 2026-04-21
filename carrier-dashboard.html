@@ -1,0 +1,1697 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Nash Bites | Carrier Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Poppins:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    :root {
+      --primary:#FF4D2D; --primary-dark:#e63e20; --primary-light:#FFF0ED;
+      --bg:#F8FAFC; --bg-card:#FFFFFF; --bg-input:#F1F5F9;
+      --text:#0F172A; --text-secondary:#64748B; --text-muted:#94A3B8;
+      --border:#E2E8F0; --border-hover:#CBD5E1;
+      --success:#22C55E; --success-light:#F0FDF4; --success-dark:#15803D;
+      --warning:#F59E0B; --warning-light:#FFFBEB; --warning-dark:#B45309;
+      --danger:#EF4444; --danger-light:#FEF2F2;
+      --info:#3B82F6; --info-light:#EFF6FF; --info-dark:#1D4ED8;
+      --purple:#8B5CF6; --purple-light:#F5F3FF;
+      --radius:16px; --radius-sm:12px; --radius-xs:8px;
+      --shadow-sm:0 1px 2px rgba(0,0,0,0.05);
+      --shadow-md:0 4px 6px -1px rgba(0,0,0,0.1);
+      --shadow-lg:0 10px 15px -3px rgba(0,0,0,0.1);
+      --shadow-xl:0 20px 25px -5px rgba(0,0,0,0.1);
+      --sidebar-w:280px;
+      --topbar-h:70px;
+    }
+    [data-theme="dark"] {
+      --bg:#0B1121; --bg-card:#1A2332; --bg-input:#243044;
+      --text:#F1F5F9; --text-secondary:#94A3B8; --text-muted:#64748B;
+      --border:#2D3A4A; --border-hover:#3D4A5A;
+      --primary-light:#2D1510; --success-light:#052E16;
+      --warning-light:#451A03; --danger-light:#450A0A;
+      --info-light:#1E3A5F; --purple-light:#2E1065;
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; font-family:'Plus Jakarta Sans',sans-serif; }
+    body { background:var(--bg); color:var(--text); line-height:1.6; transition:background 0.3s, color 0.3s; }
+
+    /* ============================================
+       SIDEBAR
+       ============================================ */
+    .sidebar {
+      position:fixed; left:0; top:0; bottom:0;
+      width:var(--sidebar-w); background:var(--bg-card);
+      border-right:1px solid var(--border);
+      padding:24px 16px; display:flex; flex-direction:column;
+      z-index:200; transition:transform 0.3s, background 0.3s;
+      overflow-y:auto;
+    }
+    .sidebar-logo {
+      font-size:1.5rem; font-weight:800; color:var(--primary);
+      font-family:'Poppins'; padding:0 8px; margin-bottom:8px;
+      text-decoration:none; display:block;
+    }
+    .sidebar-subtitle {
+      font-size:0.75rem; font-weight:700; color:var(--text-muted);
+      text-transform:uppercase; letter-spacing:1.5px;
+      padding:0 8px; margin-bottom:20px;
+    }
+
+    /* Status toggle in sidebar */
+    .status-toggle-card {
+      background:var(--bg-input); border-radius:var(--radius-sm);
+      padding:16px; margin-bottom:24px; text-align:center;
+      border:1px solid var(--border); transition:all 0.3s;
+    }
+    .status-toggle-card.online {
+      background:var(--success-light); border-color:var(--success);
+    }
+    .status-indicator {
+      display:flex; align-items:center; justify-content:center;
+      gap:8px; margin-bottom:10px;
+    }
+    .status-dot {
+      width:10px; height:10px; border-radius:50%;
+      background:var(--text-muted);
+      transition:background 0.3s;
+    }
+    .status-dot.online { background:var(--success); animation:pulse 2s infinite; }
+    @keyframes pulse {
+      0%,100% { box-shadow:0 0 0 0 rgba(34,197,94,0.4); }
+      50% { box-shadow:0 0 0 8px rgba(34,197,94,0); }
+    }
+    .status-label { font-weight:700; font-size:0.9rem; }
+    .status-label.online { color:var(--success-dark); }
+
+    .toggle-btn {
+      width:60px; height:32px; border-radius:16px;
+      background:var(--border); cursor:pointer; position:relative;
+      transition:background 0.3s; border:none;
+    }
+    .toggle-btn::after {
+      content:''; position:absolute; top:3px; left:3px;
+      width:26px; height:26px; border-radius:50%;
+      background:white; transition:transform 0.3s;
+      box-shadow:0 2px 4px rgba(0,0,0,0.2);
+    }
+    .toggle-btn.active { background:var(--success); }
+    .toggle-btn.active::after { transform:translateX(28px); }
+
+    /* Sidebar nav */
+    .sidebar-nav { flex:1; }
+    .nav-section-title {
+      font-size:0.7rem; font-weight:700; color:var(--text-muted);
+      text-transform:uppercase; letter-spacing:1.5px;
+      padding:16px 8px 8px; 
+    }
+    .nav-item {
+      display:flex; align-items:center; gap:12px;
+      padding:12px 12px; border-radius:var(--radius-xs);
+      color:var(--text-secondary); font-weight:600; font-size:0.92rem;
+      cursor:pointer; transition:all 0.2s; text-decoration:none;
+      position:relative; margin-bottom:2px;
+    }
+    .nav-item:hover { background:var(--bg-input); color:var(--text); }
+    .nav-item.active { background:var(--primary-light); color:var(--primary); }
+    .nav-item i { width:20px; text-align:center; font-size:1rem; }
+    .nav-badge {
+      margin-left:auto; background:var(--primary); color:white;
+      font-size:0.7rem; font-weight:700; padding:2px 8px;
+      border-radius:10px; min-width:22px; text-align:center;
+    }
+    .nav-badge.success { background:var(--success); }
+    .nav-badge.warning { background:var(--warning); }
+
+    /* Sidebar footer */
+    .sidebar-footer {
+      padding-top:16px; border-top:1px solid var(--border);
+    }
+    .carrier-profile {
+      display:flex; align-items:center; gap:12px;
+      padding:10px 8px; border-radius:var(--radius-xs);
+      cursor:pointer; transition:background 0.2s;
+    }
+    .carrier-profile:hover { background:var(--bg-input); }
+    .carrier-avatar {
+      width:40px; height:40px; border-radius:50%;
+      object-fit:cover; border:2px solid var(--border);
+    }
+    .carrier-name { font-weight:700; font-size:0.9rem; }
+    .carrier-id { font-size:0.75rem; color:var(--text-muted); }
+
+    /* ============================================
+       TOPBAR
+       ============================================ */
+    .topbar {
+      position:fixed; top:0; left:var(--sidebar-w); right:0;
+      height:var(--topbar-h); background:var(--bg-card);
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 28px; z-index:100; transition:all 0.3s;
+    }
+    .topbar-left { display:flex; align-items:center; gap:16px; }
+    .menu-toggle {
+      display:none; width:40px; height:40px; border-radius:var(--radius-xs);
+      border:1px solid var(--border); background:var(--bg-input);
+      color:var(--text); cursor:pointer; font-size:1.1rem;
+      align-items:center; justify-content:center;
+    }
+    .page-title { font-size:1.3rem; font-weight:800; letter-spacing:-0.5px; }
+    .page-subtitle { font-size:0.82rem; color:var(--text-muted); font-weight:500; }
+
+    .topbar-right { display:flex; align-items:center; gap:12px; }
+    .topbar-btn {
+      width:40px; height:40px; border-radius:50%;
+      border:1px solid var(--border); background:var(--bg-input);
+      color:var(--text-secondary); cursor:pointer; font-size:1rem;
+      display:flex; align-items:center; justify-content:center;
+      transition:all 0.2s; position:relative;
+    }
+    .topbar-btn:hover { border-color:var(--primary); color:var(--primary); background:var(--primary-light); }
+    .topbar-badge {
+      position:absolute; top:-4px; right:-4px;
+      width:20px; height:20px; border-radius:50%;
+      background:var(--primary); color:white; font-size:0.65rem;
+      display:flex; align-items:center; justify-content:center;
+      font-weight:700; border:2px solid var(--bg-card);
+    }
+
+    /* ============================================
+       MAIN CONTENT
+       ============================================ */
+    .main-content {
+      margin-left:var(--sidebar-w);
+      padding:calc(var(--topbar-h) + 24px) 28px 40px;
+      transition:margin 0.3s;
+    }
+
+    /* ============================================
+       STATS GRID
+       ============================================ */
+    .stats-grid {
+      display:grid; grid-template-columns:repeat(4,1fr);
+      gap:16px; margin-bottom:28px;
+    }
+    .stat-card {
+      background:var(--bg-card); border-radius:var(--radius);
+      border:1px solid var(--border); padding:20px 24px;
+      transition:all 0.3s; position:relative; overflow:hidden;
+    }
+    .stat-card:hover { transform:translateY(-3px); box-shadow:var(--shadow-md); }
+    .stat-card::before {
+      content:''; position:absolute; top:0; left:0; right:0;
+      height:3px; border-radius:3px 3px 0 0;
+    }
+    .stat-card.earnings::before { background:var(--success); }
+    .stat-card.deliveries::before { background:var(--primary); }
+    .stat-card.active-order::before { background:var(--warning); }
+    .stat-card.rating::before { background:var(--purple); }
+
+    .stat-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+    .stat-icon {
+      width:44px; height:44px; border-radius:12px;
+      display:flex; align-items:center; justify-content:center;
+      font-size:1.1rem;
+    }
+    .stat-icon.earnings { background:var(--success-light); color:var(--success); }
+    .stat-icon.deliveries { background:var(--primary-light); color:var(--primary); }
+    .stat-icon.active-order { background:var(--warning-light); color:var(--warning); }
+    .stat-icon.rating { background:var(--purple-light); color:var(--purple); }
+    .stat-trend {
+      font-size:0.78rem; font-weight:700; padding:3px 8px;
+      border-radius:6px; display:flex; align-items:center; gap:3px;
+    }
+    .stat-trend.up { background:var(--success-light); color:var(--success); }
+    .stat-trend.down { background:var(--danger-light); color:var(--danger); }
+    .stat-value { font-size:1.8rem; font-weight:800; letter-spacing:-1px; margin-bottom:2px; }
+    .stat-label { font-size:0.82rem; color:var(--text-muted); font-weight:500; }
+
+    /* ============================================
+       SECTION CARD
+       ============================================ */
+    .section-card {
+      background:var(--bg-card); border-radius:var(--radius);
+      border:1px solid var(--border); margin-bottom:24px;
+      transition:all 0.3s; box-shadow:var(--shadow-sm);
+    }
+    .section-header {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:20px 24px; border-bottom:1px solid var(--border);
+    }
+    .section-title {
+      font-size:1.05rem; font-weight:700;
+      display:flex; align-items:center; gap:10px;
+    }
+    .section-title i { color:var(--primary); }
+    .section-body { padding:20px 24px; }
+
+    /* Tabs inside sections */
+    .section-tabs {
+      display:flex; gap:4px; background:var(--bg-input);
+      border-radius:var(--radius-xs); padding:4px;
+    }
+    .section-tab {
+      padding:8px 16px; border:none; border-radius:6px;
+      background:transparent; color:var(--text-secondary);
+      font-weight:600; font-size:0.82rem; cursor:pointer;
+      transition:all 0.2s;
+    }
+    .section-tab:hover { color:var(--text); }
+    .section-tab.active { background:var(--bg-card); color:var(--primary); box-shadow:var(--shadow-sm); }
+
+    /* ============================================
+       AVAILABLE ORDERS LIST
+       ============================================ */
+    .order-feed { display:flex; flex-direction:column; gap:12px; }
+
+    .order-item {
+      border:1px solid var(--border); border-radius:var(--radius-sm);
+      padding:20px; transition:all 0.3s; cursor:pointer;
+      position:relative; overflow:hidden;
+      background:var(--bg-card);
+    }
+    .order-item:hover { border-color:var(--primary); transform:translateY(-2px); box-shadow:var(--shadow-md); }
+    .order-item::before {
+      content:''; position:absolute; left:0; top:0; bottom:0;
+      width:4px; border-radius:4px 0 0 4px;
+    }
+    .order-item.urgent::before { background:var(--danger); }
+    .order-item.normal::before { background:var(--warning); }
+    .order-item.low::before { background:var(--success); }
+
+    .order-top {
+      display:flex; align-items:flex-start; justify-content:space-between;
+      margin-bottom:12px;
+    }
+    .order-vendor {
+      display:flex; align-items:center; gap:10px;
+    }
+    .vendor-logo {
+      width:42px; height:42px; border-radius:10px;
+      background:var(--primary-light); display:flex;
+      align-items:center; justify-content:center;
+      font-size:1.1rem; color:var(--primary); font-weight:800;
+    }
+    .vendor-name { font-weight:700; font-size:0.95rem; }
+    .vendor-location { font-size:0.8rem; color:var(--text-muted); display:flex; align-items:center; gap:4px; }
+
+    .order-time-badge {
+      font-size:0.75rem; font-weight:600; padding:4px 10px;
+      border-radius:6px; white-space:nowrap;
+    }
+    .order-time-badge.new { background:var(--primary-light); color:var(--primary); }
+    .order-time-badge.waiting { background:var(--warning-light); color:var(--warning-dark); }
+
+    .order-items-preview {
+      display:flex; flex-wrap:wrap; gap:6px; margin-bottom:14px;
+    }
+    .item-chip {
+      padding:4px 10px; border-radius:6px;
+      background:var(--bg-input); font-size:0.8rem;
+      font-weight:500; color:var(--text-secondary);
+      border:1px solid var(--border);
+    }
+
+    .order-bottom {
+      display:flex; align-items:center; justify-content:space-between;
+      flex-wrap:wrap; gap:10px;
+    }
+    .order-meta-row {
+      display:flex; gap:16px; font-size:0.82rem; color:var(--text-muted);
+    }
+    .order-meta-row span { display:flex; align-items:center; gap:5px; }
+    .order-meta-row i { font-size:0.85rem; }
+
+    .order-payout {
+      font-size:1.1rem; font-weight:800; color:var(--success);
+    }
+
+    .order-actions { display:flex; gap:8px; margin-top:14px; }
+    .btn-accept {
+      flex:1; padding:10px; border:none; border-radius:var(--radius-xs);
+      background:var(--primary); color:white; font-weight:700;
+      font-size:0.88rem; cursor:pointer; transition:all 0.2s;
+      display:flex; align-items:center; justify-content:center; gap:6px;
+    }
+    .btn-accept:hover { background:var(--primary-dark); transform:translateY(-1px); }
+    .btn-view {
+      padding:10px 16px; border:2px solid var(--border); border-radius:var(--radius-xs);
+      background:transparent; color:var(--text-secondary); font-weight:600;
+      font-size:0.88rem; cursor:pointer; transition:all 0.2s;
+    }
+    .btn-view:hover { border-color:var(--primary); color:var(--primary); }
+
+    /* ============================================
+       ACTIVE DELIVERY CARD
+       ============================================ */
+    .active-delivery {
+      border:2px solid var(--primary); border-radius:var(--radius);
+      background:var(--bg-card); overflow:hidden;
+      animation:glowPulse 3s ease infinite;
+    }
+    @keyframes glowPulse {
+      0%,100% { box-shadow:0 0 0 0 rgba(255,77,45,0.1); }
+      50% { box-shadow:0 0 20px 4px rgba(255,77,45,0.08); }
+    }
+
+    .delivery-header {
+      background:linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color:white; padding:20px 24px;
+      display:flex; align-items:center; justify-content:space-between;
+    }
+    .delivery-header h3 { font-size:1rem; font-weight:700; display:flex; align-items:center; gap:8px; }
+    .live-badge {
+      display:flex; align-items:center; gap:6px;
+      font-size:0.78rem; font-weight:700;
+      background:rgba(255,255,255,0.2); padding:4px 12px;
+      border-radius:20px;
+    }
+    .live-dot {
+      width:8px; height:8px; border-radius:50%;
+      background:#FF6B6B; animation:blink 1s infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    .delivery-body { padding:24px; }
+
+    /* Progress tracker */
+    .delivery-progress {
+      display:flex; align-items:center; justify-content:space-between;
+      margin-bottom:28px; position:relative;
+    }
+    .delivery-progress::before {
+      content:''; position:absolute; top:20px; left:40px; right:40px;
+      height:3px; background:var(--border); z-index:0;
+    }
+    .progress-fill {
+      position:absolute; top:20px; left:40px;
+      height:3px; background:var(--primary);
+      transition:width 0.5s ease; z-index:1;
+    }
+    .progress-step {
+      display:flex; flex-direction:column; align-items:center;
+      gap:8px; z-index:2; position:relative;
+    }
+    .step-circle {
+      width:42px; height:42px; border-radius:50%;
+      background:var(--bg-input); border:3px solid var(--border);
+      display:flex; align-items:center; justify-content:center;
+      font-size:0.95rem; color:var(--text-muted); transition:all 0.3s;
+    }
+    .step-circle.completed { background:var(--primary); border-color:var(--primary); color:white; }
+    .step-circle.current { border-color:var(--primary); color:var(--primary); animation:pulse 2s infinite; background:var(--primary-light); }
+    .step-label { font-size:0.72rem; font-weight:600; color:var(--text-muted); text-align:center; max-width:70px; }
+    .step-label.active { color:var(--primary); font-weight:700; }
+
+    /* Delivery info grid */
+    .delivery-info-grid {
+      display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px;
+    }
+    .delivery-info-item {
+      padding:14px; border-radius:var(--radius-xs);
+      background:var(--bg-input); border:1px solid var(--border);
+    }
+    .delivery-info-label {
+      font-size:0.72rem; font-weight:700; color:var(--text-muted);
+      text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;
+    }
+    .delivery-info-value { font-size:0.95rem; font-weight:600; display:flex; align-items:center; gap:6px; }
+    .delivery-info-value i { color:var(--primary); font-size:0.85rem; }
+
+    /* Action buttons */
+    .delivery-actions {
+      display:grid; grid-template-columns:1fr 1fr; gap:10px;
+    }
+    .delivery-btn {
+      padding:13px; border-radius:var(--radius-xs); border:none;
+      font-weight:700; font-size:0.9rem; cursor:pointer;
+      display:flex; align-items:center; justify-content:center; gap:8px;
+      transition:all 0.2s;
+    }
+    .delivery-btn.primary { background:var(--primary); color:white; }
+    .delivery-btn.primary:hover { background:var(--primary-dark); }
+    .delivery-btn.success { background:var(--success); color:white; }
+    .delivery-btn.success:hover { background:var(--success-dark); }
+    .delivery-btn.outline {
+      background:transparent; border:2px solid var(--border);
+      color:var(--text-secondary);
+    }
+    .delivery-btn.outline:hover { border-color:var(--primary); color:var(--primary); }
+    .delivery-btn.danger-outline {
+      background:transparent; border:2px solid var(--danger);
+      color:var(--danger);
+    }
+    .delivery-btn.danger-outline:hover { background:var(--danger); color:white; }
+    .delivery-btn.full { grid-column:1/-1; }
+
+    /* ============================================
+       EARNINGS SECTION
+       ============================================ */
+    .earnings-chart-placeholder {
+      height:200px; border-radius:var(--radius-sm);
+      background:var(--bg-input); border:1px solid var(--border);
+      display:flex; align-items:center; justify-content:center;
+      color:var(--text-muted); font-weight:600;
+      margin-bottom:20px; position:relative; overflow:hidden;
+    }
+    /* Simple bar chart with CSS */
+    .mini-chart { display:flex; align-items:flex-end; gap:8px; height:160px; padding:20px; width:100%; }
+    .chart-bar-wrap { flex:1; display:flex; flex-direction:column; align-items:center; gap:6px; }
+    .chart-bar {
+      width:100%; border-radius:6px 6px 0 0;
+      background:var(--primary); opacity:0.7;
+      transition:all 0.3s; min-height:4px;
+    }
+    .chart-bar:hover { opacity:1; }
+    .chart-label { font-size:0.7rem; color:var(--text-muted); font-weight:600; }
+    .chart-value { font-size:0.7rem; color:var(--text); font-weight:700; }
+
+    .earnings-summary {
+      display:grid; grid-template-columns:repeat(3,1fr); gap:12px;
+    }
+    .earning-item {
+      padding:16px; border-radius:var(--radius-xs);
+      background:var(--bg-input); border:1px solid var(--border);
+      text-align:center;
+    }
+    .earning-value { font-size:1.3rem; font-weight:800; margin-bottom:2px; }
+    .earning-label { font-size:0.78rem; color:var(--text-muted); font-weight:600; }
+
+    /* ============================================
+       DELIVERY HISTORY TABLE
+       ============================================ */
+    .history-table { width:100%; border-collapse:separate; border-spacing:0; }
+    .history-table th {
+      text-align:left; padding:12px 16px; font-size:0.75rem;
+      font-weight:700; color:var(--text-muted); text-transform:uppercase;
+      letter-spacing:0.5px; border-bottom:1px solid var(--border);
+    }
+    .history-table td {
+      padding:14px 16px; font-size:0.9rem; border-bottom:1px solid var(--border);
+      vertical-align:middle;
+    }
+    .history-table tr:hover td { background:var(--bg-input); }
+    .history-table tr:last-child td { border-bottom:none; }
+
+    .table-status {
+      padding:4px 10px; border-radius:20px; font-size:0.72rem;
+      font-weight:700; text-transform:uppercase; letter-spacing:0.3px;
+    }
+    .table-status.delivered { background:var(--success-light); color:var(--success-dark); }
+    .table-status.cancelled { background:var(--danger-light); color:var(--danger); }
+    .table-rating { color:var(--warning); font-size:0.85rem; }
+
+    /* ============================================
+       NOTIFICATIONS PANEL
+       ============================================ */
+    .notif-panel {
+      position:fixed; right:-400px; top:0; bottom:0;
+      width:380px; background:var(--bg-card); border-left:1px solid var(--border);
+      z-index:300; transition:right 0.3s; overflow-y:auto;
+      box-shadow:-10px 0 30px rgba(0,0,0,0.1);
+    }
+    .notif-panel.open { right:0; }
+    .notif-header {
+      padding:20px 24px; border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between;
+      position:sticky; top:0; background:var(--bg-card); z-index:1;
+    }
+    .notif-header h3 { font-size:1.1rem; font-weight:700; }
+    .notif-close {
+      width:32px; height:32px; border-radius:50%; border:none;
+      background:var(--bg-input); color:var(--text-secondary);
+      cursor:pointer; display:flex; align-items:center; justify-content:center;
+      transition:all 0.2s;
+    }
+    .notif-close:hover { background:var(--primary-light); color:var(--primary); }
+    .notif-list { padding:12px; }
+    .notif-item {
+      display:flex; gap:12px; padding:14px;
+      border-radius:var(--radius-xs); transition:background 0.2s;
+      cursor:pointer; margin-bottom:4px;
+    }
+    .notif-item:hover { background:var(--bg-input); }
+    .notif-item.unread { background:var(--primary-light); }
+    .notif-icon-wrap {
+      width:40px; height:40px; border-radius:10px;
+      display:flex; align-items:center; justify-content:center;
+      font-size:0.95rem; flex-shrink:0;
+    }
+    .notif-icon-wrap.order { background:var(--info-light); color:var(--info); }
+    .notif-icon-wrap.accept { background:var(--success-light); color:var(--success); }
+    .notif-icon-wrap.alert { background:var(--warning-light); color:var(--warning); }
+    .notif-icon-wrap.system { background:var(--purple-light); color:var(--purple); }
+    .notif-text { flex:1; }
+    .notif-title { font-size:0.88rem; font-weight:600; margin-bottom:2px; }
+    .notif-desc { font-size:0.8rem; color:var(--text-muted); }
+    .notif-time { font-size:0.72rem; color:var(--text-muted); margin-top:4px; }
+
+    .notif-overlay {
+      display:none; position:fixed; inset:0; background:rgba(0,0,0,0.3);
+      z-index:250;
+    }
+    .notif-overlay.open { display:block; }
+
+    /* ============================================
+       ORDER DETAIL MODAL
+       ============================================ */
+    .modal-overlay {
+      display:none; position:fixed; z-index:2000;
+      inset:0; background:rgba(15,23,42,0.6);
+      backdrop-filter:blur(8px); justify-content:center; align-items:center;
+    }
+    .modal-card {
+      background:var(--bg-card); border-radius:20px;
+      width:92%; max-width:540px; max-height:90vh;
+      overflow-y:auto; position:relative;
+      animation:slideUp 0.35s cubic-bezier(0.16,1,0.3,1);
+      box-shadow:var(--shadow-xl);
+    }
+    .modal-card::before {
+      content:''; position:absolute; top:0; left:0; right:0; height:4px;
+      background:linear-gradient(90deg, var(--primary), #FF6B4D);
+    }
+    @keyframes slideUp {
+      from { opacity:0; transform:translateY(30px) scale(0.96); }
+      to { opacity:1; transform:translateY(0) scale(1); }
+    }
+    .modal-close-btn {
+      position:absolute; top:16px; right:16px;
+      width:36px; height:36px; border-radius:50%; border:none;
+      background:var(--bg-input); color:var(--text-secondary);
+      cursor:pointer; display:flex; align-items:center; justify-content:center;
+      transition:all 0.2s; z-index:1; font-size:1rem;
+    }
+    .modal-close-btn:hover { background:var(--primary-light); color:var(--primary); transform:rotate(90deg); }
+    .modal-body { padding:32px; }
+    .modal-title { font-size:1.3rem; font-weight:800; margin-bottom:4px; }
+    .modal-subtitle { font-size:0.88rem; color:var(--text-muted); margin-bottom:24px; }
+
+    .detail-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:20px; }
+    .detail-item {
+      padding:14px; border-radius:var(--radius-xs);
+      background:var(--bg-input); border:1px solid var(--border);
+    }
+    .detail-label { font-size:0.72rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px; }
+    .detail-value { font-size:0.95rem; font-weight:600; display:flex; align-items:center; gap:6px; }
+    .detail-value i { color:var(--primary); }
+    .detail-item.full { grid-column:1/-1; }
+
+    .order-items-list { margin-bottom:20px; }
+    .order-items-list h4 {
+      font-size:0.85rem; font-weight:700; color:var(--text-secondary);
+      margin-bottom:10px; text-transform:uppercase; letter-spacing:0.5px;
+    }
+    .food-item {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:10px 0; border-bottom:1px solid var(--border);
+    }
+    .food-item:last-child { border-bottom:none; }
+    .food-name { font-weight:600; font-size:0.92rem; }
+    .food-qty { color:var(--text-muted); font-size:0.85rem; }
+    .food-price { font-weight:700; color:var(--primary); }
+
+    .modal-total {
+      display:flex; justify-content:space-between; align-items:center;
+      padding:16px; border-radius:var(--radius-xs);
+      background:var(--primary-light); border:1px solid var(--primary);
+      margin-bottom:20px;
+    }
+    .modal-total-label { font-weight:700; color:var(--primary); }
+    .modal-total-value { font-size:1.3rem; font-weight:800; color:var(--primary); }
+
+    .modal-actions { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .modal-btn {
+      padding:13px; border-radius:var(--radius-xs); border:none;
+      font-weight:700; font-size:0.9rem; cursor:pointer;
+      display:flex; align-items:center; justify-content:center; gap:6px;
+      transition:all 0.2s;
+    }
+    .modal-btn.accept { background:var(--primary); color:white; }
+    .modal-btn.accept:hover { background:var(--primary-dark); }
+    .modal-btn.cancel { background:var(--bg-input); color:var(--text-secondary); border:2px solid var(--border); }
+    .modal-btn.cancel:hover { border-color:var(--text-muted); }
+
+    /* ============================================
+       CONFIRM DELIVERY MODAL
+       ============================================ */
+    .confirm-section { text-align:center; padding:20px 0; }
+    .confirm-icon {
+      width:80px; height:80px; border-radius:50%;
+      background:var(--success-light); display:inline-flex;
+      align-items:center; justify-content:center;
+      font-size:2rem; color:var(--success); margin-bottom:16px;
+    }
+    .confirm-title { font-size:1.2rem; font-weight:800; margin-bottom:6px; }
+    .confirm-desc { font-size:0.9rem; color:var(--text-muted); margin-bottom:20px; }
+    .pin-input-group { display:flex; gap:10px; justify-content:center; margin-bottom:20px; }
+    .pin-box {
+      width:52px; height:56px; border-radius:var(--radius-xs);
+      border:2px solid var(--border); background:var(--bg-input);
+      text-align:center; font-size:1.5rem; font-weight:800;
+      color:var(--text); outline:none; transition:all 0.2s;
+    }
+    .pin-box:focus { border-color:var(--primary); background:var(--bg-card); box-shadow:0 0 0 4px rgba(255,77,45,0.1); }
+
+    /* ============================================
+       EMPTY STATES
+       ============================================ */
+    .empty-state {
+      text-align:center; padding:48px 24px; color:var(--text-muted);
+    }
+    .empty-state i { font-size:3rem; margin-bottom:16px; opacity:0.4; display:block; }
+    .empty-state h3 { font-size:1.1rem; font-weight:700; color:var(--text-secondary); margin-bottom:6px; }
+    .empty-state p { font-size:0.9rem; margin-bottom:16px; }
+    .empty-state .btn-cta {
+      display:inline-flex; align-items:center; gap:8px;
+      padding:12px 24px; border-radius:var(--radius-xs);
+      background:var(--primary); color:white; font-weight:700;
+      text-decoration:none; font-size:0.9rem; transition:all 0.2s;
+      border:none; cursor:pointer;
+    }
+    .empty-state .btn-cta:hover { background:var(--primary-dark); }
+
+    /* ============================================
+       RESPONSIVE
+       ============================================ */
+    @media (max-width:1024px) {
+      .stats-grid { grid-template-columns:repeat(2,1fr); }
+    }
+    @media (max-width:768px) {
+      .sidebar { transform:translateX(-100%); }
+      .sidebar.open { transform:translateX(0); }
+      .main-content { margin-left:0; }
+      .topbar { left:0; }
+      .menu-toggle { display:flex; }
+      .stats-grid { grid-template-columns:1fr 1fr; }
+      .delivery-info-grid { grid-template-columns:1fr; }
+      .delivery-actions { grid-template-columns:1fr; }
+      .detail-grid { grid-template-columns:1fr; }
+      .modal-actions { grid-template-columns:1fr; }
+      .earnings-summary { grid-template-columns:1fr; }
+      .history-table { font-size:0.82rem; }
+      .history-table th, .history-table td { padding:10px 12px; }
+      .notif-panel { width:100%; right:-100%; }
+    }
+    @media (max-width:480px) {
+      .stats-grid { grid-template-columns:1fr; }
+      .main-content { padding-left:16px; padding-right:16px; }
+      .topbar { padding:0 16px; }
+      .modal-body { padding:24px; }
+    }
+
+    /* Mobile sidebar overlay */
+    .sidebar-overlay {
+      display:none; position:fixed; inset:0;
+      background:rgba(0,0,0,0.4); z-index:150;
+    }
+    .sidebar-overlay.open { display:block; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width:6px; }
+    ::-webkit-scrollbar-track { background:var(--bg); }
+    ::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+  </style>
+</head>
+<body>
+
+<!-- SIDEBAR OVERLAY (mobile) -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <a href="index.html" class="sidebar-logo">Nash Bites</a>
+  <div class="sidebar-subtitle">Carrier Dashboard</div>
+
+  <!-- Online/Offline Toggle -->
+  <div class="status-toggle-card" id="statusCard">
+    <div class="status-indicator">
+      <div class="status-dot" id="statusDot"></div>
+      <span class="status-label" id="statusLabel">Offline</span>
+    </div>
+    <button class="toggle-btn" id="statusToggle" onclick="toggleOnlineStatus()"></button>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section-title">Main</div>
+    <a class="nav-item active" onclick="showPage('dashboard')">
+      <i class="fa-solid fa-gauge-high"></i> Dashboard
+    </a>
+    <a class="nav-item" onclick="showPage('available')">
+      <i class="fa-solid fa-list-check"></i> Available Orders
+      <span class="nav-badge" id="availableBadge">5</span>
+    </a>
+    <a class="nav-item" onclick="showPage('active')">
+      <i class="fa-solid fa-truck-fast"></i> Active Delivery
+      <span class="nav-badge success" id="activeBadge" style="display:none;">1</span>
+    </a>
+
+    <div class="nav-section-title">Finance</div>
+    <a class="nav-item" onclick="showPage('earnings')">
+      <i class="fa-solid fa-wallet"></i> Earnings
+    </a>
+    <a class="nav-item" onclick="showPage('history')">
+      <i class="fa-solid fa-clock-rotate-left"></i> Delivery History
+    </a>
+
+    <div class="nav-section-title">Account</div>
+    <a class="nav-item" href="profile.html">
+      <i class="fa-solid fa-user-gear"></i> My Profile
+    </a>
+    <a class="nav-item" onclick="showPage('settings')">
+      <i class="fa-solid fa-gear"></i> Settings
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="carrier-profile" onclick="window.location.href='profile.html'">
+      <img src="https://ui-avatars.com/api/?name=Carrier&background=FF4D2D&color=fff&size=80" class="carrier-avatar" id="sidebarAvatar" alt="avatar">
+      <div>
+        <div class="carrier-name" id="sidebarName">Loading...</div>
+        <div class="carrier-id" id="sidebarRole">Carrier</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="topbar-left">
+    <button class="menu-toggle" onclick="toggleSidebar()">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+    <div>
+      <div class="page-title" id="pageTitle">Dashboard</div>
+      <div class="page-subtitle" id="pageSubtitle">Overview of your deliveries</div>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <button class="topbar-btn" onclick="toggleTheme()" title="Toggle theme" id="themeBtn">
+      <i class="fa-solid fa-moon"></i>
+    </button>
+    <button class="topbar-btn" onclick="toggleNotifications()" title="Notifications">
+      <i class="fa-solid fa-bell"></i>
+      <span class="topbar-badge" id="notifCount">3</span>
+    </button>
+    <img src="https://ui-avatars.com/api/?name=Carrier&background=FF4D2D&color=fff&size=80" class="carrier-avatar" id="topAvatar" alt="" style="width:38px;height:38px;cursor:pointer;" onclick="window.location.href='profile.html'">
+  </div>
+</header>
+
+<!-- NOTIFICATIONS PANEL -->
+<div class="notif-overlay" id="notifOverlay" onclick="toggleNotifications()"></div>
+<div class="notif-panel" id="notifPanel">
+  <div class="notif-header">
+    <h3>Notifications</h3>
+    <button class="notif-close" onclick="toggleNotifications()"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <div class="notif-list" id="notifList">
+    <div class="notif-item unread">
+      <div class="notif-icon-wrap accept"><i class="fa-solid fa-circle-check"></i></div>
+      <div class="notif-text">
+        <div class="notif-title">Request Approved!</div>
+        <div class="notif-desc">Mom's Kitchen accepted your pickup for Order #A3F8.</div>
+        <div class="notif-time">2 min ago</div>
+      </div>
+    </div>
+    <div class="notif-item unread">
+      <div class="notif-icon-wrap order"><i class="fa-solid fa-utensils"></i></div>
+      <div class="notif-text">
+        <div class="notif-title">New Order Available</div>
+        <div class="notif-desc">3 items from Kota King — R15 payout</div>
+        <div class="notif-time">5 min ago</div>
+      </div>
+    </div>
+    <div class="notif-item">
+      <div class="notif-icon-wrap alert"><i class="fa-solid fa-star"></i></div>
+      <div class="notif-text">
+        <div class="notif-title">New Rating Received</div>
+        <div class="notif-desc">You received 5 stars from a customer!</div>
+        <div class="notif-time">1 hour ago</div>
+      </div>
+    </div>
+    <div class="notif-item">
+      <div class="notif-icon-wrap system"><i class="fa-solid fa-bullhorn"></i></div>
+      <div class="notif-text">
+        <div class="notif-title">Peak Hours Bonus</div>
+        <div class="notif-desc">Earn 1.5x payout between 12PM–2PM today!</div>
+        <div class="notif-time">3 hours ago</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================
+     MAIN CONTENT
+     ============================================ -->
+<main class="main-content">
+
+  <!-- ============================================
+       PAGE: DASHBOARD
+       ============================================ -->
+  <div id="page-dashboard" class="page-content">
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card earnings">
+        <div class="stat-header">
+          <div class="stat-icon earnings"><i class="fa-solid fa-wallet"></i></div>
+          <div class="stat-trend up"><i class="fa-solid fa-arrow-up"></i> 12%</div>
+        </div>
+        <div class="stat-value" id="statEarnings">R245.00</div>
+        <div class="stat-label">Today's Earnings</div>
+      </div>
+      <div class="stat-card deliveries">
+        <div class="stat-header">
+          <div class="stat-icon deliveries"><i class="fa-solid fa-check-double"></i></div>
+          <div class="stat-trend up"><i class="fa-solid fa-arrow-up"></i> 8%</div>
+        </div>
+        <div class="stat-value" id="statDeliveries">12</div>
+        <div class="stat-label">Deliveries Today</div>
+      </div>
+      <div class="stat-card active-order">
+        <div class="stat-header">
+          <div class="stat-icon active-order"><i class="fa-solid fa-motorcycle"></i></div>
+        </div>
+        <div class="stat-value" id="statActive">1</div>
+        <div class="stat-label">Active Delivery</div>
+      </div>
+      <div class="stat-card rating">
+        <div class="stat-header">
+          <div class="stat-icon rating"><i class="fa-solid fa-star"></i></div>
+        </div>
+        <div class="stat-value" id="statRating">4.8</div>
+        <div class="stat-label">Average Rating</div>
+      </div>
+    </div>
+
+    <!-- Quick Active Delivery -->
+    <div class="section-card" id="quickActiveDelivery">
+      <div class="section-header">
+        <div class="section-title"><i class="fa-solid fa-truck-fast"></i> Current Delivery</div>
+        <div class="live-badge"><div class="live-dot"></div> LIVE</div>
+      </div>
+      <div class="section-body">
+        <div class="delivery-progress">
+          <div class="progress-fill" style="width:50%;" id="dashProgressFill"></div>
+          <div class="progress-step">
+            <div class="step-circle completed"><i class="fa-solid fa-check"></i></div>
+            <div class="step-label active">Accepted</div>
+          </div>
+          <div class="progress-step">
+            <div class="step-circle completed"><i class="fa-solid fa-check"></i></div>
+            <div class="step-label active">Picked Up</div>
+          </div>
+          <div class="progress-step">
+            <div class="step-circle current"><i class="fa-solid fa-motorcycle"></i></div>
+            <div class="step-label active">In Transit</div>
+          </div>
+          <div class="progress-step">
+            <div class="step-circle"><i class="fa-solid fa-flag-checkered"></i></div>
+            <div class="step-label">Delivered</div>
+          </div>
+        </div>
+        <div class="delivery-info-grid">
+          <div class="delivery-info-item">
+            <div class="delivery-info-label">Pickup</div>
+            <div class="delivery-info-value"><i class="fa-solid fa-shop"></i> Mom's Kitchen, Block C</div>
+          </div>
+          <div class="delivery-info-item">
+            <div class="delivery-info-label">Drop-off</div>
+            <div class="delivery-info-value"><i class="fa-solid fa-location-dot"></i> Res 5, Room 214</div>
+          </div>
+          <div class="delivery-info-item">
+            <div class="delivery-info-label">Customer</div>
+            <div class="delivery-info-value"><i class="fa-solid fa-user"></i> Thabo M.</div>
+          </div>
+          <div class="delivery-info-item">
+            <div class="delivery-info-label">Payout</div>
+            <div class="delivery-info-value" style="color:var(--success); font-weight:800;"><i class="fa-solid fa-coins"></i> R25.00</div>
+          </div>
+        </div>
+        <div class="delivery-actions">
+          <button class="delivery-btn outline" onclick="callCustomer()"><i class="fa-solid fa-phone"></i> Call Customer</button>
+          <button class="delivery-btn primary" onclick="showPage('active')"><i class="fa-solid fa-expand"></i> Full View</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Available Orders Preview -->
+    <div class="section-card">
+      <div class="section-header">
+        <div class="section-title"><i class="fa-solid fa-fire"></i> New Orders Nearby</div>
+        <button class="section-tab active" onclick="showPage('available')" style="background:var(--primary-light); color:var(--primary); border:none; cursor:pointer; padding:6px 14px; border-radius:6px; font-weight:600; font-size:0.82rem;">View All</button>
+      </div>
+      <div class="section-body">
+        <div class="order-feed" id="dashOrderPreview">
+          <!-- Filled by JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================
+       PAGE: AVAILABLE ORDERS
+       ============================================ -->
+  <div id="page-available" class="page-content" style="display:none;">
+    <div class="section-card">
+      <div class="section-header">
+        <div class="section-title"><i class="fa-solid fa-list-check"></i> Available Orders</div>
+        <div class="section-tabs">
+          <button class="section-tab active" onclick="filterAvailable('all',this)">All</button>
+          <button class="section-tab" onclick="filterAvailable('urgent',this)">Urgent</button>
+          <button class="section-tab" onclick="filterAvailable('nearby',this)">Nearby</button>
+          <button class="section-tab" onclick="filterAvailable('high-pay',this)">High Pay</button>
+        </div>
+      </div>
+      <div class="section-body">
+        <div class="order-feed" id="availableOrdersFeed">
+          <!-- Filled by JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================
+       PAGE: ACTIVE DELIVERY
+       ============================================ -->
+  <div id="page-active" class="page-content" style="display:none;">
+    <div id="activeDeliveryContent">
+      <!-- When there IS an active delivery -->
+      <div class="active-delivery" id="activeDeliveryCard">
+        <div class="delivery-header">
+          <h3><i class="fa-solid fa-truck-fast"></i> Active Delivery — Order #A3F8CD</h3>
+          <div class="live-badge"><div class="live-dot"></div> LIVE</div>
+        </div>
+        <div class="delivery-body">
+          <!-- Progress -->
+          <div class="delivery-progress" style="margin-bottom:32px;">
+            <div class="progress-fill" style="width:50%;" id="activeProgressFill"></div>
+            <div class="progress-step">
+              <div class="step-circle completed" id="step1"><i class="fa-solid fa-check"></i></div>
+              <div class="step-label active">Accepted</div>
+            </div>
+            <div class="progress-step">
+              <div class="step-circle completed" id="step2"><i class="fa-solid fa-check"></i></div>
+              <div class="step-label active">Picked Up</div>
+            </div>
+            <div class="progress-step">
+              <div class="step-circle current" id="step3"><i class="fa-solid fa-motorcycle"></i></div>
+              <div class="step-label active">In Transit</div>
+            </div>
+            <div class="progress-step">
+              <div class="step-circle" id="step4"><i class="fa-solid fa-flag-checkered"></i></div>
+              <div class="step-label">Delivered</div>
+            </div>
+          </div>
+
+          <!-- Order Details -->
+          <div class="delivery-info-grid">
+            <div class="delivery-info-item">
+              <div class="delivery-info-label">Vendor</div>
+              <div class="delivery-info-value"><i class="fa-solid fa-shop"></i> Mom's Kitchen</div>
+            </div>
+            <div class="delivery-info-item">
+              <div class="delivery-info-label">Pickup Location</div>
+              <div class="delivery-info-value"><i class="fa-solid fa-location-dot"></i> Block C, Room 12</div>
+            </div>
+            <div class="delivery-info-item">
+              <div class="delivery-info-label">Customer</div>
+              <div class="delivery-info-value"><i class="fa-solid fa-user"></i> Thabo Mokoena</div>
+            </div>
+            <div class="delivery-info-item">
+              <div class="delivery-info-label">Drop-off</div>
+              <div class="delivery-info-value"><i class="fa-solid fa-map-pin"></i> Res 5, Room 214</div>
+            </div>
+            <div class="delivery-info-item">
+              <div class="delivery-info-label">Items</div>
+              <div class="delivery-info-value"><i class="fa-solid fa-utensils"></i> 2x Kota, 1x Juice</div>
+            </div>
+            <div class="delivery-info-item">
+              <div class="delivery-info-label">Your Payout</div>
+              <div class="delivery-info-value" style="color:var(--success);font-weight:800;font-size:1.1rem;"><i class="fa-solid fa-coins"></i> R25.00</div>
+            </div>
+            <div class="delivery-info-item">
+              <div class="delivery-info-label">Customer Phone</div>
+              <div class="delivery-info-value"><i class="fa-solid fa-phone"></i> 072 XXX XXXX</div>
+            </div>
+            <div class="delivery-info-item">
+              <div class="delivery-info-label">Special Notes</div>
+              <div class="delivery-info-value"><i class="fa-solid fa-note-sticky"></i> Extra sauce please</div>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="delivery-actions" id="deliveryActions">
+            <button class="delivery-btn outline" onclick="callCustomer()"><i class="fa-solid fa-phone"></i> Call Customer</button>
+            <button class="delivery-btn outline" onclick="chatCustomer()"><i class="fa-solid fa-comment-dots"></i> Message</button>
+            <button class="delivery-btn primary full" id="nextStatusBtn" onclick="advanceStatus()">
+              <i class="fa-solid fa-arrow-right"></i> <span id="nextStatusLabel">Mark as Delivered</span>
+            </button>
+            <button class="delivery-btn danger-outline" onclick="cancelDelivery()"><i class="fa-solid fa-xmark"></i> Cancel Delivery</button>
+            <button class="delivery-btn outline" onclick="reportIssue()"><i class="fa-solid fa-flag"></i> Report Issue</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- When there's NO active delivery -->
+      <div id="noActiveDelivery" style="display:none;">
+        <div class="section-card">
+          <div class="section-body">
+            <div class="empty-state">
+              <i class="fa-solid fa-route"></i>
+              <h3>No Active Delivery</h3>
+              <p>Accept an order to start delivering</p>
+              <button class="btn-cta" onclick="showPage('available')"><i class="fa-solid fa-list-check"></i> Browse Orders</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================
+       PAGE: EARNINGS
+       ============================================ -->
+  <div id="page-earnings" class="page-content" style="display:none;">
+    <div class="stats-grid" style="grid-template-columns:repeat(3,1fr); margin-bottom:24px;">
+      <div class="stat-card earnings">
+        <div class="stat-header">
+          <div class="stat-icon earnings"><i class="fa-solid fa-calendar-day"></i></div>
+        </div>
+        <div class="stat-value">R245.00</div>
+        <div class="stat-label">Today</div>
+      </div>
+      <div class="stat-card deliveries">
+        <div class="stat-header">
+          <div class="stat-icon deliveries"><i class="fa-solid fa-calendar-week"></i></div>
+        </div>
+        <div class="stat-value">R1,420.00</div>
+        <div class="stat-label">This Week</div>
+      </div>
+      <div class="stat-card rating">
+        <div class="stat-header">
+          <div class="stat-icon rating"><i class="fa-solid fa-calendar"></i></div>
+        </div>
+        <div class="stat-value">R5,800.00</div>
+        <div class="stat-label">This Month</div>
+      </div>
+    </div>
+
+    <div class="section-card">
+      <div class="section-header">
+        <div class="section-title"><i class="fa-solid fa-chart-bar"></i> Weekly Earnings</div>
+        <div class="section-tabs">
+          <button class="section-tab active">This Week</button>
+          <button class="section-tab">Last Week</button>
+        </div>
+      </div>
+      <div class="section-body">
+        <div class="earnings-chart-placeholder">
+          <div class="mini-chart">
+            <div class="chart-bar-wrap"><div class="chart-value">R180</div><div class="chart-bar" style="height:60%;"></div><div class="chart-label">Mon</div></div>
+            <div class="chart-bar-wrap"><div class="chart-value">R220</div><div class="chart-bar" style="height:73%;"></div><div class="chart-label">Tue</div></div>
+            <div class="chart-bar-wrap"><div class="chart-value">R150</div><div class="chart-bar" style="height:50%;"></div><div class="chart-label">Wed</div></div>
+            <div class="chart-bar-wrap"><div class="chart-value">R290</div><div class="chart-bar" style="height:97%;"></div><div class="chart-label">Thu</div></div>
+            <div class="chart-bar-wrap"><div class="chart-value">R240</div><div class="chart-bar" style="height:80%;"></div><div class="chart-label">Fri</div></div>
+            <div class="chart-bar-wrap"><div class="chart-value">R95</div><div class="chart-bar" style="height:32%;"></div><div class="chart-label">Sat</div></div>
+            <div class="chart-bar-wrap"><div class="chart-value">R245</div><div class="chart-bar" style="height:82%; background:var(--success);opacity:1;"></div><div class="chart-label" style="font-weight:700;color:var(--text);">Today</div></div>
+          </div>
+        </div>
+        <div class="earnings-summary">
+          <div class="earning-item">
+            <div class="earning-value" style="color:var(--success);">R1,420</div>
+            <div class="earning-label">Total Earned</div>
+          </div>
+          <div class="earning-item">
+            <div class="earning-value">68</div>
+            <div class="earning-label">Deliveries</div>
+          </div>
+          <div class="earning-item">
+            <div class="earning-value">R20.88</div>
+            <div class="earning-label">Avg per Delivery</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================
+       PAGE: DELIVERY HISTORY
+       ============================================ -->
+  <div id="page-history" class="page-content" style="display:none;">
+    <div class="section-card">
+      <div class="section-header">
+        <div class="section-title"><i class="fa-solid fa-clock-rotate-left"></i> Delivery History</div>
+        <div class="section-tabs">
+          <button class="section-tab active">All</button>
+          <button class="section-tab">Completed</button>
+          <button class="section-tab">Cancelled</button>
+        </div>
+      </div>
+      <div class="section-body" style="padding:0; overflow-x:auto;">
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th>Order</th>
+              <th>Vendor</th>
+              <th>Customer</th>
+              <th>Date</th>
+              <th>Payout</th>
+              <th>Status</th>
+              <th>Rating</th>
+            </tr>
+          </thead>
+          <tbody id="historyBody">
+            <tr>
+              <td style="font-weight:700;">#B7E2A1</td>
+              <td>Kota King</td>
+              <td>Sipho N.</td>
+              <td style="color:var(--text-muted);">14 Jun, 13:42</td>
+              <td style="font-weight:700; color:var(--success);">R18.00</td>
+              <td><span class="table-status delivered">Delivered</span></td>
+              <td class="table-rating">★★★★★</td>
+            </tr>
+            <tr>
+              <td style="font-weight:700;">#C3F1D9</td>
+              <td>Mom's Kitchen</td>
+              <td>Lerato K.</td>
+              <td style="color:var(--text-muted);">14 Jun, 12:15</td>
+              <td style="font-weight:700; color:var(--success);">R25.00</td>
+              <td><span class="table-status delivered">Delivered</span></td>
+              <td class="table-rating">★★★★☆</td>
+            </tr>
+            <tr>
+              <td style="font-weight:700;">#D8A4B2</td>
+              <td>Bunny Spot</td>
+              <td>James T.</td>
+              <td style="color:var(--text-muted);">13 Jun, 18:30</td>
+              <td style="font-weight:700; color:var(--text-muted);">R0.00</td>
+              <td><span class="table-status cancelled">Cancelled</span></td>
+              <td style="color:var(--text-muted);">—</td>
+            </tr>
+            <tr>
+              <td style="font-weight:700;">#E2B5C8</td>
+              <td>Wrap It Up</td>
+              <td>Naledi M.</td>
+              <td style="color:var(--text-muted);">13 Jun, 14:08</td>
+              <td style="font-weight:700; color:var(--success);">R22.00</td>
+              <td><span class="table-status delivered">Delivered</span></td>
+              <td class="table-rating">★★★★★</td>
+            </tr>
+            <tr>
+              <td style="font-weight:700;">#F1C6D3</td>
+              <td>Kota King</td>
+              <td>Bongani S.</td>
+              <td style="color:var(--text-muted);">13 Jun, 12:55</td>
+              <td style="font-weight:700; color:var(--success);">R15.00</td>
+              <td><span class="table-status delivered">Delivered</span></td>
+              <td class="table-rating">★★★★★</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================
+       PAGE: SETTINGS
+       ============================================ -->
+  <div id="page-settings" class="page-content" style="display:none;">
+    <div class="section-card">
+      <div class="section-header">
+        <div class="section-title"><i class="fa-solid fa-gear"></i> Carrier Settings</div>
+      </div>
+      <div class="section-body">
+        <div class="setting-row" style="display:flex; align-items:center; justify-content:space-between; padding:16px 0; border-bottom:1px solid var(--border);">
+          <div style="display:flex; align-items:center; gap:14px;">
+            <div class="setting-icon" style="width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:var(--bg-input);color:var(--text-secondary);"><i class="fa-solid fa-moon"></i></div>
+            <div><h4 style="font-size:0.95rem;font-weight:600;">Dark Mode</h4><p style="font-size:0.8rem;color:var(--text-muted);">Toggle appearance</p></div>
+          </div>
+          <button class="toggle-btn" id="settingsDarkToggle" onclick="toggleTheme()"></button>
+        </div>
+        <div class="setting-row" style="display:flex; align-items:center; justify-content:space-between; padding:16px 0; border-bottom:1px solid var(--border);">
+          <div style="display:flex; align-items:center; gap:14px;">
+            <div class="setting-icon" style="width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:var(--bg-input);color:var(--text-secondary);"><i class="fa-solid fa-bell"></i></div>
+            <div><h4 style="font-size:0.95rem;font-weight:600;">Order Alerts</h4><p style="font-size:0.8rem;color:var(--text-muted);">Sound when new orders arrive</p></div>
+          </div>
+          <button class="toggle-btn active" onclick="this.classList.toggle('active')"></button>
+        </div>
+        <div class="setting-row" style="display:flex; align-items:center; justify-content:space-between; padding:16px 0; border-bottom:1px solid var(--border);">
+          <div style="display:flex; align-items:center; gap:14px;">
+            <div class="setting-icon" style="width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:var(--bg-input);color:var(--text-secondary);"><i class="fa-solid fa-location-crosshairs"></i></div>
+            <div><h4 style="font-size:0.95rem;font-weight:600;">Auto-Accept Nearby</h4><p style="font-size:0.8rem;color:var(--text-muted);">Automatically accept orders within 500m</p></div>
+          </div>
+          <button class="toggle-btn" onclick="this.classList.toggle('active')"></button>
+        </div>
+        <div class="setting-row" style="display:flex; align-items:center; justify-content:space-between; padding:16px 0;">
+          <div style="display:flex; align-items:center; gap:14px;">
+            <div class="setting-icon" style="width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:var(--bg-input);color:var(--text-secondary);"><i class="fa-solid fa-language"></i></div>
+            <div><h4 style="font-size:0.95rem;font-weight:600;">Language</h4><p style="font-size:0.8rem;color:var(--text-muted);">English (South Africa)</p></div>
+          </div>
+          <i class="fa-solid fa-chevron-right" style="color:var(--text-muted);"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-card" style="border-color:var(--danger);">
+      <div class="section-body" style="display:flex; align-items:center; justify-content:space-between;">
+        <div style="display:flex; align-items:center; gap:14px;">
+          <div class="setting-icon" style="width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:var(--danger-light);color:var(--danger);"><i class="fa-solid fa-right-from-bracket"></i></div>
+          <div><h4 style="font-size:0.95rem;font-weight:600;">Sign Out</h4><p style="font-size:0.8rem;color:var(--text-muted);">Log out of your carrier account</p></div>
+        </div>
+        <button style="padding:10px 24px;border-radius:8px;border:2px solid var(--danger);background:transparent;color:var(--danger);font-weight:700;font-size:0.88rem;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.background='var(--danger)';this.style.color='white'" onmouseout="this.style.background='transparent';this.style.color='var(--danger)'" onclick="handleLogout()">Sign Out</button>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+
+<!-- ============================================
+     ORDER DETAIL MODAL
+     ============================================ -->
+<div id="orderDetailModal" class="modal-overlay" onclick="if(event.target===this)closeOrderModal()">
+  <div class="modal-card" onclick="event.stopPropagation()">
+    <button class="modal-close-btn" onclick="closeOrderModal()"><i class="fa-solid fa-xmark"></i></button>
+    <div class="modal-body">
+      <div class="modal-title" id="modalOrderId">Order #A3F8CD</div>
+      <div class="modal-subtitle" id="modalOrderTime">Placed 8 min ago • 3 items</div>
+
+      <div class="detail-grid">
+        <div class="detail-item">
+          <div class="detail-label">Vendor</div>
+          <div class="detail-value" id="modalVendor"><i class="fa-solid fa-shop"></i> Mom's Kitchen</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Pickup</div>
+          <div class="detail-value" id="modalPickup"><i class="fa-solid fa-location-dot"></i> Block C, Room 12</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Customer</div>
+          <div class="detail-value" id="modalCustomer"><i class="fa-solid fa-user"></i> Thabo Mokoena</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Drop-off</div>
+          <div class="detail-value" id="modalDropoff"><i class="fa-solid fa-map-pin"></i> Res 5, Room 214</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Distance</div>
+          <div class="detail-value" id="modalDistance"><i class="fa-solid fa-route"></i> ~1.2 km</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Est. Time</div>
+          <div class="detail-value" id="modalTime"><i class="fa-solid fa-clock"></i> ~12 min</div>
+        </div>
+        <div class="detail-item full">
+          <div class="detail-label">Special Instructions</div>
+          <div class="detail-value" id="modalNotes"><i class="fa-solid fa-note-sticky"></i> Extra sauce, call when arriving</div>
+        </div>
+      </div>
+
+      <div class="order-items-list">
+        <h4>Order Items</h4>
+        <div id="modalItems">
+          <div class="food-item">
+            <div><div class="food-name">Special Kota</div><div class="food-qty">Qty: 2</div></div>
+            <div class="food-price">R70.00</div>
+          </div>
+          <div class="food-item">
+            <div><div class="food-name">Fresh Juice</div><div class="food-qty">Qty: 1</div></div>
+            <div class="food-price">R15.00</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-total">
+        <div class="modal-total-label">Your Payout</div>
+        <div class="modal-total-value" id="modalPayout">R25.00</div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="modal-btn cancel" onclick="closeOrderModal()"><i class="fa-solid fa-xmark"></i> Close</button>
+        <button class="modal-btn accept" onclick="acceptOrder('A3F8CD')"><i class="fa-solid fa-hand"></i> Accept Order</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================
+     CONFIRM DELIVERY MODAL
+     ============================================ -->
+<div id="confirmDeliveryModal" class="modal-overlay" onclick="if(event.target===this)closeConfirmModal()">
+  <div class="modal-card" onclick="event.stopPropagation()" style="max-width:420px;">
+    <button class="modal-close-btn" onclick="closeConfirmModal()"><i class="fa-solid fa-xmark"></i></button>
+    <div class="modal-body">
+      <div class="confirm-section">
+        <div class="confirm-icon"><i class="fa-solid fa-clipboard-check"></i></div>
+        <div class="confirm-title">Confirm Delivery</div>
+        <div class="confirm-desc">Enter the 4-digit PIN the customer gives you</div>
+        <div class="pin-input-group">
+          <input type="text" class="pin-box" maxlength="1" id="pin1" oninput="pinNext(1)" autofocus>
+          <input type="text" class="pin-box" maxlength="1" id="pin2" oninput="pinNext(2)">
+          <input type="text" class="pin-box" maxlength="1" id="pin3" oninput="pinNext(3)">
+          <input type="text" class="pin-box" maxlength="1" id="pin4" oninput="pinNext(4)">
+        </div>
+        <div class="form-message error" id="pinError" style="margin-bottom:14px;"><i class="fa-solid fa-circle-exclamation"></i> <span>Invalid PIN. Please try again.</span></div>
+        <button class="delivery-btn success full" onclick="verifyPin()" style="max-width:240px;margin:0 auto;">
+          <i class="fa-solid fa-check"></i> Confirm Delivery
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  // ============================================
+  // MOCK DATA
+  // ============================================
+  const mockOrders = [
+    { id:'A3F8CD', vendor:"Mom's Kitchen", vendorInitial:'M', location:'Block C, Room 12', customer:'Thabo Mokoena', dropoff:'Res 5, Room 214', items:['2x Special Kota','1x Fresh Juice'], payout:25, distance:'1.2 km', time:'12 min', ago:'3 min ago', priority:'urgent', notes:'Extra sauce please' },
+    { id:'B7E2A1', vendor:'Kota King', vendorInitial:'K', location:'Main Cafeteria', customer:'Sipho Ndlovu', dropoff:'Res 3, Room 108', items:['1x Classic Kota','1x Chips','2x Coke'], payout:18, distance:'0.8 km', time:'8 min', ago:'5 min ago', priority:'normal', notes:'' },
+    { id:'C9D1F3', vendor:'Wrap It Up', vendorInitial:'W', location:'Student Center', customer:'Naledi Mabaso', dropoff:'Res 7, Room 301', items:['1x Chicken Wrap','1x Salad'], payout:22, distance:'1.5 km', time:'15 min', ago:'8 min ago', priority:'normal', notes:'No onions' },
+    { id:'D2E4G6', vendor:'Bunny Spot', vendorInitial:'B', location:'East Gate Food Court', customer:'Lerato Khumalo', dropoff:'Res 1, Room 412', items:['1x Bunny Chow','1x Fanta'], payout:20, distance:'2.0 km', time:'18 min', ago:'12 min ago', priority:'low', notes:'' },
+    { id:'E5F7H9', vendor:'Pizza Hub', vendorInitial:'P', location:'Block A, Shop 4', customer:'James Tau', dropoff:'Res 9, Room 215', items:['1x Margherita','1x BBQ Wings'], payout:30, distance:'1.8 km', time:'16 min', ago:'15 min ago', priority:'urgent', notes:'Call when arriving' },
+  ];
+
+  // ============================================
+  // RENDER ORDER CARDS
+  // ============================================
+  function renderOrderCard(order, compact = false) {
+    return `
+      <div class="order-item ${order.priority}">
+        <div class="order-top">
+          <div class="order-vendor">
+            <div class="vendor-logo">${order.vendorInitial}</div>
+            <div>
+              <div class="vendor-name">${order.vendor}</div>
+              <div class="vendor-location"><i class="fa-solid fa-location-dot"></i> ${order.location}</div>
+            </div>
+          </div>
+          <span class="order-time-badge ${order.ago.includes('3') || order.ago.includes('5') ? 'new':'waiting'}">${order.ago}</span>
+        </div>
+        <div class="order-items-preview">
+          ${order.items.map(i => `<span class="item-chip">${i}</span>`).join('')}
+        </div>
+        <div class="order-bottom">
+          <div class="order-meta-row">
+            <span><i class="fa-solid fa-route"></i> ${order.distance}</span>
+            <span><i class="fa-solid fa-clock"></i> ~${order.time}</span>
+            <span><i class="fa-solid fa-map-pin"></i> ${order.dropoff.split(',')[0]}</span>
+          </div>
+          <div class="order-payout">R${order.payout.toFixed(2)}</div>
+        </div>
+        ${!compact ? `
+        <div class="order-actions">
+          <button class="btn-view" onclick="viewOrder('${order.id}')"><i class="fa-solid fa-eye"></i> Details</button>
+          <button class="btn-accept" onclick="acceptOrder('${order.id}')"><i class="fa-solid fa-hand"></i> Accept Order</button>
+        </div>` : `
+        <div class="order-actions">
+          <button class="btn-accept" style="flex:1;" onclick="viewOrder('${order.id}')"><i class="fa-solid fa-eye"></i> View & Accept</button>
+        </div>`}
+      </div>`;
+  }
+
+  // Initial render
+  function renderAllOrders() {
+    document.getElementById('availableOrdersFeed').innerHTML = mockOrders.map(o => renderOrderCard(o)).join('');
+    document.getElementById('dashOrderPreview').innerHTML = mockOrders.slice(0,3).map(o => renderOrderCard(o, true)).join('');
+  }
+  renderAllOrders();
+
+  // ============================================
+  // PAGE NAVIGATION
+  // ============================================
+  const pageTitles = {
+    dashboard: ['Dashboard', 'Overview of your deliveries'],
+    available: ['Available Orders', 'Accept orders to start earning'],
+    active: ['Active Delivery', 'Track your current delivery'],
+    earnings: ['Earnings', 'Track your income'],
+    history: ['Delivery History', 'Past deliveries and ratings'],
+    settings: ['Settings', 'Manage your preferences'],
+  };
+
+  window.showPage = (page) => {
+    document.querySelectorAll('.page-content').forEach(p => p.style.display = 'none');
+    document.getElementById(`page-${page}`).style.display = 'block';
+
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    const navItems = document.querySelectorAll('.nav-item');
+    navItems.forEach(n => {
+      if (n.textContent.trim().toLowerCase().includes(page === 'dashboard' ? 'dashboard' : page === 'available' ? 'available' : page === 'active' ? 'active' : page === 'earnings' ? 'earnings' : page === 'history' ? 'history' : 'settings')) {
+        n.classList.add('active');
+      }
+    });
+
+    document.getElementById('pageTitle').textContent = pageTitles[page]?.[0] || 'Dashboard';
+    document.getElementById('pageSubtitle').textContent = pageTitles[page]?.[1] || '';
+
+    // Close sidebar on mobile
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebarOverlay').classList.remove('open');
+  };
+
+  // ============================================
+  // SIDEBAR TOGGLE (mobile)
+  // ============================================
+  window.toggleSidebar = () => {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('sidebarOverlay').classList.toggle('open');
+  };
+
+  // ============================================
+  // ONLINE/OFFLINE STATUS
+  // ============================================
+  let isOnline = false;
+  window.toggleOnlineStatus = () => {
+    isOnline = !isOnline;
+    const card = document.getElementById('statusCard');
+    const dot = document.getElementById('statusDot');
+    const label = document.getElementById('statusLabel');
+    const toggle = document.getElementById('statusToggle');
+
+    if (isOnline) {
+      card.classList.add('online');
+      dot.classList.add('online');
+      label.textContent = 'Online';
+      label.classList.add('online');
+      toggle.classList.add('active');
+    } else {
+      card.classList.remove('online');
+      dot.classList.remove('online');
+      label.textContent = 'Offline';
+      label.classList.remove('online');
+      toggle.classList.remove('active');
+    }
+  };
+
+  // ============================================
+  // THEME TOGGLE
+  // ============================================
+  window.toggleTheme = () => {
+    const html = document.documentElement;
+    const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    localStorage.setItem('nash-theme', next);
+    updateThemeUI(next);
+  };
+
+  function updateThemeUI(theme) {
+    const navIcon = document.querySelector('#themeBtn i');
+    const settingsToggle = document.getElementById('settingsDarkToggle');
+    if (theme === 'dark') {
+      navIcon.className = 'fa-solid fa-sun';
+      settingsToggle?.classList.add('active');
+    } else {
+      navIcon.className = 'fa-solid fa-moon';
+      settingsToggle?.classList.remove('active');
+    }
+  }
+
+  // Load saved theme
+  const savedTheme = localStorage.getItem('nash-theme') || 'light';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  updateThemeUI(savedTheme);
+
+  // ============================================
+  // NOTIFICATIONS PANEL
+  // ============================================
+  window.toggleNotifications = () => {
+    document.getElementById('notifPanel').classList.toggle('open');
+    document.getElementById('notifOverlay').classList.toggle('open');
+  };
+
+  // ============================================
+  // VIEW ORDER DETAIL
+  // ============================================
+  window.viewOrder = (id) => {
+    const order = mockOrders.find(o => o.id === id);
+    if (!order) return;
+
+    document.getElementById('modalOrderId').textContent = `Order #${order.id}`;
+    document.getElementById('modalOrderTime').textContent = `Placed ${order.ago} • ${order.items.length} items`;
+    document.getElementById('modalVendor').innerHTML = `<i class="fa-solid fa-shop"></i> ${order.vendor}`;
+    document.getElementById('modalPickup').innerHTML = `<i class="fa-solid fa-location-dot"></i> ${order.location}`;
+    document.getElementById('modalCustomer').innerHTML = `<i class="fa-solid fa-user"></i> ${order.customer}`;
+    document.getElementById('modalDropoff').innerHTML = `<i class="fa-solid fa-map-pin"></i> ${order.dropoff}`;
+    document.getElementById('modalDistance').innerHTML = `<i class="fa-solid fa-route"></i> ~${order.distance}`;
+    document.getElementById('modalTime').innerHTML = `<i class="fa-solid fa-clock"></i> ~${order.time}`;
+    document.getElementById('modalNotes').innerHTML = `<i class="fa-solid fa-note-sticky"></i> ${order.notes || 'None'}`;
+    document.getElementById('modalPayout').textContent = `R${order.payout.toFixed(2)}`;
+
+    document.getElementById('modalItems').innerHTML = order.items.map(item => {
+      const parts = item.split(' ');
+      const qty = parts[0];
+      const name = parts.slice(1).join(' ');
+      return `<div class="food-item"><div><div class="food-name">${name}</div><div class="food-qty">Qty: ${qty.replace('x','')}</div></div><div class="food-price">—</div></div>`;
+    }).join('');
+
+    document.getElementById('orderDetailModal').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  };
+
+  window.closeOrderModal = () => {
+    document.getElementById('orderDetailModal').style.display = 'none';
+    document.body.style.overflow = '';
+  };
+
+  // ============================================
+  // ACCEPT ORDER
+  // ============================================
+  window.acceptOrder = (id) => {
+    const order = mockOrders.find(o => o.id === id);
+    if (!order) return;
+
+    closeOrderModal();
+    alert(`✅ You accepted Order #${id} from ${order.vendor}!\n\nWaiting for vendor approval...\n\n(In the live version, the vendor will be notified and must approve your pickup request.)`);
+
+    // Show active delivery
+    document.getElementById('activeBadge').style.display = 'flex';
+    document.getElementById('activeBadge').textContent = '1';
+    showPage('active');
+  };
+
+  // ============================================
+  // DELIVERY STATUS PROGRESSION
+  // ============================================
+  let currentStep = 2; // 0=accepted, 1=picked_up, 2=in_transit, 3=delivered
+  const statusLabels = ['Mark as Picked Up', 'Mark as In Transit', 'Mark as Delivered', 'Delivery Complete'];
+
+  window.advanceStatus = () => {
+    if (currentStep >= 3) return;
+
+    if (currentStep === 2) {
+      // Open PIN confirmation for delivery
+      document.getElementById('confirmDeliveryModal').style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+      document.getElementById('pin1').focus();
+      return;
+    }
+
+    currentStep++;
+    updateProgressUI();
+  };
+
+  function updateProgressUI() {
+    const steps = [document.getElementById('step1'), document.getElementById('step2'), document.getElementById('step3'), document.getElementById('step4')];
+    const fills = { 0:'0%', 1:'33%', 2:'66%', 3:'100%' };
+
+    steps.forEach((step, i) => {
+      step.className = 'step-circle';
+      if (i < currentStep) { step.classList.add('completed'); step.innerHTML = '<i class="fa-solid fa-check"></i>'; }
+      else if (i === currentStep) { step.classList.add('current'); }
+    });
+
+    document.getElementById('activeProgressFill').style.width = fills[currentStep];
+    document.getElementById('dashProgressFill').style.width = fills[currentStep];
+
+    if (currentStep < statusLabels.length) {
+      document.getElementById('nextStatusLabel').textContent = statusLabels[currentStep];
+    }
+
+    if (currentStep >= 3) {
+      document.getElementById('nextStatusBtn').style.display = 'none';
+      alert('🎉 Delivery confirmed! Great job!\n\nEarnings have been added to your balance.');
+    }
+  }
+
+  // ============================================
+  // PIN VERIFICATION
+  // ============================================
+  window.pinNext = (current) => {
+    const input = document.getElementById(`pin${current}`);
+    if (input.value.length === 1 && current < 4) {
+      document.getElementById(`pin${current + 1}`).focus();
+    }
+  };
+
+  window.verifyPin = () => {
+    const pin = [1,2,3,4].map(i => document.getElementById(`pin${i}`).value).join('');
+    if (pin.length < 4) {
+      document.getElementById('pinError').classList.add('show');
+      return;
+    }
+    // Mock: accept any 4-digit PIN
+    document.getElementById('pinError').classList.remove('show');
+    closeConfirmModal();
+    currentStep = 3;
+    updateProgressUI();
+  };
+
+  window.closeConfirmModal = () => {
+    document.getElementById('confirmDeliveryModal').style.display = 'none';
+    document.body.style.overflow = '';
+    [1,2,3,4].forEach(i => document.getElementById(`pin${i}`).value = '');
+  };
+
+  // ============================================
+  // FILTER AVAILABLE ORDERS
+  // ============================================
+  window.filterAvailable = (filter, btn) => {
+    document.querySelectorAll('.section-tabs .section-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+
+    let filtered = [...mockOrders];
+    if (filter === 'urgent') filtered = mockOrders.filter(o => o.priority === 'urgent');
+    if (filter === 'nearby') filtered = [...mockOrders].sort((a,b) => parseFloat(a.distance) - parseFloat(b.distance));
+    if (filter === 'high-pay') filtered = [...mockOrders].sort((a,b) => b.payout - a.payout);
+
+    document.getElementById('availableOrdersFeed').innerHTML = filtered.length
+      ? filtered.map(o => renderOrderCard(o)).join('')
+      : '<div class="empty-state"><i class="fa-solid fa-inbox"></i><h3>No orders match this filter</h3></div>';
+  };
+
+  // ============================================
+  // ACTION STUBS
+  // ============================================
+  window.callCustomer = () => alert('📞 Calling customer...\n(Phone dialer would open in production)');
+  window.chatCustomer = () => alert('💬 Opening chat...\n(In-app chat would open in production)');
+  window.cancelDelivery = () => {
+    if (confirm('Are you sure you want to cancel this delivery?\nThis may affect your rating.')) {
+      alert('Delivery cancelled. The order will be returned to the available pool.');
+      showPage('available');
+    }
+  };
+  window.reportIssue = () => alert('🚩 Report submitted.\n(Issue reporting form would open in production)');
+  window.handleLogout = () => {
+    if (confirm('Sign out of carrier dashboard?')) {
+      window.location.href = 'index.html';
+    }
+  };
+
+  // ============================================
+  // ESCAPE KEY
+  // ============================================
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      closeOrderModal();
+      closeConfirmModal();
+      document.getElementById('notifPanel').classList.remove('open');
+      document.getElementById('notifOverlay').classList.remove('open');
+    }
+  });
+</script>
+</body>
+</html>
