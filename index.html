@@ -6,6 +6,8 @@
   <title>Nash Bites | Campus Logistics Reimagined</title>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Poppins:wght@700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital@1&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
   <style>
     :root { --primary:#FF4D2D; --primary-dark:#e63e20; --primary-light:#FFF0ED; --dark:#0F172A; --gray-50:#F8FAFC; --gray-100:#F1F5F9; --gray-200:#E2E8F0; --gray-300:#CBD5E1; --gray-400:#94A3B8; --gray-500:#64748B; --gray-600:#475569; --gray-700:#334155; --white:#FFFFFF; --shadow-sm:0 1px 2px rgba(0,0,0,0.05); --shadow-md:0 4px 6px -1px rgba(0,0,0,0.1),0 2px 4px -2px rgba(0,0,0,0.1); --shadow-lg:0 10px 15px -3px rgba(0,0,0,0.1),0 4px 6px -4px rgba(0,0,0,0.1); --shadow-xl:0 20px 25px -5px rgba(0,0,0,0.1),0 8px 10px -6px rgba(0,0,0,0.1); --shadow-2xl:0 25px 50px -12px rgba(0,0,0,0.25); }
     * { margin:0; padding:0; box-sizing:border-box; font-family:'Plus Jakarta Sans',sans-serif; }
@@ -464,9 +466,149 @@
       .modal-header h2 { font-size:1.4rem; }
       .form-extras { flex-direction:column; gap:8px; align-items:flex-start; }
     }
+
+    /* ============================================
+       MOBILE SPLASH SCREEN (phones only)
+       ============================================ */
+    @media (max-width:767px) {
+
+      /* Hide desktop nav + hero + services entirely */
+      #mainNav,
+      .hero,
+      .services { display:none !important; }
+
+      /* Full-screen splash */
+      .mobile-splash {
+        display:flex;
+        flex-direction:column;
+        min-height:100dvh;
+        width:100%;
+        position:relative;
+        overflow:hidden;
+        background:#0a0a0a;
+      }
+
+      /* Background food photo — full bleed */
+      .mobile-splash-bg {
+        position:absolute;
+        inset:0;
+        background:
+          url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=85')
+          center/cover no-repeat;
+        z-index:0;
+      }
+      /* subtle dark vignette at bottom so buttons are readable */
+      .mobile-splash-bg::after {
+        content:'';
+        position:absolute;
+        inset:0;
+        background: linear-gradient(
+          to bottom,
+          rgba(0,0,0,0.08) 0%,
+          rgba(0,0,0,0.05) 40%,
+          rgba(0,0,0,0.55) 72%,
+          rgba(0,0,0,0.82) 100%
+        );
+      }
+
+      /* Content layer */
+      .mobile-splash-content {
+        position:relative;
+        z-index:1;
+        flex:1;
+        display:flex;
+        flex-direction:column;
+        justify-content:center;
+        align-items:center; 
+        padding:0 28px 52px;
+      }
+
+      /* Welcome text */
+      .splash-welcome {
+        font-family:'Playfair Display', serif;
+        font-size:1.35rem;
+        font-weight:500;
+        font-style:italic;
+        color:rgba(255,255,255,0.92);
+        margin-bottom:2px;
+        letter-spacing:0.2px;
+      }
+      
+       .splash-brand {
+        font-family:'Montserrat', sans-serif;
+        font-weight:800;
+          font-size:3.9rem;
+         letter-spacing:2px;
+
+        color:#FF4D2D;
+        line-height:1;
+        letter-spacing:-1.5px;
+        text-transform:uppercase;
+        margin-bottom:44px;
+        /* punchy text shadow for readability */
+        text-shadow: 0 2px 24px rgba(0,0,0,0.4), 0 0 60px rgba(255,77,45,0.18);
+      }
+
+      /* Pill buttons */
+      .splash-btns {
+        display:flex;
+        flex-direction:column;
+        gap:14px;
+        width:100%;
+      }
+      .splash-btn {
+        width:100%;
+        padding:17px 0;
+        border-radius:50px;
+        font-family:'Plus Jakarta Sans', sans-serif;
+        font-size:1.05rem;
+        font-weight:700;
+        text-align:center;
+        border:none;
+        cursor:pointer;
+        transition:transform .18s, box-shadow .18s, opacity .18s;
+        letter-spacing:0.2px;
+      }
+      .splash-btn:active { transform:scale(0.97); }
+      .splash-btn-login {
+        background:rgba(255,255,255,0.97);
+        color:#FF4D2D;
+        box-shadow:0 8px 32px rgba(0,0,0,0.22);
+      }
+      .splash-btn-login:hover { opacity:0.93; }
+      .splash-btn-register {
+        background:transparent;
+        color:rgba(255,255,255,0.95);
+        border:2.5px solid rgba(255,255,255,0.75);
+        backdrop-filter:blur(6px);
+        box-shadow:0 4px 20px rgba(0,0,0,0.15);
+      }
+      .splash-btn-register:hover { background:rgba(255,255,255,0.1); }
+
+    }
+
+    /* Hide mobile splash on desktop */
+    @media (min-width:768px) {
+      .mobile-splash { display:none !important; }
+    }
   </style>
 </head>
 <body>
+
+<!-- ============================================
+     MOBILE SPLASH (phones only — hidden on desktop via CSS)
+     ============================================ -->
+<div class="mobile-splash">
+  <div class="mobile-splash-bg"></div>
+  <div class="mobile-splash-content">
+    <p class="splash-welcome">Welcome to</p>
+    <h1 class="splash-brand">Nash Bites</h1>
+    <div class="splash-btns">
+      <button class="splash-btn splash-btn-login" onclick="openModal('loginModal')">Log in</button>
+      <button class="splash-btn splash-btn-register" onclick="openModal('signupModal')">Register</button>
+    </div>
+  </div>
+</div>
 
 <nav id="mainNav">
   <div class="logo">Nash Bites</div>

@@ -345,11 +345,11 @@
       <div class="sec-head">
         <div class="sec-title"><i class="fa-solid fa-receipt"></i> Orders</div>
         <div class="sec-tabs" id="orderTabs">
-          <button class="sec-tab active" onclick="filterOrders('all',this)">All</button>
-          <button class="sec-tab" onclick="filterOrders('pending',this)">Pending</button>
-          <button class="sec-tab" onclick="filterOrders('preparing',this)">Preparing</button>
-          <button class="sec-tab" onclick="filterOrders('ready',this)">Ready</button>
-          <button class="sec-tab" onclick="filterOrders('picked_up',this)">Picked Up</button>
+          <button class="sec-tab active" data-filter="all" onclick="filterOrders('all',this)">All</button>
+          <button class="sec-tab" data-filter="pending" onclick="filterOrders('pending',this)">Pending</button>
+          <button class="sec-tab" data-filter="preparing" onclick="filterOrders('preparing',this)">Preparing</button>
+          <button class="sec-tab" data-filter="ready" onclick="filterOrders('ready',this)">Ready</button>
+          <button class="sec-tab" data-filter="picked_up" onclick="filterOrders('picked_up',this)">Picked Up</button>
         </div>
       </div>
       <div class="sec-body"><div class="order-pipeline" id="allOrdersFeed"></div></div>
@@ -409,6 +409,18 @@
       <div style="display:flex;align-items:center;gap:14px"><div style="width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:var(--danger-light);color:var(--danger)"><i class="fa-solid fa-right-from-bracket"></i></div><div><h4 style="font-size:.95rem;font-weight:600">Sign Out</h4><p style="font-size:.8rem;color:var(--text-muted)">Log out of vendor dashboard</p></div></div>
       <button class="o-btn danger" onclick="handleLogout()">Sign Out</button>
     </div></div>
+    <div class="section" style="border-color:var(--danger)">
+      <div class="sec-body">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px">
+          <div style="width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:var(--danger-light);color:var(--danger)"><i class="fa-solid fa-user-minus"></i></div>
+          <div>
+            <h4 style="font-size:.95rem;font-weight:600;color:var(--danger)">Deregister as Vendor</h4>
+            <p style="font-size:.8rem;color:var(--text-muted)">Remove your vendor role. Your menu and store will be deactivated. Your customer account remains active.</p>
+          </div>
+        </div>
+        <button class="o-btn danger" onclick="deregisterVendor()"><i class="fa-solid fa-triangle-exclamation"></i> Deregister as Vendor</button>
+      </div>
+    </div>
   </div>
 
 </main>
@@ -568,14 +580,18 @@ function syncStoreStatus() {
 async function loadOrders() {
   const { data, error } = await S
     .from('orders')
-    .select('*, profiles:customer_id(full_name)')
+    .select('*, customer:customer_id(full_name, phone)')
     .eq('vendor_id', user.id)
     .order('created_at', { ascending: false });
 
   if (error) return console.error('Orders fetch error:', error);
   allOrders = data;
-  renderOrders();
-  updateStats();
+  renderDashboard();
+  const activeTab = document.querySelector('#orderTabs .sec-tab.active');
+  const currentFilter = activeTab ? (activeTab.getAttribute('data-filter') || 'all') : 'all';
+  renderAllOrders(currentFilter);
+  renderHistory();
+  renderRevenue();
 }
 function renderDashboard() {
   const today = new Date().toDateString();
@@ -688,8 +704,8 @@ window.closeOrderModal = () => { document.getElementById('orderModal').style.dis
 async function loadCarrierRequests() {
   // Fetch carriers who have requested to deliver for this vendor's orders
   const { data, error } = await S
-    .from('carrier_requests')
-    .select('*, carrier:carrier_id(full_name, avatar_url)')
+    .from('delivery_requests')
+    .select('*, carrier:carrier_id(full_name, avatar_url, rating, transport_mode, total_orders), order:order_id(id)')
     .eq('vendor_id', user.id)
     .eq('status', 'pending');
 
@@ -710,7 +726,7 @@ function renderCarrierRequests() {
           <span><i class="fa-solid fa-star" style="color:var(--warning)"></i> ${(c.rating||0).toFixed(1)}</span>
           <span><i class="fa-solid fa-motorcycle"></i> ${c.transport_mode||'—'}</span>
           <span><i class="fa-solid fa-box"></i> ${c.total_orders||0} deliveries</span>
-          <span><i class="fa-solid fa-hashtag"></i> Order #${(r.order?.id||'').slice(0,8).toUpperCase()}</span>
+          <span><i class="fa-solid fa-hashtag"></i> Order #${(r.order?.id||r.order_id||'').slice(0,8).toUpperCase()}</span>
         </div>
       </div>
       <div class="cr-actions">
@@ -719,8 +735,12 @@ function renderCarrierRequests() {
       </div>
     </div>`;
   }).join('') : '<div class="empty-state"><i class="fa-solid fa-motorcycle"></i><h3>No carrier requests</h3><p>Carriers will request to pick up your ready orders</p></div>';
-  document.getElementById('carrierFeed').innerHTML = html;
-  document.getElementById('dashCarriers').innerHTML = html;
+  const carrierFeed = document.getElementById('carrierFeed');
+  const dashCarriers = document.getElementById('dashCarriers');
+  if (carrierFeed) carrierFeed.innerHTML = html;
+  if (dashCarriers) dashCarriers.innerHTML = html;
+  const badge = document.getElementById('carrierBadge');
+  if (badge) badge.textContent = pending.length;
 }
 window.respondRequest = async (reqId, orderId, carrierId, status) => {
   const { error } = await S.from('delivery_requests').update({ status, responded_at: new Date().toISOString() }).eq('id', reqId);
@@ -1071,6 +1091,20 @@ window.toggleTheme = () => {
 };
 function updateThemeUI(t) { document.querySelector('#themeBtn i').className = t === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon'; }
 function loadTheme() { const t = localStorage.getItem('nash-theme')||'light'; document.documentElement.setAttribute('data-theme', t); updateThemeUI(t); }
+window.deregisterVendor = async () => {
+  if (!confirm('Are you sure you want to deregister as a Vendor?\n\nYour store, menu items, and vendor dashboard will be deactivated. Your customer account remains active.')) return;
+  try {
+    const updates = { is_vendor: false };
+    if (!profile.is_carrier) updates.role = 'user';
+    const { error } = await S.from('profiles').update(updates).eq('id', user.id);
+    if (error) throw error;
+    alert('You have been deregistered as a Vendor. Redirecting to your profile...');
+    location.href = 'profile.html';
+  } catch(err) {
+    alert('Could not deregister: ' + err.message);
+  }
+};
+
 window.handleLogout = async () => { if (!confirm('Sign out?')) return; await S.auth.signOut(); location.href = 'index.html'; };
 
 // ── Helpers ───────────────────────────────────────────────────────────────────

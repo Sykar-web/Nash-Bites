@@ -395,22 +395,33 @@
   <div id="page-dashboard" class="page-content active">
     <div class="stats-grid">
       <div class="stat-card earnings">
-        <div class="stat-header"><div class="stat-icon earnings"><i class="fa-solid fa-wallet"></i></div></div>
+        <div class="stat-header">
+          <div class="stat-icon earnings"><i class="fa-solid fa-wallet"></i></div>
+          <span class="stat-trend up" id="trendEarnings" style="display:none;"><i class="fa-solid fa-arrow-up"></i> <span></span></span>
+        </div>
         <div class="stat-value" id="statEarnings">UGX 0</div>
         <div class="stat-label">Today's Earnings</div>
       </div>
       <div class="stat-card deliveries">
-        <div class="stat-header"><div class="stat-icon deliveries"><i class="fa-solid fa-check-double"></i></div></div>
+        <div class="stat-header">
+          <div class="stat-icon deliveries"><i class="fa-solid fa-check-double"></i></div>
+          <span class="stat-trend up" id="trendDeliveries" style="display:none;"><i class="fa-solid fa-arrow-up"></i> <span></span></span>
+        </div>
         <div class="stat-value" id="statDeliveries">0</div>
         <div class="stat-label">Deliveries Today</div>
       </div>
       <div class="stat-card active-order">
-        <div class="stat-header"><div class="stat-icon active-order"><i class="fa-solid fa-motorcycle"></i></div></div>
+        <div class="stat-header">
+          <div class="stat-icon active-order"><i class="fa-solid fa-motorcycle"></i></div>
+        </div>
         <div class="stat-value" id="statActive">0</div>
         <div class="stat-label">Active Delivery</div>
       </div>
       <div class="stat-card rating">
-        <div class="stat-header"><div class="stat-icon rating"><i class="fa-solid fa-star"></i></div></div>
+        <div class="stat-header">
+          <div class="stat-icon rating"><i class="fa-solid fa-star"></i></div>
+          <span class="stat-trend up" id="trendRating" style="display:none;"><i class="fa-solid fa-star"></i> <span></span></span>
+        </div>
         <div class="stat-value" id="statRating">—</div>
         <div class="stat-label">Your Rating</div>
       </div>
@@ -606,12 +617,19 @@
           </div>
           <button class="toggle-btn active" onclick="this.classList.toggle('active')"></button>
         </div>
-        <div style="padding:16px 0;">
-          <div style="display:flex; align-items:center; gap:14px; margin-bottom:12px;">
+        <div style="display:flex; align-items:center; justify-content:space-between; padding:16px 0; border-bottom:1px solid var(--border);">
+          <div style="display:flex; align-items:center; gap:14px;">
             <div style="width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:var(--danger-light);color:var(--danger);"><i class="fa-solid fa-right-from-bracket"></i></div>
             <div><h4 style="font-size:0.95rem;font-weight:600;">Sign Out</h4><p style="font-size:0.8rem;color:var(--text-muted);">Log out of your carrier account</p></div>
           </div>
           <button style="padding:10px 24px;border-radius:8px;border:2px solid var(--danger);background:transparent;color:var(--danger);font-weight:700;font-size:0.88rem;cursor:pointer;" onclick="handleLogout()">Sign Out</button>
+        </div>
+        <div style="padding:16px 0;">
+          <div style="display:flex; align-items:center; gap:14px; margin-bottom:12px;">
+            <div style="width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:var(--danger-light);color:var(--danger);"><i class="fa-solid fa-user-minus"></i></div>
+            <div><h4 style="font-size:0.95rem;font-weight:600;color:var(--danger);">Deregister as Carrier</h4><p style="font-size:0.8rem;color:var(--text-muted);">Remove your carrier role. Your customer account remains active.</p></div>
+          </div>
+          <button style="padding:10px 24px;border-radius:8px;border:2px solid var(--danger);background:var(--danger-light);color:var(--danger);font-weight:700;font-size:0.88rem;cursor:pointer;" onclick="deregisterCarrier()"><i class="fa-solid fa-triangle-exclamation"></i> Deregister as Carrier</button>
         </div>
       </div>
     </div>
@@ -871,12 +889,43 @@ async function loadNotifications() {
 // ============ UPDATE DASHBOARD STATS ============
 function updateDashStats() {
   const today = new Date().toDateString();
+  const yesterday = new Date(Date.now() - 86400000).toDateString();
+
   const todayDelivered = myHistory.filter(o => o.order_status === 'delivered' && new Date(o.updated_at).toDateString() === today);
+  const yestDelivered = myHistory.filter(o => o.order_status === 'delivered' && new Date(o.updated_at).toDateString() === yesterday);
   const todayEarnings = todayDelivered.reduce((s, o) => s + (+o.delivery_fee || 0), 0);
+  const yestEarnings = yestDelivered.reduce((s, o) => s + (+o.delivery_fee || 0), 0);
 
   document.getElementById('statEarnings').textContent = ugx(todayEarnings);
   document.getElementById('statDeliveries').textContent = todayDelivered.length;
   document.getElementById('statActive').textContent = activeOrder ? 1 : 0;
+
+  // Trend badges
+  const setTrend = (id, curr, prev) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (prev === 0 && curr === 0) { el.style.display = 'none'; return; }
+    const pct = prev === 0 ? 100 : Math.round(((curr - prev) / prev) * 100);
+    el.style.display = 'flex';
+    if (curr >= prev) {
+      el.className = 'stat-trend up';
+      el.innerHTML = `<i class="fa-solid fa-arrow-up"></i> ${Math.abs(pct)}%`;
+    } else {
+      el.className = 'stat-trend down';
+      el.innerHTML = `<i class="fa-solid fa-arrow-down"></i> ${Math.abs(pct)}%`;
+    }
+  };
+  setTrend('trendEarnings', todayEarnings, yestEarnings);
+  setTrend('trendDeliveries', todayDelivered.length, yestDelivered.length);
+
+  if (profile && profile.rating) {
+    const rTrend = document.getElementById('trendRating');
+    if (rTrend) {
+      rTrend.style.display = 'flex';
+      rTrend.className = 'stat-trend up';
+      rTrend.innerHTML = `<i class="fa-solid fa-star"></i> ${(+profile.rating).toFixed(1)}`;
+    }
+  }
 }
 
 // ============ RENDER AVAILABLE ORDERS ============
@@ -1437,6 +1486,21 @@ window.callActiveCustomer = () => {
 };
 
 window.reportIssue = () => alert('🚩 Issue reporting will be available soon.');
+
+window.deregisterCarrier = async () => {
+  if (!confirm('Are you sure you want to deregister as a Carrier?\n\nYour carrier dashboard will be deactivated. Your customer account remains active.')) return;
+  try {
+    const updates = { is_carrier: false };
+    // If user is not also a vendor, reset role to 'user'
+    if (!profile.is_vendor) updates.role = 'user';
+    const { error } = await S.from('profiles').update(updates).eq('id', user.id);
+    if (error) throw error;
+    alert('You have been deregistered as a Carrier. Redirecting to your profile...');
+    location.href = 'profile.html';
+  } catch(err) {
+    alert('Could not deregister: ' + err.message);
+  }
+};
 
 window.handleLogout = async () => {
   if (!confirm('Sign out of carrier dashboard?')) return;
