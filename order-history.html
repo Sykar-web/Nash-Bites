@@ -1,235 +1,399 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
   <title>My Orders | Nash Bites</title>
-  
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-  
   <style>
-    :root { 
-        --brand:#FF4D2D; 
-        --bg:#F8F9FB; 
-        --text:#1A1C1E; 
-        --muted:#94A3B8; 
-        --danger:#FF4D4D; 
-        --green:#27ae60; 
-        --whatsapp:#25d366; 
+    :root{
+      --primary:#FF4D2D;--primary-dark:#e63e20;--primary-light:#FFF0ED;
+      --bg:#F5F7FA;--bg-card:#FFFFFF;--bg-input:#F1F5F9;
+      --text:#0F172A;--text-secondary:#64748B;--text-muted:#94A3B8;
+      --border:#E2E8F0;--success:#22C55E;--success-light:#F0FDF4;
+      --warning:#F59E0B;--warning-light:#FFFBEB;
+      --danger:#EF4444;--danger-light:#FEF2F2;
+      --info:#3B82F6;--info-light:#EFF6FF;
+      --purple:#7C3AED;--purple-light:#F5F3FF;
+      --whatsapp:#25D366;
+      --shadow-sm:0 1px 4px rgba(0,0,0,0.06);
+      --shadow-md:0 4px 16px rgba(0,0,0,0.08);
+      --footer-h:68px;
     }
-    
-    * { box-sizing:border-box; margin:0; padding:0; font-family: 'Plus Jakarta Sans', sans-serif; }
-    body { background: var(--bg); color: var(--text); padding-bottom: 110px; }
-
-    header { 
-      background: var(--brand); color: #fff; padding: 20px; 
-      display: flex; align-items: center; position: sticky; top: 0; z-index: 1000;
-      border-radius: 0 0 25px 25px;
+    [data-theme="dark"]{
+      --bg:#0A0F1E;--bg-card:#141B2D;--bg-input:#1E2940;
+      --text:#F1F5F9;--text-secondary:#94A3B8;--text-muted:#64748B;
+      --border:#243046;--primary-light:#2A1510;
+      --success-light:#052E16;--warning-light:#451A03;
+      --danger-light:#450A0A;--info-light:#172554;--purple-light:#2E1065;
     }
-    header h1 { font-size: 1.1rem; flex-grow: 1; font-weight: 800; }
-    .back-link { color: white; text-decoration: none; font-size: 0.75rem; background: rgba(255,255,255,0.2); padding: 8px 15px; border-radius: 12px; font-weight: 700; }
+    *{margin:0;padding:0;box-sizing:border-box;font-family:'DM Sans',sans-serif;}
+    body{background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:calc(var(--footer-h) + 24px);transition:background .3s,color .3s;}
 
-    .main-content { padding: 20px; max-width: 600px; margin: 0 auto; }
-    .page-header { margin-bottom: 25px; }
-    .page-header h2 { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.5px; }
+    /* ── HEADER ── */
+    .page-header{
+      background:var(--bg-card);border-bottom:1px solid var(--border);
+      position:sticky;top:0;z-index:100;
+      padding:16px 20px;
+      display:flex;align-items:center;justify-content:space-between;
+      transition:background .3s;
+    }
+    .header-left{display:flex;align-items:center;gap:12px;}
+    .back-btn{width:36px;height:36px;border-radius:50%;background:var(--bg-input);border:1px solid var(--border);color:var(--text-secondary);display:flex;align-items:center;justify-content:center;text-decoration:none;transition:.2s;}
+    .back-btn:hover{border-color:var(--primary);color:var(--primary);}
+    .header-title{font-family:'Syne',sans-serif;font-size:1.15rem;font-weight:800;}
+    .theme-btn{width:36px;height:36px;border-radius:50%;background:var(--bg-input);border:1px solid var(--border);color:var(--text-secondary);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.9rem;transition:.2s;}
+    .theme-btn:hover{border-color:var(--primary);color:var(--primary);}
 
-    #historyContainer { display: flex; flex-direction: column; gap: 15px; }
+    /* ── CONTENT ── */
+    .content{max-width:680px;margin:0 auto;padding:20px 16px;}
+    @media(min-width:768px){.content{padding:28px 20px;}}
 
-    .card { background: #fff; border-radius: 25px; padding: 20px; border: 1px solid #EDF2F7; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
-    
-    .status-pill { padding: 6px 12px; border-radius: 10px; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; }
-    .status-pending { background: #FFF9E6; color: #D97706; }
-    .status-preparing { background: #E0F2FE; color: #0369A1; }
-    .status-out-for-delivery { background: #F0F9FF; color: #0284C7; border: 1px dashed #0284C7; }
-    .status-delivered { background: #ECFDF5; color: #059669; }
-    .status-ready { background: #EFF6FF; color: #1D4ED8; }
-    .status-picked_up { background: #F5F3FF; color: #7C3AED; border: 1px dashed #7C3AED; }
-    .status-in_transit { background: #FFF7ED; color: #EA580C; border: 1px dashed #EA580C; }
-    .status-cancelled { background: #FEF2F2; color: #DC2626; }
+    /* ── FILTER CHIPS ── */
+    .filter-bar{display:flex;gap:8px;margin-bottom:20px;overflow-x:auto;scrollbar-width:none;padding:2px;}
+    .filter-bar::-webkit-scrollbar{display:none;}
+    .chip{padding:7px 16px;border-radius:50px;border:1.5px solid var(--border);background:var(--bg-card);font-size:.8rem;font-weight:600;cursor:pointer;white-space:nowrap;transition:.2s;color:var(--text-secondary);}
+    .chip:hover{border-color:var(--primary);color:var(--primary);}
+    .chip.active{background:var(--primary);color:#fff;border-color:var(--primary);box-shadow:0 3px 10px rgba(255,77,45,.3);}
 
-    .item-mini { display: flex; align-items: center; gap: 10px; margin: 12px 0; }
-    .item-mini img { width: 45px; height: 45px; border-radius: 12px; object-fit: cover; background: #f1f1f1; }
-    .item-name { font-weight: 700; font-size: 0.85rem; display: block; }
-    .item-qty { font-size: 0.75rem; color: var(--muted); }
+    /* ── EMPTY / LOADING ── */
+    .empty-state{text-align:center;padding:60px 20px;color:var(--text-muted);}
+    .empty-state i{font-size:2.5rem;margin-bottom:14px;display:block;opacity:.35;}
+    .empty-state h3{font-size:1rem;font-weight:700;color:var(--text-secondary);margin-bottom:6px;}
+    .spinner-wrap{display:flex;justify-content:center;padding:60px;}
+    .spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin .7s linear infinite;}
+    @keyframes spin{to{transform:rotate(360deg)}}
 
-    .order-footer { background: #F8FAFC; padding: 15px; border-radius: 18px; margin-top: 10px; font-size: 0.8rem; }
-    .total-price { color: var(--brand); font-weight: 800; font-size: 1rem; }
+    /* ── ORDER LIST ITEM (expandable) ── */
+    .order-list{display:flex;flex-direction:column;gap:10px;}
+    .order-item{
+      background:var(--bg-card);border:1px solid var(--border);
+      border-radius:18px;overflow:hidden;
+      transition:border-color .2s,box-shadow .2s;
+      box-shadow:var(--shadow-sm);
+    }
+    .order-item:hover{border-color:var(--border);box-shadow:var(--shadow-md);}
+    .order-item.expanded{border-color:var(--primary);}
 
-    .btn-group { margin-top: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .wa-btn { background: var(--whatsapp); color: white; text-decoration: none; padding: 12px; border-radius: 15px; font-size: 0.75rem; font-weight: 800; text-align: center; display: flex; align-items: center; justify-content: center; gap: 5px; }
-    .cancel-btn { background: #fff; color: var(--danger); border: 1px solid #fee2e2; border-radius: 15px; padding: 12px; font-weight: 800; font-size: 0.75rem; cursor: pointer; }
+    /* Row summary (always visible) */
+    .order-row{
+      display:flex;align-items:center;gap:12px;
+      padding:14px 16px;cursor:pointer;
+      user-select:none;
+    }
+    .order-status-dot{
+      width:8px;height:8px;border-radius:50%;flex-shrink:0;
+    }
+    .dot-pending{background:var(--warning);}
+    .dot-preparing,.dot-ready{background:var(--info);}
+    .dot-out-for-delivery,.dot-picked_up,.dot-in_transit{background:var(--purple);}
+    .dot-delivered{background:var(--success);}
+    .dot-cancelled{background:var(--danger);}
 
-    /* Footer Nav */
-    .footer-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; display: flex; justify-content: space-around; padding: 15px 0 30px; box-shadow: 0 -10px 30px rgba(0,0,0,0.05); border-radius: 25px 25px 0 0; }
-    .nav-item { text-decoration: none; color: #B0B5BB; display: flex; flex-direction: column; align-items: center; font-size: 0.7rem; font-weight: 600; }
-    .nav-item i { font-size: 1.2rem; margin-bottom: 5px; }
-    .nav-item.active { color: var(--brand); }
+    .order-row-main{flex:1;min-width:0;}
+    .order-row-id{font-size:.8rem;font-weight:800;color:var(--text);margin-bottom:2px;}
+    .order-row-meta{font-size:.73rem;color:var(--text-muted);display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+    .order-row-meta span{display:flex;align-items:center;gap:3px;}
+    .order-row-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;}
+    .order-pill{
+      padding:3px 10px;border-radius:50px;font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.3px;
+    }
+    .pill-pending{background:var(--warning-light);color:#B45309;}
+    .pill-preparing,.pill-ready{background:var(--info-light);color:#1D4ED8;}
+    .pill-out-for-delivery,.pill-picked_up,.pill-in_transit{background:var(--purple-light);color:var(--purple);}
+    .pill-delivered{background:var(--success-light);color:#15803D;}
+    .pill-cancelled{background:var(--danger-light);color:#DC2626;}
+    .order-total{font-family:'Syne',sans-serif;font-size:.9rem;font-weight:800;color:var(--primary);}
+    .chevron{font-size:.75rem;color:var(--text-muted);transition:transform .25s;}
+    .order-item.expanded .chevron{transform:rotate(180deg);}
+
+    /* Expanded detail panel */
+    .order-detail{
+      max-height:0;overflow:hidden;
+      transition:max-height .35s cubic-bezier(.16,1,.3,1);
+      border-top:0 solid var(--border);
+    }
+    .order-item.expanded .order-detail{
+      max-height:800px;
+      border-top-width:1px;
+    }
+    .detail-inner{padding:16px;}
+
+    /* items list */
+    .detail-items{display:flex;flex-direction:column;gap:10px;margin-bottom:14px;}
+    .detail-item-row{display:flex;align-items:center;gap:10px;}
+    .item-img{width:42px;height:42px;border-radius:10px;object-fit:cover;background:var(--bg-input);flex-shrink:0;}
+    .item-info{flex:1;min-width:0;}
+    .item-name{font-size:.85rem;font-weight:700;margin-bottom:1px;}
+    .item-qty{font-size:.73rem;color:var(--text-muted);}
+    .item-price{font-size:.85rem;font-weight:700;color:var(--text);flex-shrink:0;}
+
+    /* info rows */
+    .detail-info{background:var(--bg-input);border-radius:12px;padding:12px;margin-bottom:12px;}
+    .info-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;font-size:.82rem;}
+    .info-row:not(:last-child){border-bottom:1px solid var(--border);}
+    .info-label{color:var(--text-muted);font-weight:500;}
+    .info-val{font-weight:700;text-align:right;max-width:60%;}
+    .info-val.brand{color:var(--primary);}
+    .info-val.green{color:var(--success);}
+    .pin-display{
+      font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;
+      letter-spacing:6px;color:var(--primary);
+    }
+
+    /* carrier card */
+    .carrier-card{
+      background:var(--success-light);border:1px solid #86EFAC;
+      border-radius:12px;padding:12px;margin-bottom:12px;
+      display:flex;align-items:center;gap:10px;
+    }
+    [data-theme="dark"] .carrier-card{background:#052E16;border-color:#166534;}
+    .carrier-avatar{width:38px;height:38px;border-radius:50%;object-fit:cover;flex-shrink:0;}
+    .carrier-info{flex:1;}
+    .carrier-name{font-size:.88rem;font-weight:700;color:#15803D;}
+    [data-theme="dark"] .carrier-name{color:#86EFAC;}
+    .carrier-vehicle{font-size:.73rem;color:#16A34A;}
+    [data-theme="dark"] .carrier-vehicle{color:#4ADE80;}
+    .carrier-call{background:#16A34A;color:#fff;border:none;border-radius:9px;padding:7px 12px;font-size:.75rem;font-weight:700;cursor:pointer;text-decoration:none;display:flex;align-items:center;gap:5px;transition:.2s;}
+    .carrier-call:hover{background:#15803D;}
+
+    /* action buttons */
+    .detail-actions{display:flex;gap:8px;margin-top:4px;}
+    .act-btn{flex:1;padding:11px;border-radius:12px;font-size:.8rem;font-weight:700;cursor:pointer;border:none;display:flex;align-items:center;justify-content:center;gap:6px;transition:.2s;font-family:inherit;}
+    .act-btn-wa{background:var(--whatsapp);color:#fff;}
+    .act-btn-wa:hover{filter:brightness(.92);}
+    .act-btn-cancel{background:var(--bg-input);color:var(--danger);border:1px solid var(--danger-light);}
+    .act-btn-cancel:hover{background:var(--danger-light);}
+    .act-btn-delete{background:var(--danger-light);color:var(--danger);}
+    .act-btn-delete:hover{background:#FECACA;}
+    .act-btn-disabled{background:var(--bg-input);color:var(--text-muted);cursor:default;opacity:.5;}
+
+    /* ── FOOTER NAV ── */
+    .footer-nav{
+      position:fixed;bottom:0;left:0;right:0;
+      background:var(--bg-card);border-top:1px solid var(--border);
+      display:flex;justify-content:space-around;
+      padding:10px 0 calc(10px + env(safe-area-inset-bottom,0px));
+      border-radius:22px 22px 0 0;
+      box-shadow:0 -6px 24px rgba(0,0,0,.06);
+      z-index:200;transition:background .3s;
+    }
+    .nav-link{text-decoration:none;color:var(--text-muted);display:flex;flex-direction:column;align-items:center;gap:3px;font-size:.67rem;font-weight:600;transition:.2s;}
+    .nav-link i{font-size:1.15rem;}
+    .nav-link.active{color:var(--primary);}
+    .nav-link:hover:not(.active){color:var(--text-secondary);}
   </style>
 </head>
-
 <body>
-<header>
-  <h1>Nash Bites</h1>
-  <a href="home.html" class="back-link">Back</a>
+
+<header class="page-header">
+  <div class="header-left">
+    <a href="home.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+    <div class="header-title">My Orders</div>
+  </div>
+  <button class="theme-btn" onclick="toggleTheme()" id="themeBtn"><i class="fa-solid fa-moon"></i></button>
 </header>
 
-<div class="main-content">
-  <div class="page-header">
-    <h2>Order History</h2>
-    <p style="color: var(--muted); font-size: 0.85rem; font-weight: 500;">Track your Muni campus deliveries.</p>
+<div class="content">
+  <div class="filter-bar" id="filterBar">
+    <button class="chip active" onclick="setFilter('all',this)">All</button>
+    <button class="chip" onclick="setFilter('pending',this)">Pending</button>
+    <button class="chip" onclick="setFilter('active',this)">Active</button>
+    <button class="chip" onclick="setFilter('delivered',this)">Delivered</button>
+    <button class="chip" onclick="setFilter('cancelled',this)">Cancelled</button>
   </div>
-
-  <div id="historyContainer">
-      <div style="text-align: center; padding: 50px;">
-          <i class="fa fa-spinner fa-spin" style="color: var(--brand);"></i>
-      </div>
+  <div id="ordersContainer">
+    <div class="spinner-wrap"><div class="spinner"></div></div>
   </div>
 </div>
 
 <nav class="footer-nav">
-  <a href="home.html" class="nav-item"><i class="fa-solid fa-house"></i><span>Menu</span></a>
-  <a href="order-history.html" class="nav-item active"><i class="fa-solid fa-receipt"></i><span>History</span></a>
-  <a href="cart.html" class="nav-item"><i class="fa-solid fa-bag-shopping"></i><span>Cart</span></a>
-  <a href="profile.html" class="nav-item"><i class="fa-solid fa-user"></i><span>Profile</span></a>
+  <a href="home.html" class="nav-link"><i class="fa-solid fa-house"></i><span>Menu</span></a>
+  <a href="order-history.html" class="nav-link active"><i class="fa-solid fa-receipt"></i><span>Orders</span></a>
+  <a href="cart.html" class="nav-link"><i class="fa-solid fa-bag-shopping"></i><span>Cart</span></a>
+  <a href="profile.html" class="nav-link"><i class="fa-solid fa-user"></i><span>Profile</span></a>
 </nav>
 
 <script type="module">
-  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+const S = createClient(
+  'https://lwpwicajcbcmzkyecnbv.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx3cHdpY2FqY2JjbXpreWVjbmJ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzNDgxNjAsImV4cCI6MjA5MTkyNDE2MH0.BF2azgoZPOmo4OP9Zo1-QNpXX-EJ23BWQx-lf3GgW68'
+);
+const SUPPORT = '256748372023';
+let userId = null, allOrders = [], currentFilter = 'all';
 
-  const supabaseUrl = 'https://lwpwicajcbcmzkyecnbv.supabase.co'
-  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx3cHdpY2FqY2JjbXpreWVjbmJ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzNDgxNjAsImV4cCI6MjA5MTkyNDE2MH0.BF2azgoZPOmo4OP9Zo1-QNpXX-EJ23BWQx-lf3GgW68'
-  const supabase = createClient(supabaseUrl, supabaseKey)
+// ── Theme ──
+function loadTheme(){const t=localStorage.getItem('nash-theme')||'light';document.documentElement.setAttribute('data-theme',t);document.querySelector('#themeBtn i').className=t==='dark'?'fa-solid fa-sun':'fa-solid fa-moon';}
+window.toggleTheme=()=>{const t=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',t);localStorage.setItem('nash-theme',t);document.querySelector('#themeBtn i').className=t==='dark'?'fa-solid fa-sun':'fa-solid fa-moon';};
 
-  const SUPPORT_PHONE = "256748372023"; 
-  let userId = null;
+// ── Init ──
+async function init(){
+  loadTheme();
+  const {data:{user}}=await S.auth.getUser();
+  if(!user){location.href='index.html';return;}
+  userId=user.id;
+  await fetchOrders();
+  S.channel('my-orders')
+    .on('postgres_changes',{event:'UPDATE',schema:'public',table:'orders'},(p)=>{
+      if(p.new.customer_id===userId||p.new.user_id===userId) fetchOrders();
+    })
+    .subscribe();
+}
 
-  async function init() {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-      userId = user.id;
-      fetchOrders();
-      // Real-time listener for status updates — works for both column names
-      supabase.channel('my-orders')
-        .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'orders' }, (payload) => {
-          if (payload.new.customer_id === userId || payload.new.user_id === userId) fetchOrders();
-        })
-        .subscribe();
-    } else {
-      location.href = "index.html";
-    }
+async function fetchOrders(){
+  const {data,error}=await S.from('orders')
+    .select('*, carrier:profiles!orders_carrier_id_fkey(full_name,phone,avatar_url,vehicle_type)')
+    .or(`customer_id.eq.${userId},user_id.eq.${userId}`)
+    .order('created_at',{ascending:false});
+  if(!error){allOrders=data||[];renderOrders();}
+  else console.error(error);
+}
+
+// ── Filter ──
+window.setFilter=(f,btn)=>{
+  currentFilter=f;
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+  btn.classList.add('active');
+  renderOrders();
+};
+
+function filterOrders(){
+  if(currentFilter==='all') return allOrders;
+  if(currentFilter==='active') return allOrders.filter(o=>['preparing','ready','picked_up','in_transit'].includes(getStatus(o)));
+  return allOrders.filter(o=>getStatus(o)===currentFilter);
+}
+
+function getStatus(o){return o.order_status||o.status||'pending';}
+function getTotalAmt(o){return Number(o.total_price||o.total_amount||o.total||0).toLocaleString();}
+
+function pillClass(s){
+  const map={pending:'pending',preparing:'preparing',ready:'ready','out-for-delivery':'out-for-delivery',picked_up:'picked_up',in_transit:'in_transit',delivered:'delivered',cancelled:'cancelled'};
+  return 'pill-'+(map[s]||'pending');
+}
+function dotClass(s){
+  const map={pending:'dot-pending',preparing:'dot-preparing',ready:'dot-preparing','out-for-delivery':'dot-in_transit',picked_up:'dot-picked_up',in_transit:'dot-in_transit',delivered:'dot-delivered',cancelled:'dot-cancelled'};
+  return map[s]||'dot-pending';
+}
+
+function renderOrders(){
+  const filtered=filterOrders();
+  const container=document.getElementById('ordersContainer');
+  if(!filtered.length){
+    container.innerHTML=`<div class="empty-state"><i class="fa-solid fa-receipt"></i><h3>No orders found</h3><p>Your orders will appear here</p></div>`;
+    return;
   }
+  container.innerHTML=`<div class="order-list">${filtered.map(o=>renderOrderItem(o)).join('')}</div>`;
+}
 
-  async function fetchOrders() {
-    // Try customer_id first (vendor-dashboard schema), fall back to user_id
-    let { data: orders, error } = await supabase
-      .from('orders')
-      .select('*, carrier:profiles!orders_carrier_id_fkey(full_name, phone, avatar_url, vehicle_type)')
-      .or(`customer_id.eq.${userId},user_id.eq.${userId}`)
-      .order('created_at', { ascending: false });
+function renderOrderItem(o){
+  const status=getStatus(o);
+  const date=new Date(o.created_at).toLocaleDateString('en-UG',{day:'numeric',month:'short'});
+  const time=new Date(o.created_at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  const items=Array.isArray(o.items)?o.items:[];
+  const carrier=o.carrier;
+  const isConfirmed=['picked_up','in_transit','delivered'].includes(status);
+  const isDeletable=['delivered','cancelled'].includes(status);
+  const isCancelable=status==='pending';
+  const isActive=['preparing','ready','picked_up','in_transit'].includes(status);
+  const shortId=o.id.slice(0,8).toUpperCase();
 
-    if (!error) renderOrders(orders);
-    else console.error('fetchOrders error:', error);
-  }
+  const statusText=status.replace(/_/g,' ');
 
-  function statusLabel(o) {
-    return o.order_status || o.status || 'pending';
-  }
+  // detail panel HTML
+  const itemsHtml=items.map(i=>`
+    <div class="detail-item-row">
+      <img class="item-img" src="${i.image_url||'https://placehold.co/42x42/F1F5F9/94A3B8?text=🍽'}" onerror="this.src='https://placehold.co/42x42/F1F5F9/94A3B8?text=🍽'">
+      <div class="item-info">
+        <div class="item-name">${esc(i.name||'Item')}</div>
+        <div class="item-qty">${i.qty||1} unit(s)</div>
+      </div>
+      <div class="item-price">UGX ${Number(i.price||0).toLocaleString()}</div>
+    </div>`).join('');
 
-  function totalAmt(o) {
-    const t = o.total_price || o.total_amount || o.total || 0;
-    return Number(t).toLocaleString();
-  }
+  const carrierHtml=isConfirmed&&carrier?`
+    <div class="carrier-card">
+      <img class="carrier-avatar" src="${carrier.avatar_url||`https://ui-avatars.com/api/?name=${encodeURIComponent(carrier.full_name||'C')}&background=22c55e&color=fff&size=80`}" onerror="this.src='https://placehold.co/38x38'">
+      <div class="carrier-info">
+        <div class="carrier-name">${carrier.full_name||'Carrier'}</div>
+        <div class="carrier-vehicle"><i class="fa-solid fa-bicycle"></i> ${carrier.vehicle_type||'On the way'}</div>
+      </div>
+      ${carrier.phone?`<a href="tel:${carrier.phone}" class="carrier-call"><i class="fa-solid fa-phone"></i> Call</a>`:''}
+    </div>`:'';
 
-  function renderOrders(orders) {
-    const container = document.getElementById("historyContainer");
-    if (!orders || !orders.length) {
-        container.innerHTML = `<div style="text-align:center; padding-top:40px; color:var(--muted);">No orders found.</div>`;
-        return;
-    }
+  const actionsHtml=`<div class="detail-actions">
+    <a href="https://wa.me/${SUPPORT}?text=Query about Order #${shortId}" class="act-btn act-btn-wa" style="text-decoration:none;"><i class="fab fa-whatsapp"></i> Support</a>
+    ${isCancelable?`<button class="act-btn act-btn-cancel" onclick="cancelOrder('${o.id}',event)"><i class="fa-solid fa-xmark"></i> Cancel</button>`:''}
+    ${isDeletable?`<button class="act-btn act-btn-delete" onclick="deleteOrder('${o.id}',event)"><i class="fa-solid fa-trash"></i> Delete</button>`:''}
+    ${isActive&&!isCancelable&&!isDeletable?`<span class="act-btn act-btn-disabled">In progress</span>`:''}
+  </div>`;
 
-    container.innerHTML = orders.map(o => {
-      const status = statusLabel(o);
-      const statusClass = `status-${status.replace(/\s+/g, '-')}`;
-      const date = new Date(o.created_at).toLocaleDateString('en-UG', {day:'numeric',month:'short',year:'numeric'});
-      const time = new Date(o.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-      const isCancelable = status === 'pending';
-      const items = Array.isArray(o.items) ? o.items : [];
-      const carrier = o.carrier;
-      const isConfirmed = ['picked_up','in_transit','delivered'].includes(status);
-
-      return `
-        <div class="card">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-            <span style="font-weight:800; font-size:0.75rem;">#${o.id.slice(0,8).toUpperCase()}</span>
-            <span class="status-pill ${statusClass}">${status.replace(/_/g,' ')}</span>
-          </div>
-          <div style="font-size:0.7rem; color:var(--muted); margin-bottom:10px;">${date} at ${time}</div>
-          
-          <div class="items-list">
-            ${items.map(i => `
-              <div class="item-mini">
-                <img src="${i.image_url || 'https://via.placeholder.com/50'}" onerror="this.src='https://via.placeholder.com/50'">
-                <div style="flex:1;">
-                    <span class="item-name">${i.name || 'Item'}</span>
-                    <span class="item-qty">${i.qty || 1} unit(s)</span>
-                </div>
-                <span style="font-weight:700; font-size:0.8rem;">UGX ${Number(i.price||0).toLocaleString()}</span>
-              </div>
-            `).join('')}
-          </div>
-
-          <div class="order-footer">
-            <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
-                <span>Deliver to:</span>
-                <span style="font-weight:700;">${o.delivery_location || o.address || '—'}</span>
-            </div>
-            ${o.delivery_pin ? `<div style="display:flex; justify-content:space-between; margin-bottom:5px;">
-                <span>Delivery PIN:</span>
-                <span style="font-weight:800; color:var(--brand); letter-spacing:2px;">${o.delivery_pin}</span>
-            </div>` : ''}
-            <div style="display:flex; justify-content:space-between; padding-top:10px; border-top:1px solid #eee;">
-                <span>Total Paid:</span>
-                <span class="total-price">UGX ${totalAmt(o)}</span>
-            </div>
-          </div>
-
-          ${isConfirmed && carrier ? `
-          <div style="background:#F0FDF4; border:1px solid #86EFAC; border-radius:15px; padding:12px; margin-top:10px;">
-            <div style="font-size:0.7rem; font-weight:800; color:#16A34A; margin-bottom:8px; text-transform:uppercase; letter-spacing:0.5px;"><i class="fa-solid fa-bicycle"></i> Carrier Assigned</div>
-            <div style="display:flex; align-items:center; gap:10px;">
-              <img src="${carrier.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(carrier.full_name||'C')}&background=22c55e&color=fff&size=80`}" 
-                   style="width:38px;height:38px;border-radius:10px;object-fit:cover;" onerror="this.src='https://via.placeholder.com/38'">
-              <div style="flex:1;">
-                <div style="font-weight:800; font-size:0.85rem;">${carrier.full_name || 'Carrier'}</div>
-                <div style="font-size:0.72rem; color:#16A34A;">${carrier.vehicle_type || 'On the way'}</div>
-              </div>
-              ${carrier.phone ? `<a href="tel:${carrier.phone}" style="background:#16A34A;color:white;border:none;border-radius:10px;padding:8px 12px;font-size:0.75rem;font-weight:700;text-decoration:none;"><i class="fa-solid fa-phone"></i> Call</a>` : ''}
-            </div>
-          </div>` : ''}
-
-          <div class="btn-group">
-            <a href="https://wa.me/${SUPPORT_PHONE}?text=Query regarding Order #${o.id.slice(0,8).toUpperCase()}" class="wa-btn">
-                <i class="fab fa-whatsapp"></i> Chat Support
-            </a>
-            ${isCancelable ? `<button class="cancel-btn" onclick="cancelOrder('${o.id}')">Cancel Order</button>` : `<button class="cancel-btn" style="opacity:0.35; cursor:default;" disabled>${status === 'delivered' ? '✓ Delivered' : status === 'cancelled' ? 'Cancelled' : 'History'}</button>`}
-          </div>
+  return `
+  <div class="order-item" id="oi-${o.id}">
+    <div class="order-row" onclick="toggleOrder('${o.id}')">
+      <div class="order-status-dot ${dotClass(status)}"></div>
+      <div class="order-row-main">
+        <div class="order-row-id">#${shortId}</div>
+        <div class="order-row-meta">
+          <span><i class="fa-regular fa-calendar"></i>${date}</span>
+          <span><i class="fa-regular fa-clock"></i>${time}</span>
+          <span><i class="fa-solid fa-utensils"></i>${items.length} item${items.length!==1?'s':''}</span>
         </div>
-      `;
-    }).join('');
+      </div>
+      <div class="order-row-right">
+        <span class="order-pill ${pillClass(status)}">${statusText}</span>
+        <span class="order-total">UGX ${getTotalAmt(o)}</span>
+      </div>
+      <i class="fa-solid fa-chevron-down chevron"></i>
+    </div>
+    <div class="order-detail">
+      <div class="detail-inner">
+        ${items.length?`<div class="detail-items">${itemsHtml}</div>`:''}
+        <div class="detail-info">
+          <div class="info-row"><span class="info-label">Deliver to</span><span class="info-val">${esc(o.delivery_location||o.address||'—')}</span></div>
+          ${o.delivery_pin?`<div class="info-row"><span class="info-label">Delivery PIN</span><span class="info-val"><span class="pin-display">${o.delivery_pin}</span></span></div>`:''}
+          <div class="info-row"><span class="info-label">Total Paid</span><span class="info-val brand">UGX ${getTotalAmt(o)}</span></div>
+          ${o.special_note?`<div class="info-row"><span class="info-label">Notes</span><span class="info-val">${esc(o.special_note)}</span></div>`:''}
+        </div>
+        ${carrierHtml}
+        ${actionsHtml}
+      </div>
+    </div>
+  </div>`;
+}
+
+window.toggleOrder=(id)=>{
+  const el=document.getElementById(`oi-${id}`);
+  const wasExpanded=el.classList.contains('expanded');
+  document.querySelectorAll('.order-item.expanded').forEach(e=>e.classList.remove('expanded'));
+  if(!wasExpanded) el.classList.add('expanded');
+};
+
+window.cancelOrder=async(id,e)=>{
+  e.stopPropagation();
+  if(!confirm("Cancel this order?")) return;
+  const {error}=await S.from('orders').update({order_status:'cancelled',status:'cancelled'}).eq('id',id);
+  if(error) alert('Could not cancel: '+error.message);
+  else await fetchOrders();
+};
+
+window.deleteOrder=async(id,e)=>{
+  e.stopPropagation();
+  if(!confirm("Delete this order from your history? This can't be undone.")) return;
+  // Soft delete — we use a deleted_by_customer flag if available, otherwise hard delete
+  const {error}=await S.from('orders').delete().eq('id',id);
+  if(error){
+    // fallback: mark deleted
+    await S.from('orders').update({customer_deleted:true}).eq('id',id);
   }
+  allOrders=allOrders.filter(o=>o.id!==id);
+  renderOrders();
+};
 
-  window.cancelOrder = async (id) => {
-    if (confirm("Cancel this order? This can only be done while status is 'Pending'.")) {
-      const { error } = await supabase.from('orders')
-        .update({ order_status: 'cancelled', status: 'cancelled' })
-        .eq('id', id);
-      if (error) alert("Could not cancel order: " + error.message);
-      else fetchOrders();
-    }
-  };
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
-  init();
+init();
 </script>
 </body>
 </html>

@@ -6,6 +6,7 @@
   <title>Nash Bites | Vendor Dashboard</title>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Poppins:wght@700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <style>
     :root{--primary:#FF4D2D;--primary-dark:#e63e20;--primary-light:#FFF0ED;--primary-shadow:rgba(255,77,45,0.35);--bg:#F8FAFC;--bg-card:#FFF;--bg-input:#F1F5F9;--text:#0F172A;--text-sec:#64748B;--text-secondary:#64748B;--text-muted:#94A3B8;--border:#E2E8F0;--border-hover:#CBD5E1;--success:#22C55E;--success-light:#F0FDF4;--success-dark:#15803D;--warning:#F59E0B;--warning-light:#FFFBEB;--warning-dark:#B45309;--danger:#EF4444;--danger-light:#FEF2F2;--info:#3B82F6;--info-light:#EFF6FF;--purple:#8B5CF6;--purple-light:#F5F3FF;--radius:16px;--radius-sm:12px;--radius-xs:8px;--shadow-sm:0 1px 2px rgba(0,0,0,.05);--shadow-md:0 4px 6px -1px rgba(0,0,0,.1);--shadow-lg:0 10px 15px -3px rgba(0,0,0,.1);--shadow-xl:0 20px 25px -5px rgba(0,0,0,.1);--sidebar-w:270px;--topbar-h:70px}
     [data-theme="dark"]{--bg:#0B1121;--bg-card:#1A2332;--bg-input:#243044;--text:#F1F5F9;--text-sec:#94A3B8;--text-secondary:#94A3B8;--text-muted:#64748B;--border:#2D3A4A;--border-hover:#3D4A5A;--primary-light:#2D1510;--success-light:#052E16;--warning-light:#451A03;--danger-light:#450A0A;--info-light:#1E3A5F;--purple-light:#2E1065}
@@ -398,7 +399,16 @@
             <div class="form-group"><label class="form-label">Operating Hours</label><div class="form-wrap"><i class="fa-solid fa-clock fi"></i><input class="f-input" id="setHours" placeholder="08:00-22:00"></div></div>
           </div>
           <div class="form-group"><label class="form-label">Kitchen Location</label><div class="form-wrap"><i class="fa-solid fa-location-dot fi"></i><input class="f-input" id="setLocation" placeholder="Block, Room"></div></div>
-          <div class="form-group"><label class="form-label">Store Description</label><textarea class="f-textarea" id="setDesc" placeholder="Describe your store..."></textarea></div>
+          
+        <!-- Business Location Map -->
+        <div class="form-group" id="locationMapWrap">
+          <label class="form-label">Business Location Map</label>
+          <div id="vendorLocationMap" style="width:100%;height:220px;border-radius:12px;overflow:hidden;border:2px solid var(--border);margin-top:6px;z-index:1;position:relative;"></div>
+          <p style="font-size:.73rem;color:var(--text-muted);margin-top:5px;display:flex;align-items:center;gap:5px;"><i class="fa-solid fa-info-circle" style="color:var(--primary);"></i> Drag the pin to your exact business/kitchen location</p>
+          <input type="hidden" id="vendorLat" value="">
+          <input type="hidden" id="vendorLng" value="">
+        </div>
+        <div class="form-group"><label class="form-label">Store Description</label><textarea class="f-textarea" id="setDesc" placeholder="Describe your store..."></textarea></div>
           <button type="submit" class="save-btn" id="saveStoreBtn"><span class="spinner"></span><span class="btn-lbl"><i class="fa-solid fa-check"></i> Save Settings</span></button>
           <div class="form-msg success" id="storeSuccess"><i class="fa-solid fa-circle-check"></i><span></span></div>
           <div class="form-msg error" id="storeError"><i class="fa-solid fa-circle-exclamation"></i><span></span></div>
@@ -1124,6 +1134,29 @@ document.addEventListener('keydown', e => {
 });
 
 document.addEventListener('DOMContentLoaded', () => { init(); });
+</script>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+// Vendor location map
+let vendorMap, vendorMarker;
+function initVendorMap(){
+  if(vendorMap) return;
+  const center=[0.3476,32.5825]; // Uganda center
+  vendorMap=L.map('vendorLocationMap').setView(center,13);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap',maxZoom:19}).addTo(vendorMap);
+  const icon=L.divIcon({html:'<div style="width:28px;height:28px;background:#FF4D2D;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:3px solid #fff;box-shadow:0 3px 10px rgba(0,0,0,.3)"></div>',className:'',iconAnchor:[14,28],iconSize:[28,28]});
+  vendorMarker=L.marker(center,{draggable:true,icon}).addTo(vendorMap);
+  function updateCoords(ll){document.getElementById('vendorLat').value=ll.lat;document.getElementById('vendorLng').value=ll.lng;}
+  updateCoords({lat:center[0],lng:center[1]});
+  vendorMarker.on('dragend',()=>updateCoords(vendorMarker.getLatLng()));
+  vendorMap.on('click',e=>{vendorMarker.setLatLng(e.latlng);updateCoords(e.latlng);});
+  // Try geolocation
+  if(navigator.geolocation) navigator.geolocation.getCurrentPosition(p=>{const ll=[p.coords.latitude,p.coords.longitude];vendorMap.setView(ll,17);vendorMarker.setLatLng(ll);updateCoords({lat:ll[0],lng:ll[1]});});
+}
+// Initialize map when settings page is shown
+const _origShowPage=window.showPage;
+window.showPage=function(p){if(_origShowPage) _origShowPage(p);if(p==='settings'){setTimeout(()=>{initVendorMap();if(vendorMap) vendorMap.invalidateSize();},200);}};
 </script>
 </body>
 </html>
