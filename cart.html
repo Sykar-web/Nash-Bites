@@ -4,139 +4,202 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
   <title>Nash Bites | Cart</title>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
-    :root{--primary:#FF4D2D;--primary-dark:#e63e20;--primary-light:#FFF0ED;--primary-shadow:rgba(255,77,45,.3);--bg:#F5F7FA;--bg-card:#FFFFFF;--bg-input:#F1F5F9;--text:#0F172A;--text-secondary:#64748B;--text-muted:#94A3B8;--border:#E2E8F0;--success:#22C55E;--success-light:#F0FDF4;--danger:#EF4444;--danger-light:#FEF2F2;--info:#3B82F6;--info-light:#EFF6FF;--shadow-sm:0 2px 8px rgba(0,0,0,.06);--shadow-md:0 6px 20px rgba(0,0,0,.09);--footer-h:68px;}
-    [data-theme="dark"]{--bg:#0A0F1E;--bg-card:#141B2D;--bg-input:#1E2940;--text:#F1F5F9;--text-secondary:#94A3B8;--text-muted:#64748B;--border:#243046;--primary-light:#2A1510;--success-light:#052E16;--danger-light:#450A0A;--info-light:#172554;}
-    *{margin:0;padding:0;box-sizing:border-box;font-family:'DM Sans',sans-serif;}
-    body{background:var(--bg);color:var(--text);overflow-x:hidden;padding-bottom:calc(var(--footer-h)+100px);transition:background .3s,color .3s;}
-    
-    .top-header{background:var(--primary);padding:16px 20px 28px;border-radius:0 0 24px 24px;}
-    .header-row{display:flex;align-items:center;justify-content:space-between;}
-    .header-back{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.2);border:none;color:#fff;font-size:.95rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s;}
-    .header-back:hover{background:rgba(255,255,255,.35);}
-    .header-title{font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:800;color:#fff;}
-    .header-right{display:flex;align-items:center;gap:8px;}
-    .header-theme{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.2);border:none;color:#fff;font-size:.85rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s;}
-    .clear-btn{background:rgba(255,255,255,.2);border:none;color:#fff;font-size:.72rem;font-weight:700;padding:6px 13px;border-radius:20px;cursor:pointer;transition:.2s;}
-    .clear-btn:hover{background:rgba(255,255,255,.35);}
+    :root{
+      --p:#FF4D2D;--pd:#e63e20;--pl:#FFF0ED;--ps:rgba(255,77,45,.25);
+      --bg:#F2F4F8;--card:#fff;--inp:#EEF1F7;
+      --tx:#0D1321;--t2:#5A6A85;--tm:#9DADC4;--br:#E4EAF4;
+      --ok:#22C55E;--ok2:#F0FDF4;--ng:#EF4444;--ng2:#FEF2F2;
+      --info:#3B82F6;--in2:#EFF6FF;
+      --sh:0 2px 12px rgba(13,19,33,.08);--shm:0 8px 28px rgba(13,19,33,.12);
+      --fh:70px;
+    }
+    [data-theme="dark"]{
+      --bg:#080D1A;--card:#111827;--inp:#1A2540;
+      --tx:#F1F5F9;--t2:#8DA0BC;--tm:#4A6080;--br:#1E2E48;
+      --pl:#2A1510;--ok2:#052E16;--ng2:#450A0A;--in2:#172554;
+    }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--tx);overflow-x:hidden;padding-bottom:calc(var(--fh)+100px);transition:background .3s,color .3s;}
 
-    .section-label{padding:18px 16px 10px;display:flex;align-items:center;justify-content:space-between;}
-    .section-label h2{font-family:'Syne',sans-serif;font-size:.95rem;font-weight:800;}
-    .item-count{font-size:.76rem;font-weight:600;color:var(--text-muted);}
+    /* ── HEADER ── */
+    .hdr{background:var(--card);border-bottom:1px solid var(--br);position:sticky;top:0;z-index:200;padding:0 18px;height:60px;display:flex;align-items:center;justify-content:space-between;transition:background .3s;box-shadow:var(--sh);}
+    .hdr-left{display:flex;align-items:center;gap:10px;}
+    .back-btn{width:36px;height:36px;border-radius:50%;background:var(--inp);border:1px solid var(--br);color:var(--t2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.85rem;transition:.2s;}
+    .back-btn:hover{border-color:var(--p);color:var(--p);}
+    .hdr-title{font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:800;color:var(--tx);}
+    .hdr-right{display:flex;gap:8px;align-items:center;}
+    .icon-btn{width:36px;height:36px;border-radius:50%;background:var(--inp);border:1px solid var(--br);color:var(--t2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.82rem;transition:.2s;}
+    .icon-btn:hover{border-color:var(--p);color:var(--p);}
+    .clear-pill{background:var(--ng2);color:var(--ng);border:none;font-size:.72rem;font-weight:700;padding:6px 14px;border-radius:20px;cursor:pointer;transition:.2s;font-family:inherit;}
+    .clear-pill:hover{background:var(--ng);color:#fff;}
 
+    /* ── SECTION LABEL ── */
+    .sec-label{padding:18px 18px 10px;display:flex;align-items:center;justify-content:space-between;}
+    .sec-label h2{font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:800;}
+    .sec-count{font-size:.75rem;font-weight:600;color:var(--tm);background:var(--inp);padding:3px 10px;border-radius:20px;}
+
+    /* ── CART ITEMS ── */
     .cart-list{padding:0 16px;display:flex;flex-direction:column;gap:10px;}
-    @media(min-width:640px){.cart-list{padding:0 20px;}}
-    .cart-item{background:var(--bg-card);border-radius:18px;border:1px solid var(--border);box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:12px;padding:13px;animation:fadeUp .3s ease both;transition:opacity .3s,transform .3s,border-color .2s;}
-    .cart-item:hover{border-color:var(--primary);}
-    .cart-item.removing{opacity:0;transform:translateX(24px);}
-    @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-    .item-img{width:66px;height:66px;border-radius:14px;flex-shrink:0;overflow:hidden;background:var(--primary-light);}
-    .item-img img{width:100%;height:100%;object-fit:cover;display:block;}
-    .item-img-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:1.8rem;}
-    .item-details{flex:1;min-width:0;}
-    .item-vendor{font-size:.58rem;font-weight:800;color:var(--primary);text-transform:uppercase;letter-spacing:.4px;margin-bottom:2px;}
-    .item-name{font-size:.88rem;font-weight:700;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px;}
-    .item-unit-price{font-size:.73rem;color:var(--text-muted);font-weight:600;}
-    .item-right{display:flex;flex-direction:column;align-items:flex-end;gap:9px;flex-shrink:0;}
-    .item-subtotal{font-size:.92rem;font-weight:800;}
-    .qty-control{display:flex;align-items:center;background:var(--bg-input);border-radius:11px;overflow:hidden;border:1.5px solid var(--border);}
-    .qty-btn{width:30px;height:30px;border:none;background:transparent;color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s;}
-    .qty-btn:hover{background:var(--border);}
-    .qty-num{min-width:26px;text-align:center;font-size:.86rem;font-weight:800;}
+    .cart-item{background:var(--card);border-radius:20px;border:1px solid var(--br);box-shadow:var(--sh);display:flex;align-items:center;gap:12px;padding:13px 14px;animation:fadeUp .3s ease both;transition:opacity .3s,transform .3s,border-color .2s;}
+    .cart-item:hover{border-color:var(--p);}
+    .cart-item.removing{opacity:0;transform:translateX(30px);}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+    .ci-img{width:68px;height:68px;border-radius:16px;flex-shrink:0;overflow:hidden;background:var(--pl);}
+    .ci-img img{width:100%;height:100%;object-fit:cover;}
+    .ci-img-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:1.9rem;}
+    .ci-info{flex:1;min-width:0;}
+    .ci-vendor{font-size:.6rem;font-weight:800;color:var(--p);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;}
+    .ci-name{font-size:.9rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px;}
+    .ci-unit{font-size:.73rem;color:var(--tm);font-weight:500;}
+    .ci-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex-shrink:0;}
+    .ci-sub{font-size:.95rem;font-weight:800;color:var(--tx);}
+    .qty-ctl{display:flex;align-items:center;gap:1px;background:var(--inp);border-radius:12px;overflow:hidden;border:1.5px solid var(--br);}
+    .qty-btn{width:32px;height:32px;border:none;background:transparent;color:var(--tx);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s;}
+    .qty-btn:hover{background:var(--br);}
+    .qty-n{min-width:28px;text-align:center;font-size:.88rem;font-weight:800;}
 
-    .summary-card{margin:14px 16px 0;background:var(--bg-card);border-radius:20px;border:1px solid var(--border);box-shadow:var(--shadow-sm);overflow:hidden;}
-    @media(min-width:640px){.summary-card{margin:14px 20px 0;}}
-    .summary-head{padding:13px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:9px;}
-    .summary-icon{width:32px;height:32px;border-radius:10px;background:var(--info-light);display:flex;align-items:center;justify-content:center;color:var(--info);font-size:.82rem;}
-    .summary-head h3{font-size:.88rem;font-weight:800;}
-    .summary-body{padding:13px 16px;}
-    .sum-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;font-size:.85rem;}
-    .sum-row .lbl{color:var(--text-muted);font-weight:600;}
-    .sum-row .val{font-weight:700;}
-    .sum-divider{height:1px;background:var(--border);margin:9px 0;}
-    .sum-total{display:flex;justify-content:space-between;align-items:center;padding-top:3px;}
-    .sum-total .lbl{font-size:.95rem;font-weight:800;}
-    .sum-total .val{font-family:'Syne',sans-serif;font-size:1.15rem;font-weight:800;color:var(--primary);}
+    /* ── SUMMARY CARD ── */
+    .summary-card{margin:14px 16px 0;background:var(--card);border-radius:20px;border:1px solid var(--br);box-shadow:var(--sh);overflow:hidden;}
+    .sum-hd{padding:14px 18px;border-bottom:1px solid var(--br);display:flex;align-items:center;gap:10px;}
+    .sum-ico{width:34px;height:34px;border-radius:10px;background:var(--in2);display:flex;align-items:center;justify-content:center;color:var(--info);font-size:.85rem;}
+    .sum-hd h3{font-family:'Outfit',sans-serif;font-size:.9rem;font-weight:800;}
+    .sum-body{padding:14px 18px;}
+    .sr{display:flex;justify-content:space-between;align-items:center;padding:5px 0;font-size:.84rem;}
+    .sr .lbl{color:var(--tm);font-weight:600;}
+    .sr .val{font-weight:700;}
+    .s-div{height:1px;background:var(--br);margin:10px 0;}
+    .sum-total{display:flex;justify-content:space-between;align-items:center;padding-top:4px;}
+    .sum-total .lbl{font-family:'Outfit',sans-serif;font-size:.98rem;font-weight:800;}
+    .sum-total .val{font-family:'Outfit',sans-serif;font-size:1.18rem;font-weight:900;color:var(--p);}
 
-    .empty-cart{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:64px 28px;text-align:center;}
-    .empty-icon{width:82px;height:82px;border-radius:24px;background:var(--primary-light);display:flex;align-items:center;justify-content:center;font-size:2.5rem;margin-bottom:18px;}
-    .empty-cart h2{font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:800;margin-bottom:7px;}
-    .empty-cart p{font-size:.86rem;color:var(--text-muted);margin-bottom:22px;}
-    .browse-btn{background:var(--primary);color:#fff;border:none;padding:13px 28px;border-radius:16px;font-weight:700;font-size:.9rem;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:7px;transition:.2s;font-family:inherit;}
-    .browse-btn:hover{background:var(--primary-dark);transform:translateY(-1px);}
+    /* ── SUGGESTIONS ── */
+    .suggest-wrap{padding:20px 0 0;}
+    .suggest-hd{padding:0 18px 12px;display:flex;align-items:center;justify-content:space-between;}
+    .suggest-hd h2{font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:800;}
+    .suggest-hd a{font-size:.78rem;font-weight:700;color:var(--p);text-decoration:none;}
+    .suggest-scroll{display:flex;gap:12px;padding:4px 18px 4px;overflow-x:auto;scrollbar-width:none;}
+    .suggest-scroll::-webkit-scrollbar{display:none;}
+    .sug-card{flex-shrink:0;width:150px;background:var(--card);border-radius:18px;border:1px solid var(--br);overflow:hidden;box-shadow:var(--sh);cursor:pointer;transition:.25s;}
+    .sug-card:hover{transform:translateY(-4px);box-shadow:var(--shm);border-color:var(--p);}
+    .sug-img{width:100%;height:96px;overflow:hidden;background:var(--pl);position:relative;}
+    .sug-img img{width:100%;height:100%;object-fit:cover;transition:transform .35s;}
+    .sug-card:hover .sug-img img{transform:scale(1.07);}
+    .sug-img-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2.2rem;}
+    .sug-body{padding:9px 10px 11px;}
+    .sug-name{font-size:.76rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:6px;}
+    .sug-footer{display:flex;align-items:center;justify-content:space-between;}
+    .sug-price{font-size:.7rem;font-weight:700;color:var(--p);}
+    .sug-add{width:26px;height:26px;border-radius:8px;background:var(--p);color:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.7rem;transition:.2s;}
+    .sug-add:hover{background:var(--pd);}
+    .sug-add.added{background:var(--ok);}
 
-    .proceed-bar{position:fixed;bottom:var(--footer-h);left:0;right:0;padding:0 16px 12px;background:linear-gradient(to top,var(--bg) 60%,transparent);z-index:500;}
-    .proceed-btn{width:100%;padding:16px;border:none;background:var(--primary);color:#fff;border-radius:18px;font-weight:800;font-size:.97rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;box-shadow:0 7px 22px var(--primary-shadow);transition:.25s;font-family:inherit;}
-    .proceed-btn:hover{background:var(--primary-dark);transform:translateY(-2px);}
+    /* ── EMPTY STATE ── */
+    .empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:72px 28px;text-align:center;}
+    .empty-icon{width:90px;height:90px;border-radius:28px;background:var(--pl);display:flex;align-items:center;justify-content:center;font-size:2.8rem;margin-bottom:20px;}
+    .empty-state h2{font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:800;margin-bottom:8px;}
+    .empty-state p{font-size:.86rem;color:var(--tm);margin-bottom:24px;}
+    .browse-btn{background:var(--p);color:#fff;border:none;padding:14px 30px;border-radius:16px;font-weight:700;font-size:.9rem;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:.2s;font-family:inherit;}
+    .browse-btn:hover{background:var(--pd);transform:translateY(-2px);}
 
-    .footer-nav{position:fixed;bottom:0;left:0;right:0;background:var(--bg-card);border-top:1px solid var(--border);display:flex;justify-content:space-around;padding:10px 0 calc(10px + env(safe-area-inset-bottom,0px));border-radius:22px 22px 0 0;z-index:200;transition:background .3s;}
-    .nav-link{text-decoration:none;color:var(--text-muted);display:flex;flex-direction:column;align-items:center;gap:3px;font-size:.67rem;font-weight:600;transition:.2s;}
-    .nav-link i{font-size:1.15rem;}
-    .nav-link.active{color:var(--primary);}
+    /* ── PROCEED BAR ── */
+    .proceed-bar{position:fixed;bottom:var(--fh);left:0;right:0;padding:10px 16px 12px;background:linear-gradient(to top,var(--bg) 65%,transparent);z-index:300;}
+    .proceed-btn{width:100%;padding:16px;border:none;background:var(--p);color:#fff;border-radius:18px;font-family:'Outfit',sans-serif;font-weight:800;font-size:.97rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;box-shadow:0 8px 24px var(--ps);transition:.25s;}
+    .proceed-btn:hover{background:var(--pd);transform:translateY(-2px);}
 
-    .toast{position:fixed;bottom:calc(var(--footer-h)+16px);left:50%;transform:translateX(-50%) translateY(20px);background:var(--text);color:var(--bg-card);padding:11px 20px;border-radius:50px;font-size:.81rem;font-weight:700;white-space:nowrap;z-index:5000;opacity:0;transition:.3s;pointer-events:none;box-shadow:var(--shadow-md);display:flex;align-items:center;gap:7px;}
+    /* ── FOOTER NAV ── */
+    .fnav{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--br);display:flex;justify-content:space-around;padding:8px 0 calc(8px + env(safe-area-inset-bottom,0px));border-radius:22px 22px 0 0;z-index:200;transition:background .3s;box-shadow:0 -2px 12px rgba(13,19,33,.06);}
+    .fnav-lnk{text-decoration:none;color:var(--tm);display:flex;flex-direction:column;align-items:center;gap:3px;font-size:.65rem;font-weight:600;transition:.2s;padding:2px 12px;}
+    .fnav-lnk i{font-size:1.18rem;}
+    .fnav-lnk.active{color:var(--p);}
+    .fnav-lnk.active i{transform:scale(1.1);}
+
+    /* ── TOAST ── */
+    .toast{position:fixed;bottom:calc(var(--fh)+16px);left:50%;transform:translateX(-50%) translateY(18px);background:var(--tx);color:var(--card);padding:11px 22px;border-radius:50px;font-size:.82rem;font-weight:700;white-space:nowrap;z-index:5000;opacity:0;transition:.28s;pointer-events:none;box-shadow:var(--shm);display:flex;align-items:center;gap:8px;}
     .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
   </style>
 </head>
 <body>
-<div class="top-header">
-  <div class="header-row">
-    <button class="header-back" onclick="history.back()"><i class="fa-solid fa-arrow-left"></i></button>
-    <span class="header-title">My Cart</span>
-    <div class="header-right">
-      <button class="header-theme" onclick="toggleTheme()" id="themeBtn"><i class="fa-solid fa-moon"></i></button>
-      <button class="clear-btn" id="clearBtn" onclick="clearCart()" style="display:none">Clear all</button>
-      <span id="clearPh" style="width:56px"></span>
-    </div>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-left">
+    <button class="back-btn" onclick="history.back()"><i class="fa-solid fa-arrow-left"></i></button>
+    <span class="hdr-title">My Cart</span>
+  </div>
+  <div class="hdr-right">
+    <button class="icon-btn" onclick="toggleTheme()" id="themeBtn"><i class="fa-solid fa-moon"></i></button>
+    <button class="clear-pill" id="clearBtn" onclick="clearCart()" style="display:none">Clear all</button>
   </div>
 </div>
 
-<div class="section-label" id="cartLabel" style="display:none">
-  <h2>Your Items</h2><span class="item-count" id="itemCountLabel"></span>
+<!-- CART ITEMS -->
+<div class="sec-label" id="cartLabel" style="display:none">
+  <h2>Your Items</h2><span class="sec-count" id="itemCountLabel"></span>
 </div>
 <div class="cart-list" id="cartList"></div>
 
+<!-- ORDER SUMMARY -->
 <div class="summary-card" id="summaryCard" style="display:none">
-  <div class="summary-head"><div class="summary-icon"><i class="fa-solid fa-receipt"></i></div><h3>Order Summary</h3></div>
-  <div class="summary-body">
+  <div class="sum-hd">
+    <div class="sum-ico"><i class="fa-solid fa-receipt"></i></div>
+    <h3>Order Summary</h3>
+  </div>
+  <div class="sum-body">
     <div id="summaryRows"></div>
-    <div class="sum-divider"></div>
-    <div class="sum-row"><span class="lbl">Subtotal</span><span class="val" id="subtotalVal">UGX 0</span></div>
-    <div class="sum-row"><span class="lbl">Delivery fee</span><span class="val" style="color:var(--success)">Calculated at checkout</span></div>
-    <div class="sum-divider"></div>
+    <div class="s-div"></div>
+    <div class="sr"><span class="lbl">Subtotal</span><span class="val" id="subtotalVal">UGX 0</span></div>
+    <div class="sr"><span class="lbl">Delivery fee</span><span class="val" style="color:var(--ok)">Calculated at checkout</span></div>
+    <div class="s-div"></div>
     <div class="sum-total"><span class="lbl">Total</span><span class="val" id="totalVal">UGX 0</span></div>
   </div>
 </div>
 
-<div class="empty-cart" id="emptyState" style="display:none">
+<!-- MEAL SUGGESTIONS -->
+<div class="suggest-wrap" id="suggestSection" style="display:none">
+  <div class="suggest-hd">
+    <h2>🍽 You might also like</h2>
+    <a href="home.html">See all</a>
+  </div>
+  <div class="suggest-scroll" id="suggestList"></div>
+</div>
+
+<!-- EMPTY STATE -->
+<div class="empty-state" id="emptyState" style="display:none">
   <div class="empty-icon">🛒</div>
   <h2>Your cart is empty</h2>
   <p>Browse the menu and add something delicious!</p>
   <a href="home.html" class="browse-btn"><i class="fa-solid fa-utensils"></i> Browse Menu</a>
 </div>
 
+<!-- PROCEED BAR -->
 <div class="proceed-bar" id="proceedBar" style="display:none">
   <button class="proceed-btn" onclick="location.href='checkout.html'">
-    Proceed to Checkout <i class="fa-solid fa-arrow-right"></i>
+    <i class="fa-solid fa-arrow-right"></i> Proceed to Checkout
   </button>
 </div>
 
-<nav class="footer-nav">
-  <a href="home.html" class="nav-link"><i class="fa-solid fa-house"></i><span>Menu</span></a>
-  <a href="order-history.html" class="nav-link"><i class="fa-solid fa-receipt"></i><span>Orders</span></a>
-  <a href="cart.html" class="nav-link active"><i class="fa-solid fa-bag-shopping"></i><span>Cart</span></a>
-  <a href="profile.html" class="nav-link"><i class="fa-solid fa-user"></i><span>Profile</span></a>
+<!-- FOOTER NAV -->
+<nav class="fnav">
+  <a href="home.html" class="fnav-lnk"><i class="fa-solid fa-house"></i><span>Menu</span></a>
+  <a href="order-history.html" class="fnav-lnk"><i class="fa-solid fa-receipt"></i><span>Orders</span></a>
+  <a href="cart.html" class="fnav-lnk active"><i class="fa-solid fa-bag-shopping"></i><span>Cart</span></a>
+  <a href="profile.html" class="fnav-lnk"><i class="fa-solid fa-user"></i><span>Profile</span></a>
 </nav>
 
-<div class="toast" id="toast"><i class="fa-solid fa-circle-check" style="color:var(--success)"></i><span id="toastMsg"></span></div>
+<div class="toast" id="toast"><i class="fa-solid fa-circle-check" style="color:var(--ok)"></i><span id="toastMsg"></span></div>
 
 <script type="module">
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-const supabase = createClient('https://lwpwicajcbcmzkyecnbv.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx3cHdpY2FqY2JjbXpreWVjbmJ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzNDgxNjAsImV4cCI6MjA5MTkyNDE2MH0.BF2azgoZPOmo4OP9Zo1-QNpXX-EJ23BWQx-lf3GgW68');
-let mealDetails={};
+const supabase = createClient(
+  'https://lwpwicajcbcmzkyecnbv.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx3cHdpY2FqY2JjbXpreWVjbmJ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzNDgxNjAsImV4cCI6MjA5MTkyNDE2MH0.BF2azgoZPOmo4OP9Zo1-QNpXX-EJ23BWQx-lf3GgW68'
+);
+let mealDetails = {}, suggestMeals = [];
 
+// Theme
 function loadTheme(){const t=localStorage.getItem('nash-theme')||'light';document.documentElement.setAttribute('data-theme',t);document.querySelector('#themeBtn i').className=t==='dark'?'fa-solid fa-sun':'fa-solid fa-moon';}
 window.toggleTheme=()=>{const t=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',t);localStorage.setItem('nash-theme',t);document.querySelector('#themeBtn i').className=t==='dark'?'fa-solid fa-sun':'fa-solid fa-moon';};
 
@@ -144,13 +207,63 @@ async function init(){
   loadTheme();
   const {data:{user}}=await supabase.auth.getUser();
   if(!user){location.href='index.html';return;}
-  await hydrateMeals();renderCart();
+  await hydrateMeals();
+  renderCart();
+  await loadSuggestions();
 }
+
 async function hydrateMeals(){
   const cart=getCart();if(!cart.length) return;
-  const {data}=await supabase.from('meals').select('id,name,price,image_url,profiles!meals_vendor_id_fkey(business_name)').in('id',cart.map(i=>i.id));
+  const {data}=await supabase.from('meals').select('id,name,price,image_url,category,profiles!meals_vendor_id_fkey(business_name)').in('id',cart.map(i=>i.id));
   if(data) data.forEach(m=>{mealDetails[m.id]=m;});
 }
+
+async function loadSuggestions(){
+  const cart=getCart();
+  const cartIds=cart.map(i=>i.id);
+  const cats=[...new Set(cart.map(i=>mealDetails[i.id]?.category).filter(Boolean))];
+  let query=supabase.from('meals').select('id,name,price,image_url,category,is_available').eq('is_available',true).limit(10);
+  if(cats.length) query=query.in('category',cats);
+  const {data}=await query;
+  if(data){
+    suggestMeals=data.filter(m=>!cartIds.includes(m.id)).slice(0,8);
+    renderSuggestions();
+  }
+}
+
+function renderSuggestions(){
+  if(!suggestMeals.length) return;
+  document.getElementById('suggestSection').style.display='block';
+  const cart=getCart();
+  document.getElementById('suggestList').innerHTML=suggestMeals.map(m=>{
+    const inCart=cart.some(i=>i.id===m.id);
+    return `<div class="sug-card" onclick="openItem('${m.id}')">
+      <div class="sug-img">${m.image_url?`<img src="${esc(m.image_url)}" alt="${esc(m.name)}" loading="lazy">`:`<div class="sug-img-ph">🍽️</div>`}</div>
+      <div class="sug-body">
+        <div class="sug-name">${esc(m.name)}</div>
+        <div class="sug-footer">
+          <span class="sug-price">UGX ${(+m.price).toLocaleString()}</span>
+          <button class="sug-add ${inCart?'added':''}" id="sadd-${m.id}" onclick="event.stopPropagation();quickAdd('${m.id}','${esc(m.name)}',${m.price})">
+            <i class="fa-solid ${inCart?'fa-check':'fa-plus'}"></i>
+          </button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+window.quickAdd=(id,name,price)=>{
+  const cart=getCart();const ex=cart.find(i=>i.id===id);
+  if(ex) ex.qty=(ex.qty||1)+1;else cart.push({id,name,price:+price,qty:1});
+  saveCart(cart);
+  const btn=document.getElementById(`sadd-${id}`);
+  if(btn){btn.classList.add('added');btn.innerHTML='<i class="fa-solid fa-check"></i>';}
+  showToast(`${name} added to cart`);
+  renderCart();
+};
+
+window.openItem=(id)=>{location.href=`home.html#meal-${id}`;};
+
 function getCart(){return JSON.parse(localStorage.getItem('nash_cart')||'[]');}
 function saveCart(c){localStorage.setItem('nash_cart',JSON.stringify(c));}
 
@@ -160,34 +273,31 @@ function renderCart(){
   document.getElementById('cartLabel').style.display=has?'flex':'none';
   document.getElementById('summaryCard').style.display=has?'block':'none';
   document.getElementById('proceedBar').style.display=has?'block':'none';
-  document.getElementById('clearBtn').style.display=has?'inline':'none';
-  document.getElementById('clearPh').style.display=has?'none':'inline';
+  document.getElementById('clearBtn').style.display=has?'inline-block':'none';
   if(!has){document.getElementById('cartList').innerHTML='';return;}
   const totalQty=cart.reduce((s,i)=>s+(i.qty||1),0);
   const totalPrice=cart.reduce((s,i)=>s+(i.price*(i.qty||1)),0);
   document.getElementById('itemCountLabel').textContent=`${totalQty} item${totalQty!==1?'s':''}`;
   document.getElementById('subtotalVal').textContent=`UGX ${totalPrice.toLocaleString()}`;
   document.getElementById('totalVal').textContent=`UGX ${totalPrice.toLocaleString()}`;
-  document.getElementById('summaryRows').innerHTML=cart.map(i=>`<div class="sum-row"><span class="lbl">${esc(i.name)} <span style="opacity:.6">×${i.qty||1}</span></span><span class="val">UGX ${((+i.price)*(i.qty||1)).toLocaleString()}</span></div>`).join('');
+  document.getElementById('summaryRows').innerHTML=cart.map(i=>`<div class="sr"><span class="lbl">${esc(i.name)} <span style="opacity:.55">×${i.qty||1}</span></span><span class="val">UGX ${((+i.price)*(i.qty||1)).toLocaleString()}</span></div>`).join('');
   document.getElementById('cartList').innerHTML=cart.map((item,idx)=>{
     const d=mealDetails[item.id];
-    const imgHtml=d?.image_url?`<img src="${d.image_url}" alt="${esc(item.name)}" loading="lazy">`:
-      `<div class="item-img-ph">🍽️</div>`;
-    return `<div class="cart-item" id="ci-${item.id}" style="animation-delay:${idx*45}ms">
-      <div class="item-img">${imgHtml}</div>
-      <div class="item-details">
-        ${d?.profiles?.business_name?`<div class="item-vendor">${esc(d.profiles.business_name)}</div>`:''}
-        <div class="item-name">${esc(item.name)}</div>
-        <div class="item-unit-price">UGX ${(+item.price).toLocaleString()} each</div>
+    return `<div class="cart-item" id="ci-${item.id}" style="animation-delay:${idx*40}ms">
+      <div class="ci-img">${d?.image_url?`<img src="${d.image_url}" alt="${esc(item.name)}" loading="lazy">`:`<div class="ci-img-ph">🍽️</div>`}</div>
+      <div class="ci-info">
+        ${d?.profiles?.business_name?`<div class="ci-vendor">${esc(d.profiles.business_name)}</div>`:''}
+        <div class="ci-name">${esc(item.name)}</div>
+        <div class="ci-unit">UGX ${(+item.price).toLocaleString()} each</div>
       </div>
-      <div class="item-right">
-        <div class="item-subtotal">UGX ${((+item.price)*(item.qty||1)).toLocaleString()}</div>
-        <div class="qty-control">
+      <div class="ci-right">
+        <div class="ci-sub">UGX ${((+item.price)*(item.qty||1)).toLocaleString()}</div>
+        <div class="qty-ctl">
           <button class="qty-btn" onclick="changeQty('${item.id}',-1)">
-            ${(item.qty||1)===1?'<i class="fa-solid fa-trash" style="font-size:.68rem;color:var(--danger)"></i>':'<i class="fa-solid fa-minus" style="font-size:.68rem"></i>'}
+            ${(item.qty||1)===1?'<i class="fa-solid fa-trash" style="font-size:.62rem;color:var(--ng)"></i>':'<i class="fa-solid fa-minus" style="font-size:.62rem"></i>'}
           </button>
-          <span class="qty-num">${item.qty||1}</span>
-          <button class="qty-btn" onclick="changeQty('${item.id}',1)"><i class="fa-solid fa-plus" style="font-size:.68rem"></i></button>
+          <span class="qty-n">${item.qty||1}</span>
+          <button class="qty-btn" onclick="changeQty('${item.id}',1)"><i class="fa-solid fa-plus" style="font-size:.62rem"></i></button>
         </div>
       </div>
     </div>`;
@@ -196,16 +306,19 @@ function renderCart(){
 
 window.changeQty=(id,delta)=>{
   let cart=getCart();const item=cart.find(i=>i.id===id);if(!item) return;
-  const newQty=(item.qty||1)+delta;
-  if(newQty<=0){
+  const nq=(item.qty||1)+delta;
+  if(nq<=0){
     const el=document.getElementById(`ci-${id}`);
-    if(el){el.classList.add('removing');setTimeout(()=>{saveCart(cart.filter(i=>i.id!==id));renderCart();},260);}
+    if(el){el.classList.add('removing');setTimeout(()=>{saveCart(cart.filter(i=>i.id!==id));renderCart();renderSuggestions();},280);}
     else{saveCart(cart.filter(i=>i.id!==id));renderCart();}
-  }else{item.qty=newQty;saveCart(cart);renderCart();}
+  }else{item.qty=nq;saveCart(cart);renderCart();}
 };
-window.clearCart=()=>{if(!confirm('Remove all items?')) return;localStorage.removeItem('nash_cart');renderCart();showToast('Cart cleared');};
-function showToast(msg){const t=document.getElementById('toast');document.getElementById('toastMsg').textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2300);}
+
+window.clearCart=()=>{if(!confirm('Remove all items from cart?')) return;localStorage.removeItem('nash_cart');renderCart();showToast('Cart cleared');};
+
+function showToast(msg){const t=document.getElementById('toast');document.getElementById('toastMsg').textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2400);}
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
 init();
 </script>
 </body>
