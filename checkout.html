@@ -1,470 +1,782 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
-  <title>Nash Bites | Checkout</title>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <style>
-    :root{
-      --p:#FF4D2D;--pd:#e63e20;--pl:#FFF0ED;--ps:rgba(255,77,45,.25);
-      --bg:#F2F4F8;--card:#fff;--inp:#EEF1F7;
-      --tx:#0D1321;--t2:#5A6A85;--tm:#9DADC4;--br:#E4EAF4;
-      --ok:#22C55E;--ok2:#F0FDF4;--ng:#EF4444;--ng2:#FEF2F2;
-      --info:#3B82F6;--in2:#EFF6FF;--warn:#F59E0B;
-      --sh:0 2px 12px rgba(13,19,33,.08);--shm:0 8px 28px rgba(13,19,33,.12);
-      --fh:70px;
-    }
-    [data-theme="dark"]{
-      --bg:#080D1A;--card:#111827;--inp:#1A2540;
-      --tx:#F1F5F9;--t2:#8DA0BC;--tm:#4A6080;--br:#1E2E48;
-      --pl:#2A1510;--ok2:#052E16;--ng2:#450A0A;--in2:#172554;
-    }
-    *{margin:0;padding:0;box-sizing:border-box;}
-    body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--tx);padding-bottom:calc(var(--fh)+100px);transition:background .3s,color .3s;}
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#FF4D2D">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Nash Bites">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="icon" type="image/png" href="icon-192.png">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>Nash Bites | Checkout</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root{
+  --p:#FF4D2D;--pd:#e63e20;--pl:rgba(255,77,45,.12);--ps:rgba(255,77,45,.28);
+  --bg:#F4F5FA;--card:#fff;--inp:#EEF1F8;
+  --tx:#0B1120;--t2:#5C6B88;--tm:#9AACC4;--br:rgba(0,0,0,.08);
+  --ok:#16A34A;--ok2:#F0FDF4;--ng:#DC2626;--ng2:#FEF2F2;
+  --info:#2563EB;--in2:#EFF6FF;--warn:#D97706;
+  --sh:0 1px 4px rgba(11,17,32,.06),0 4px 16px rgba(11,17,32,.04);
+  --shm:0 8px 32px rgba(11,17,32,.1);
+  --fh:70px;--r1:14px;--r2:20px;--r3:26px;
+}
+[data-theme="dark"]{
+  --bg:#07091A;--card:#0F1829;--inp:#152035;
+  --tx:#EEF2FA;--t2:#7A90B4;--tm:#3E5580;--br:rgba(255,255,255,.07);
+  --pl:rgba(255,77,45,.18);--ok2:#052E16;--ng2:#450A0A;--in2:#172554;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);padding-bottom:calc(var(--fh)+120px);transition:background .3s,color .3s;min-height:100vh;}
+a{color:inherit;text-decoration:none;}
 
-    /* HEADER */
-    .hdr{background:var(--card);border-bottom:1px solid var(--br);position:sticky;top:0;z-index:200;padding:0 18px;height:60px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--sh);transition:background .3s;}
-    .hdr-left{display:flex;align-items:center;gap:10px;}
-    .back-btn{width:36px;height:36px;border-radius:50%;background:var(--inp);border:1px solid var(--br);color:var(--t2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.85rem;transition:.2s;}
-    .back-btn:hover{border-color:var(--p);color:var(--p);}
-    .hdr-title{font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:800;}
-    .hdr-right{display:flex;gap:8px;align-items:center;}
-    .icon-btn{width:36px;height:36px;border-radius:50%;background:var(--inp);border:1px solid var(--br);color:var(--t2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.82rem;transition:.2s;}
-    .icon-btn:hover{border-color:var(--p);color:var(--p);}
-    .step-pill{font-size:.7rem;font-weight:700;color:var(--t2);background:var(--inp);border:1px solid var(--br);padding:4px 12px;border-radius:20px;}
+/* PROGRESS */
+.pg-bar{position:fixed;top:0;left:0;height:3px;background:var(--p);z-index:9999;transition:width .4s ease;width:0;border-radius:0 3px 3px 0;}
 
-    /* SECTION CARDS */
-    .sec-card{margin:16px 16px 0;background:var(--card);border-radius:20px;border:1px solid var(--br);box-shadow:var(--sh);overflow:hidden;transition:background .3s;}
-    .card-hd{padding:14px 18px;border-bottom:1px solid var(--br);display:flex;align-items:center;gap:12px;}
-    .card-ico{width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;}
-    .card-ico.red{background:var(--pl);color:var(--p);}
-    .card-ico.blue{background:var(--in2);color:var(--info);}
-    .card-ico.green{background:var(--ok2);color:var(--ok);}
-    .card-hd-txt h3{font-family:'Outfit',sans-serif;font-size:.92rem;font-weight:800;}
-    .card-hd-txt p{font-size:.72rem;color:var(--tm);margin-top:1px;}
-    .card-body{padding:16px;display:flex;flex-direction:column;gap:12px;}
+/* HEADER */
+.hdr{background:var(--card);border-bottom:1px solid var(--br);position:sticky;top:0;z-index:200;padding:0 16px;height:56px;display:flex;align-items:center;justify-content:space-between;transition:background .3s;}
+.hdr-l{display:flex;align-items:center;gap:10px;}
+.back-btn{width:34px;height:34px;border-radius:50%;background:var(--inp);border:1px solid var(--br);color:var(--t2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.8rem;transition:.2s;flex-shrink:0;}
+.back-btn:hover{border-color:var(--p);color:var(--p);}
+.brand{display:flex;align-items:center;gap:8px;}
+.brand-mark{width:28px;height:28px;background:var(--p);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.75rem;color:#fff;font-weight:800;font-family:'Syne',sans-serif;}
+.brand-name{font-family:'Syne',sans-serif;font-weight:800;font-size:1rem;}
+.hdr-r{display:flex;gap:8px;}
+.icon-btn{width:34px;height:34px;border-radius:50%;background:var(--inp);border:1px solid var(--br);color:var(--t2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.8rem;transition:.2s;}
+.icon-btn:hover{border-color:var(--p);color:var(--p);}
 
-    /* GOOGLE MAP */
-    #gmap{width:100%;height:250px;border-radius:14px;overflow:hidden;border:1.5px solid var(--br);position:relative;background:#e8eaf0;}
-    .map-controls{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
-    .map-ctrl-btn{padding:8px 14px;border-radius:12px;border:1.5px solid var(--br);background:var(--inp);color:var(--tx);font-size:.75rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;transition:.2s;font-family:inherit;}
-    .map-ctrl-btn:hover{border-color:var(--p);color:var(--p);}
-    .map-ctrl-btn.active{background:var(--p);color:#fff;border-color:var(--p);}
-    .location-search{position:relative;margin-top:10px;}
-    .location-search i{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--tm);font-size:.85rem;pointer-events:none;}
-    .loc-input{width:100%;padding:11px 12px 11px 36px;border:1.5px solid var(--br);border-radius:13px;font-size:.87rem;font-weight:500;color:var(--tx);background:var(--inp);outline:none;transition:.2s;font-family:inherit;}
-    .loc-input:focus{border-color:var(--p);background:var(--card);box-shadow:0 0 0 3px rgba(255,77,45,.1);}
-    .loc-input::placeholder{color:var(--tm);}
-    .loc-badge{margin-top:8px;background:var(--pl);border:1px solid rgba(255,77,45,.2);border-radius:11px;padding:10px 14px;font-size:.8rem;color:var(--p);font-weight:600;display:none;align-items:center;gap:8px;}
-    .loc-badge.show{display:flex;}
-    .fee-tag{font-size:.72rem;font-weight:800;background:var(--p);color:#fff;padding:3px 10px;border-radius:20px;margin-left:auto;}
-    .map-note{font-size:.74rem;color:var(--tm);margin-top:8px;display:flex;align-items:center;gap:6px;line-height:1.4;}
-    .map-note i{color:var(--p);flex-shrink:0;}
+/* STEP PILLS */
+.step-strip{margin:14px 16px 0;display:flex;align-items:center;gap:0;background:var(--card);border-radius:var(--r2);padding:12px 16px;border:1px solid var(--br);box-shadow:var(--sh);}
+.stp{display:flex;align-items:center;gap:8px;flex:1;}
+.stp-n{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;font-family:'Syne',sans-serif;flex-shrink:0;transition:.3s;}
+.stp-n.done{background:var(--ok);color:#fff;}
+.stp-n.active{background:var(--p);color:#fff;box-shadow:0 0 0 4px var(--pl);}
+.stp-n.idle{background:var(--inp);color:var(--tm);border:1.5px solid var(--br);}
+.stp-i .sl{font-size:.65rem;font-weight:700;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;}
+.stp-i .st{font-size:.8rem;font-weight:600;color:var(--tx);margin-top:1px;}
+.stp-sep{width:24px;height:2px;background:var(--br);border-radius:2px;margin:0 4px;flex-shrink:0;}
+.stp-sep.done{background:var(--ok);}
 
-    /* FORM */
-    .field-grp{display:flex;flex-direction:column;gap:5px;}
-    .field-lbl{font-size:.7rem;font-weight:700;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;}
-    .field-wrap{position:relative;}
-    .field-wrap i.ico{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--tm);font-size:.82rem;pointer-events:none;transition:.2s;}
-    .field-wrap:focus-within i.ico{color:var(--p);}
-    .f-in{width:100%;padding:12px 12px 12px 36px;border:1.5px solid var(--br);border-radius:13px;font-size:.88rem;font-weight:500;color:var(--tx);background:var(--inp);outline:none;transition:.2s;font-family:inherit;}
-    .f-in:focus{border-color:var(--p);background:var(--card);box-shadow:0 0 0 3px rgba(255,77,45,.1);}
-    .f-in::placeholder{color:var(--tm);}
-    .field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-    textarea.f-in{padding-left:12px;resize:none;min-height:72px;line-height:1.5;}
+/* SECTION CARDS */
+.sc{margin:12px 16px 0;background:var(--card);border-radius:var(--r2);border:1px solid var(--br);box-shadow:var(--sh);overflow:hidden;transition:background .3s;}
+.sc:hover{box-shadow:var(--shm);}
+.ch{padding:14px 18px;border-bottom:1px solid var(--br);display:flex;align-items:center;gap:12px;cursor:pointer;user-select:none;transition:.2s;}
+.ch:hover{background:var(--inp);}
+.ch.open{border-bottom:1px solid var(--br);}
+.cico{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:.88rem;flex-shrink:0;}
+.cico.r{background:var(--pl);color:var(--p);}
+.cico.b{background:var(--in2);color:var(--info);}
+.cico.g{background:var(--ok2);color:var(--ok);}
+.cico.a{background:#FEF3C7;color:#92400E;}
+[data-theme="dark"] .cico.a{background:#422006;color:#FCD34D;}
+.cht h3{font-family:'Syne',sans-serif;font-size:.9rem;font-weight:700;}
+.cht p{font-size:.72rem;color:var(--tm);margin-top:1px;}
+.cbadge{margin-left:auto;font-size:.64rem;font-weight:700;padding:3px 10px;border-radius:20px;background:var(--inp);color:var(--t2);border:1px solid var(--br);white-space:nowrap;flex-shrink:0;}
+.cbadge.req{background:var(--pl);color:var(--p);border-color:rgba(255,77,45,.2);}
+.cbadge.ok{background:var(--ok2);color:var(--ok);border-color:rgba(22,163,74,.2);}
+.cchev{transition:.3s;color:var(--tm);font-size:.78rem;flex-shrink:0;margin-left:8px;}
+.ch.open .cchev{transform:rotate(180deg);}
+.cb{overflow:hidden;max-height:0;transition:max-height .35s cubic-bezier(.4,0,.2,1);}
+.cb.open{max-height:1400px;}
+.cbody{padding:16px;display:flex;flex-direction:column;gap:12px;}
 
-    /* SUMMARY */
-    .mini-item{display:flex;align-items:center;justify-content:space-between;padding:8px 0;font-size:.85rem;border-bottom:1px solid var(--br);}
-    .mini-item:last-of-type{border-bottom:none;}
-    .mi-name{font-weight:600;}
-    .mi-qty{font-size:.75rem;color:var(--tm);}
-    .mi-price{font-weight:700;}
-    .total-row{display:flex;justify-content:space-between;align-items:center;padding-top:12px;margin-top:6px;border-top:2px solid var(--br);}
-    .total-row .lbl{font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:800;}
-    .total-row .val{font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:900;color:var(--p);}
-    .fee-row{display:flex;justify-content:space-between;padding:8px 0;font-size:.84rem;border-top:1px solid var(--br);margin-top:6px;}
+/* DISTRICT */
+.ds-wrap{position:relative;}
+.ds-wrap i.sico{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--tm);font-size:.8rem;pointer-events:none;}
+.ds-input{width:100%;padding:11px 12px 11px 38px;border:1.5px solid var(--br);border-radius:var(--r1);font-size:.87rem;color:var(--tx);background:var(--inp);outline:none;font-family:inherit;transition:.2s;}
+.ds-input:focus{border-color:var(--p);background:var(--card);box-shadow:0 0 0 3px var(--pl);}
+.ds-input::placeholder{color:var(--tm);}
+.d-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(108px,1fr));gap:7px;max-height:196px;overflow-y:auto;padding:2px;scrollbar-width:thin;}
+.d-chip{padding:8px 10px;border-radius:11px;border:1.5px solid var(--br);background:var(--inp);color:var(--t2);font-size:.75rem;font-weight:600;cursor:pointer;transition:.2s;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:inherit;}
+.d-chip:hover{border-color:var(--p);color:var(--p);background:var(--pl);}
+.d-chip.sel{border-color:var(--p);color:var(--p);background:var(--pl);font-weight:700;}
+.d-chip.hid{display:none;}
+.sel-banner{display:none;align-items:center;gap:10px;padding:11px 14px;background:var(--pl);border:1.5px solid rgba(255,77,45,.22);border-radius:13px;}
+.sel-banner.show{display:flex;}
+.sb-name{font-weight:700;color:var(--p);font-family:'Syne',sans-serif;font-size:.88rem;}
+.sb-reg{font-size:.7rem;color:var(--t2);}
+.sb-clr{background:none;border:none;color:var(--tm);cursor:pointer;font-size:.82rem;padding:2px 5px;margin-left:auto;transition:.2s;}
+.sb-clr:hover{color:var(--ng);}
 
-    /* ORDER BAR */
-    .order-bar{position:fixed;bottom:var(--fh);left:0;right:0;padding:10px 16px 12px;background:linear-gradient(to top,var(--bg) 65%,transparent);z-index:400;}
-    .order-btn{width:100%;padding:16px;border:none;background:var(--p);color:#fff;border-radius:18px;font-family:'Outfit',sans-serif;font-weight:800;font-size:.98rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 8px 24px var(--ps);transition:.25s;}
-    .order-btn:hover{background:var(--pd);transform:translateY(-2px);}
-    .order-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none;}
-    .spin{width:18px;height:18px;border:2.5px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;display:none;}
-    .order-btn.loading .spin{display:block;}.order-btn.loading .btn-lbl{display:none;}
-    @keyframes spin{to{transform:rotate(360deg)}}
+/* MAP */
+.map-sec{display:none;flex-direction:column;gap:10px;}
+.map-sec.show{display:flex;}
+.map-info{display:flex;align-items:flex-start;gap:8px;padding:10px 13px;background:var(--in2);border-radius:12px;border:1px solid rgba(37,99,235,.15);}
+[data-theme="dark"] .map-info{background:rgba(37,99,235,.1);}
+.map-info i{color:var(--info);font-size:.82rem;margin-top:2px;flex-shrink:0;}
+.map-info p{font-size:.76rem;color:var(--info);font-weight:500;line-height:1.45;}
+#gmap{width:100%;height:255px;border-radius:var(--r1);overflow:hidden;border:1.5px solid var(--br);background:var(--inp);}
+.map-ctrls{display:flex;gap:8px;flex-wrap:wrap;}
+.mc-btn{padding:8px 13px;border-radius:11px;border:1.5px solid var(--br);background:var(--inp);color:var(--tx);font-size:.74rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;transition:.2s;font-family:inherit;}
+.mc-btn:hover{border-color:var(--p);color:var(--p);}
+.loc-badge{background:var(--pl);border:1.5px solid rgba(255,77,45,.2);border-radius:12px;padding:10px 14px;font-size:.8rem;color:var(--p);font-weight:600;display:none;align-items:center;gap:8px;}
+.loc-badge.show{display:flex;}
+.fee-tag{font-size:.68rem;font-weight:800;background:var(--p);color:#fff;padding:3px 10px;border-radius:20px;margin-left:auto;white-space:nowrap;}
+.eta-strip{display:none;align-items:center;gap:8px;padding:9px 13px;background:var(--ok2);border:1px solid rgba(22,163,74,.2);border-radius:11px;font-size:.79rem;}
+.eta-strip.show{display:flex;}
+.eta-strip i{color:var(--ok);}
+.eta-strip strong{color:var(--ok);font-family:'Syne',sans-serif;}
+.map-note{font-size:.73rem;color:var(--tm);display:flex;align-items:flex-start;gap:7px;line-height:1.45;}
+.map-note i{color:var(--p);flex-shrink:0;margin-top:1px;}
 
-    /* FOOTER NAV */
-    .fnav{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--br);display:flex;justify-content:space-around;padding:8px 0 calc(8px + env(safe-area-inset-bottom,0px));border-radius:22px 22px 0 0;z-index:200;transition:background .3s;box-shadow:0 -2px 12px rgba(13,19,33,.06);}
-    .fnav-lnk{text-decoration:none;color:var(--tm);display:flex;flex-direction:column;align-items:center;gap:3px;font-size:.65rem;font-weight:600;transition:.2s;padding:2px 12px;}
-    .fnav-lnk i{font-size:1.18rem;}
-    .fnav-lnk.active{color:var(--p);}
+/* FORM */
+.fg{display:flex;flex-direction:column;gap:5px;}
+.fl{font-size:.67rem;font-weight:700;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;}
+.rs{color:var(--p);}
+.fw{position:relative;}
+.fw i.fi{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--tm);font-size:.8rem;pointer-events:none;transition:.2s;}
+.fw:focus-within i.fi{color:var(--p);}
+.fin{width:100%;padding:12px 12px 12px 38px;border:1.5px solid var(--br);border-radius:var(--r1);font-size:.87rem;font-weight:500;color:var(--tx);background:var(--inp);outline:none;transition:.2s;font-family:inherit;}
+.fin:focus{border-color:var(--p);background:var(--card);box-shadow:0 0 0 3px var(--pl);}
+.fin::placeholder{color:var(--tm);}
+.fin.valid{border-color:var(--ok);}
+.fin.err{border-color:var(--ng);}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+textarea.fin{padding-left:13px;resize:none;min-height:76px;line-height:1.5;}
+.ferr{font-size:.69rem;color:var(--ng);display:none;align-items:center;gap:4px;margin-top:2px;}
+.ferr.show{display:flex;}
+.cc{font-size:.65rem;color:var(--tm);text-align:right;}
+.ph-row{display:flex;gap:8px;}
+.ph-pfx{padding:12px;border:1.5px solid var(--br);border-radius:var(--r1);background:var(--inp);color:var(--t2);font-size:.83rem;font-weight:700;white-space:nowrap;display:flex;align-items:center;gap:6px;min-width:76px;}
 
-    /* TOAST */
-    .toast{position:fixed;bottom:calc(var(--fh)+16px);left:50%;transform:translateX(-50%) translateY(18px);background:var(--tx);color:var(--card);padding:11px 22px;border-radius:50px;font-size:.82rem;font-weight:700;white-space:nowrap;z-index:5000;opacity:0;transition:.28s;pointer-events:none;box-shadow:var(--shm);display:flex;align-items:center;gap:8px;}
-    .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+/* PAYMENT */
+.pay-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.pay-opt{padding:12px;border-radius:13px;border:1.5px solid var(--br);background:var(--inp);cursor:pointer;transition:.2s;display:flex;flex-direction:column;gap:5px;}
+.pay-opt:hover{border-color:var(--p);}
+.pay-opt.sel{border-color:var(--p);background:var(--pl);}
+.pay-opt-top{display:flex;align-items:center;gap:8px;}
+.pay-ico{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.88rem;background:var(--card);border:1px solid var(--br);}
+.pay-nm{font-size:.81rem;font-weight:700;font-family:'Syne',sans-serif;}
+.pay-ds{font-size:.7rem;color:var(--tm);}
+.pay-opt.sel .pay-nm{color:var(--p);}
+.momo-ext{display:none;flex-direction:column;gap:8px;margin-top:4px;}
+.momo-ext.show{display:flex;}
 
-    /* SUCCESS */
-    .success-screen{display:none;position:fixed;inset:0;background:var(--bg);z-index:9000;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;text-align:center;overflow-y:auto;}
-    .success-screen.show{display:flex;}
-    @keyframes popIn{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:scale(1)}}
-    .suc-anim{width:90px;height:90px;border-radius:50%;background:var(--ok2);border:3px solid var(--ok);display:flex;align-items:center;justify-content:center;font-size:2.6rem;margin-bottom:20px;animation:popIn .5s cubic-bezier(.16,1,.3,1);}
-    .success-screen h2{font-family:'Outfit',sans-serif;font-size:1.5rem;font-weight:900;letter-spacing:-.5px;margin-bottom:8px;}
-    .success-screen>p{font-size:.88rem;color:var(--tm);line-height:1.6;margin-bottom:20px;}
-    .info-card{width:100%;background:var(--card);border-radius:18px;border:1px solid var(--br);overflow:hidden;margin-bottom:12px;}
-    .info-row{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;border-bottom:1px solid var(--br);}
-    .info-row:last-child{border-bottom:none;}
-    .info-lbl{font-size:.72rem;font-weight:700;color:var(--tm);text-transform:uppercase;letter-spacing:.4px;}
-    .info-val{font-size:.92rem;font-weight:800;}
-    .pin-block{width:100%;background:linear-gradient(135deg,#141B2D,#0A0F1E);border-radius:18px;padding:18px;margin-bottom:18px;text-align:left;}
-    .pin-label{font-size:.68rem;font-weight:700;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;}
-    .pin-digits{font-family:'Outfit',sans-serif;font-size:2.2rem;font-weight:900;letter-spacing:8px;color:#FFE04D;margin-bottom:6px;}
-    .pin-hint{font-size:.73rem;color:rgba(255,255,255,.4);line-height:1.5;}
-    .suc-actions{display:flex;flex-direction:column;gap:10px;width:100%;}
-    .suc-btn{padding:14px;border-radius:16px;font-family:'Outfit',sans-serif;font-weight:700;font-size:.9rem;cursor:pointer;border:none;transition:.2s;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;}
-    .suc-primary{background:var(--p);color:#fff;box-shadow:0 6px 20px var(--ps);}
-    .suc-ghost{background:transparent;border:2px solid var(--br);color:var(--tx);}
-    .suc-ghost:hover{border-color:var(--p);color:var(--p);}
-  </style>
+/* SUMMARY */
+.mi{display:flex;align-items:flex-start;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--br);}
+.mi:last-of-type{border-bottom:none;}
+.mi-n{font-size:.85rem;font-weight:600;}
+.mi-q{font-size:.72rem;color:var(--tm);margin-top:2px;}
+.mi-p{font-size:.85rem;font-weight:700;white-space:nowrap;margin-left:12px;}
+.fee-rows{border-top:1px solid var(--br);margin-top:8px;padding-top:8px;display:flex;flex-direction:column;gap:6px;}
+.fee-line{display:flex;justify-content:space-between;font-size:.83rem;}
+.fee-line .ll{color:var(--t2);}
+.fee-line .vl{font-weight:600;}
+.tot-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0 0;margin-top:8px;border-top:2px solid var(--br);}
+.tot-row .ll{font-family:'Syne',sans-serif;font-size:.95rem;font-weight:700;}
+.tot-row .vl{font-family:'Syne',sans-serif;font-size:1.15rem;font-weight:800;color:var(--p);}
+
+/* ORDER BAR */
+.obar{position:fixed;bottom:var(--fh);left:0;right:0;padding:10px 16px 14px;background:linear-gradient(to top,var(--bg) 70%,transparent);z-index:400;}
+.obtn{width:100%;padding:16px;border:none;background:var(--p);color:#fff;border-radius:var(--r2);font-family:'Syne',sans-serif;font-weight:700;font-size:.97rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 8px 24px var(--ps);transition:.25s;}
+.obtn:hover:not(:disabled){background:var(--pd);transform:translateY(-2px);box-shadow:0 12px 32px var(--ps);}
+.obtn:disabled{opacity:.42;cursor:not-allowed;transform:none !important;box-shadow:none;}
+.spin{width:18px;height:18px;border:2.5px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;display:none;}
+.obtn.loading .spin{display:block;}.obtn.loading .bl{display:none;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.obar-hint{text-align:center;font-size:.73rem;color:var(--tm);margin-top:6px;display:flex;align-items:center;justify-content:center;gap:5px;}
+.obar-hint i{color:var(--ok);font-size:.65rem;}
+
+/* FOOTER NAV */
+.fnav{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--br);display:flex;justify-content:space-around;padding:8px 0 calc(8px + env(safe-area-inset-bottom,0px));border-radius:22px 22px 0 0;z-index:200;transition:background .3s;}
+.fnav a{text-decoration:none;color:var(--tm);display:flex;flex-direction:column;align-items:center;gap:3px;font-size:.64rem;font-weight:600;transition:.2s;padding:2px 14px;}
+.fnav a i{font-size:1.12rem;}
+.fnav a.active{color:var(--p);}
+
+/* TOAST */
+.toast{position:fixed;bottom:calc(var(--fh)+18px);left:50%;transform:translateX(-50%) translateY(18px);background:var(--tx);color:var(--card);padding:10px 20px;border-radius:50px;font-size:.8rem;font-weight:600;white-space:nowrap;z-index:5000;opacity:0;transition:.28s;pointer-events:none;box-shadow:var(--shm);display:flex;align-items:center;gap:8px;max-width:calc(100vw - 40px);}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.toast.success{background:var(--ok);}
+.toast.error{background:var(--ng);}
+
+/* SUCCESS */
+.suc-scr{display:none;position:fixed;inset:0;background:var(--bg);z-index:9000;flex-direction:column;align-items:center;justify-content:flex-start;padding:40px 22px 120px;text-align:center;overflow-y:auto;}
+.suc-scr.show{display:flex;}
+@keyframes popIn{from{opacity:0;transform:scale(.5) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.suc-ico{width:96px;height:96px;border-radius:50%;background:var(--ok2);border:3px solid var(--ok);display:flex;align-items:center;justify-content:center;margin-bottom:20px;animation:popIn .5s cubic-bezier(.16,1,.3,1);}
+.suc-ico i{font-size:2.8rem;color:var(--ok);}
+.suc-scr h2{font-family:'Syne',sans-serif;font-size:1.55rem;font-weight:800;letter-spacing:-.5px;margin-bottom:8px;animation:fadeUp .5s .1s both;}
+.suc-scr .sp{font-size:.87rem;color:var(--tm);line-height:1.6;margin-bottom:22px;animation:fadeUp .5s .2s both;}
+.icard{width:100%;background:var(--card);border-radius:var(--r2);border:1px solid var(--br);overflow:hidden;margin-bottom:14px;animation:fadeUp .5s .3s both;}
+.irow{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--br);}
+.irow:last-child{border-bottom:none;}
+.il{font-size:.7rem;font-weight:700;color:var(--tm);text-transform:uppercase;letter-spacing:.4px;}
+.iv{font-size:.88rem;font-weight:700;}
+.pin-blk{width:100%;background:linear-gradient(135deg,#0B1120,#182540);border-radius:var(--r2);padding:20px;margin-bottom:16px;text-align:left;animation:fadeUp .5s .4s both;}
+.pin-lbl{font-size:.67rem;font-weight:700;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.pin-dig{font-family:'Syne',sans-serif;font-size:2.4rem;font-weight:800;letter-spacing:10px;color:#FFE04D;margin-bottom:6px;}
+.pin-hint{font-size:.73rem;color:rgba(255,255,255,.4);line-height:1.5;}
+.suc-acts{display:flex;flex-direction:column;gap:10px;width:100%;animation:fadeUp .5s .5s both;}
+.sbtn{padding:14px;border-radius:var(--r1);font-family:'Syne',sans-serif;font-weight:700;font-size:.9rem;cursor:pointer;border:none;transition:.2s;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;}
+.sp1{background:var(--p);color:#fff;box-shadow:0 6px 20px var(--ps);}
+.sp1:hover{background:var(--pd);}
+.sg{background:transparent;border:2px solid var(--br);color:var(--tx);}
+.sg:hover{border-color:var(--p);color:var(--p);}
+
+/* ANIMATIONS */
+@keyframes slideUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.sc{animation:slideUp .3s ease both;}
+.sc:nth-child(1){animation-delay:.04s;}
+.sc:nth-child(2){animation-delay:.08s;}
+.sc:nth-child(3){animation-delay:.12s;}
+.sc:nth-child(4){animation-delay:.16s;}
+.sc:nth-child(5){animation-delay:.2s;}
+</style>
 </head>
 <body>
 
+<div class="pg-bar" id="pgBar"></div>
+
 <!-- HEADER -->
 <div class="hdr">
-  <div class="hdr-left">
+  <div class="hdr-l">
     <button class="back-btn" onclick="history.back()"><i class="fa-solid fa-arrow-left"></i></button>
-    <span class="hdr-title">Checkout</span>
+    <div class="brand">
+      <div class="brand-mark">N</div>
+      <span class="brand-name">Nash Bites</span>
+    </div>
   </div>
-  <div class="hdr-right">
+  <div class="hdr-r">
     <button class="icon-btn" onclick="toggleTheme()" id="themeBtn"><i class="fa-solid fa-moon"></i></button>
-    <span class="step-pill">Step 2 of 2</span>
   </div>
 </div>
 
-<!-- GOOGLE MAP SECTION -->
-<div class="sec-card">
-  <div class="card-hd">
-    <div class="card-ico red"><i class="fa-solid fa-map-location-dot"></i></div>
-    <div class="card-hd-txt">
-      <h3>Pin Your Location</h3>
-      <p>Search or tap the map to set your delivery point</p>
-    </div>
+<!-- STEPS -->
+<div class="step-strip">
+  <div class="stp">
+    <div class="stp-n done"><i class="fa-solid fa-check"></i></div>
+    <div class="stp-i"><div class="sl">Step 1</div><div class="st">Cart</div></div>
   </div>
-  <div class="card-body">
-    <!-- Location search bar -->
-    <div class="location-search">
-      <i class="fa-solid fa-search"></i>
-      <input class="loc-input" id="locSearchInput" type="text" placeholder="Search for your location…" oninput="handleLocSearch(this.value)">
-    </div>
-    <!-- Google Map -->
-    <div id="gmap"></div>
-    <!-- Quick locate buttons -->
-    <div class="map-controls">
-      <button class="map-ctrl-btn" onclick="useMyLocation()"><i class="fa-solid fa-location-crosshairs"></i> Use My Location</button>
-      <button class="map-ctrl-btn" onclick="resetToDefault()"><i class="fa-solid fa-school"></i> Campus Center</button>
-    </div>
-    <!-- Pin info -->
-    <div class="loc-badge" id="locBadge">
-      <i class="fa-solid fa-location-dot"></i>
-      <span id="locText">Location set</span>
-      <span class="fee-tag" id="feeBadge">UGX 0</span>
-    </div>
-    <p class="map-note"><i class="fa-solid fa-info-circle"></i> Drag the pin or click/tap on the map to select your exact delivery spot. The fee is calculated by distance.</p>
+  <div class="stp-sep done"></div>
+  <div class="stp">
+    <div class="stp-n active">2</div>
+    <div class="stp-i"><div class="sl">Step 2</div><div class="st">Checkout</div></div>
+  </div>
+  <div class="stp-sep"></div>
+  <div class="stp">
+    <div class="stp-n idle">3</div>
+    <div class="stp-i"><div class="sl">Step 3</div><div class="st">Done</div></div>
   </div>
 </div>
 
-<!-- DELIVERY DETAILS -->
-<div class="sec-card">
-  <div class="card-hd">
-    <div class="card-ico red"><i class="fa-solid fa-building"></i></div>
-    <div class="card-hd-txt">
-      <h3>Delivery Details</h3>
-      <p>Help your carrier find you quickly</p>
-    </div>
+<!-- 1. LOCATION -->
+<div class="sc">
+  <div class="ch open" id="locHd" onclick="tog('locHd','locCb')">
+    <div class="cico r"><i class="fa-solid fa-map-location-dot"></i></div>
+    <div class="cht" style="flex:1;"><h3>Delivery Location</h3><p>Select district, then pin your exact spot</p></div>
+    <span class="cbadge req" id="locBadge2">Required</span>
+    <i class="fa-solid fa-chevron-down cchev"></i>
   </div>
-  <div class="card-body">
-    <div class="field-row">
-      <div class="field-grp">
-        <label class="field-lbl">Hostel / Block</label>
-        <div class="field-wrap">
-          <i class="fa-solid fa-building ico"></i>
-          <input class="f-in" id="hostelInput" placeholder="e.g. Block A" type="text">
+  <div class="cb open" id="locCb">
+    <div class="cbody">
+      <!-- District chooser -->
+      <div>
+        <div class="fl" style="margin-bottom:8px;"><i class="fa-solid fa-list" style="font-size:.65rem;"></i> Step 1 — Choose your district <span class="rs">*</span></div>
+        <div class="ds-wrap" style="margin-bottom:10px;" id="dSearchWrap">
+          <i class="sico fa-solid fa-magnifying-glass"></i>
+          <input class="ds-input" id="dFilter" placeholder="Search district e.g. Kampala…" oninput="filterD(this.value)">
+        </div>
+        <div class="d-grid" id="dGrid"></div>
+        <div class="sel-banner" id="selBanner">
+          <i class="fa-solid fa-location-dot" style="color:var(--p);"></i>
+          <div>
+            <div class="sb-name" id="sbName">—</div>
+            <div class="sb-reg" id="sbReg"></div>
+          </div>
+          <button class="sb-clr" onclick="clearDistrict()" title="Change district"><i class="fa-solid fa-xmark"></i></button>
         </div>
       </div>
-      <div class="field-grp">
-        <label class="field-lbl">Room Number</label>
-        <div class="field-wrap">
-          <i class="fa-solid fa-door-open ico"></i>
-          <input class="f-in" id="roomInput" placeholder="e.g. 204" type="text">
+
+      <!-- Google Map (shown after district chosen) -->
+      <div class="map-sec" id="mapSec">
+        <div class="map-info">
+          <i class="fa-solid fa-circle-info"></i>
+          <p>Step 2 — Tap or drag the red pin on the map to mark your exact delivery spot</p>
+        </div>
+        <div id="gmap"></div>
+        <div class="map-ctrls">
+          <button class="mc-btn" onclick="useMyLoc()"><i class="fa-solid fa-location-crosshairs"></i> Use My GPS</button>
+          <button class="mc-btn" onclick="goToDistrict()"><i class="fa-solid fa-map-pin"></i> District Centre</button>
+        </div>
+        <div class="loc-badge" id="locBadge">
+          <i class="fa-solid fa-location-dot"></i>
+          <span id="locTxt">Location set</span>
+          <span class="fee-tag" id="feeBadge">UGX 0</span>
+        </div>
+        <div class="eta-strip" id="etaStrip">
+          <i class="fa-solid fa-clock"></i>
+          <span>Est. delivery: <strong id="etaTxt">20–35 min</strong></span>
+        </div>
+        <p class="map-note"><i class="fa-solid fa-info-circle"></i> Tap anywhere or drag the pin to set your exact delivery spot. Fee is calculated by distance from the vendor.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 2. DELIVERY DETAILS -->
+<div class="sc">
+  <div class="ch open" id="detHd" onclick="tog('detHd','detCb')">
+    <div class="cico r"><i class="fa-solid fa-building"></i></div>
+    <div class="cht" style="flex:1;"><h3>Delivery Details</h3><p>Help your rider find you</p></div>
+    <i class="fa-solid fa-chevron-down cchev"></i>
+  </div>
+  <div class="cb open" id="detCb">
+    <div class="cbody">
+      <div class="frow">
+        <div class="fg">
+          <label class="fl">Hostel / Block <span class="rs">*</span></label>
+          <div class="fw"><i class="fi fa-solid fa-building"></i><input class="fin" id="hostelIn" placeholder="e.g. Block A" type="text" oninput="vField(this,'hostelErr')"></div>
+          <div class="ferr" id="hostelErr"><i class="fa-solid fa-circle-exclamation"></i> Required</div>
+        </div>
+        <div class="fg">
+          <label class="fl">Room No. <span class="rs">*</span></label>
+          <div class="fw"><i class="fi fa-solid fa-door-open"></i><input class="fin" id="roomIn" placeholder="e.g. 204" type="text" oninput="vField(this,'roomErr')"></div>
+          <div class="ferr" id="roomErr"><i class="fa-solid fa-circle-exclamation"></i> Required</div>
+        </div>
+      </div>
+      <div class="fg">
+        <label class="fl">Phone Number <span class="rs">*</span></label>
+        <div class="ph-row">
+          <div class="ph-pfx">🇺🇬 +256</div>
+          <div class="fw" style="flex:1;"><i class="fi fa-solid fa-phone"></i><input class="fin" id="phoneIn" placeholder="700 000 000" type="tel" oninput="vPhone(this)"></div>
+        </div>
+        <div class="ferr" id="phoneErr"><i class="fa-solid fa-circle-exclamation"></i> Enter a valid Ugandan number</div>
+      </div>
+      <div class="fg">
+        <label class="fl">Full Name</label>
+        <div class="fw"><i class="fi fa-solid fa-user"></i><input class="fin" id="nameIn" placeholder="Your full name" type="text"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 3. PAYMENT -->
+<div class="sc">
+  <div class="ch open" id="payHd" onclick="tog('payHd','payCb')">
+    <div class="cico a"><i class="fa-solid fa-wallet"></i></div>
+    <div class="cht" style="flex:1;"><h3>Payment Method</h3><p>Choose how you'll pay on delivery</p></div>
+    <i class="fa-solid fa-chevron-down cchev"></i>
+  </div>
+  <div class="cb open" id="payCb">
+    <div class="cbody">
+      <div class="pay-grid">
+        <div class="pay-opt sel" id="pMomo" onclick="selPay('momo')">
+          <div class="pay-opt-top"><div class="pay-ico">📱</div><div class="pay-nm">Mobile Money</div></div>
+          <div class="pay-ds">MTN / Airtel Money</div>
+        </div>
+        <div class="pay-opt" id="pCash" onclick="selPay('cash')">
+          <div class="pay-opt-top"><div class="pay-ico">💵</div><div class="pay-nm">Cash on Delivery</div></div>
+          <div class="pay-ds">Pay when it arrives</div>
+        </div>
+      </div>
+      <div class="momo-ext show" id="momoExt">
+        <div class="fg">
+          <label class="fl">MoMo Number</label>
+          <div class="fw"><i class="fi fa-solid fa-sim-card"></i><input class="fin" id="momoIn" placeholder="e.g. 0770 000 000" type="tel"></div>
+        </div>
+        <div class="fg">
+          <label class="fl">Network Provider</label>
+          <div class="fw"><i class="fi fa-solid fa-signal"></i>
+            <select class="fin" id="netSel">
+              <option value="">Select network</option>
+              <option value="mtn">MTN Uganda</option>
+              <option value="airtel">Airtel Uganda</option>
+            </select>
+          </div>
         </div>
       </div>
     </div>
-    <div class="field-grp">
-      <label class="field-lbl">Phone Number</label>
-      <div class="field-wrap">
-        <i class="fa-solid fa-phone ico"></i>
-        <input class="f-in" id="phoneInput" placeholder="+256 700 000 000" type="tel">
+  </div>
+</div>
+
+<!-- 4. SPECIAL NOTE -->
+<div class="sc">
+  <div class="ch" id="noteHd" onclick="tog('noteHd','noteCb')">
+    <div class="cico b"><i class="fa-solid fa-pen-to-square"></i></div>
+    <div class="cht" style="flex:1;"><h3>Note to Vendor</h3><p>Special instructions (optional)</p></div>
+    <i class="fa-solid fa-chevron-down cchev"></i>
+  </div>
+  <div class="cb" id="noteCb">
+    <div class="cbody">
+      <div class="fg">
+        <textarea class="fin" id="noteIn" placeholder="e.g. No onions, extra sauce, ring bell twice…" rows="3" maxlength="200" oninput="updCC(this)"></textarea>
+        <div class="cc"><span id="ccNum">0</span>/200</div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- SPECIAL NOTE -->
-<div class="sec-card">
-  <div class="card-hd">
-    <div class="card-ico blue"><i class="fa-solid fa-pen-to-square"></i></div>
-    <div class="card-hd-txt">
-      <h3>Note to Vendor</h3>
-      <p>Special instructions or requests</p>
-    </div>
+<!-- 5. ORDER SUMMARY -->
+<div class="sc">
+  <div class="ch open" id="sumHd" onclick="tog('sumHd','sumCb')">
+    <div class="cico g"><i class="fa-solid fa-receipt"></i></div>
+    <div class="cht" style="flex:1;"><h3>Order Summary</h3><p id="sumSub">Loading…</p></div>
+    <i class="fa-solid fa-chevron-down cchev"></i>
   </div>
-  <div class="card-body">
-    <textarea class="f-in" id="noteInput" placeholder="e.g. No onions, extra sauce…" rows="3"></textarea>
-  </div>
-</div>
-
-<!-- ORDER SUMMARY -->
-<div class="sec-card">
-  <div class="card-hd">
-    <div class="card-ico green"><i class="fa-solid fa-receipt"></i></div>
-    <div class="card-hd-txt">
-      <h3>Order Summary</h3>
-      <p id="summarySubtitle">Loading…</p>
-    </div>
-  </div>
-  <div class="card-body">
-    <div id="miniItems"></div>
-    <div class="fee-row">
-      <span style="color:var(--tm);font-weight:600;">Delivery fee</span>
-      <span id="deliveryFeeDisplay" style="font-weight:700;color:var(--ok);">Calculating…</span>
-    </div>
-    <div class="total-row">
-      <span class="lbl">Total</span>
-      <span class="val" id="miniTotal">UGX 0</span>
+  <div class="cb open" id="sumCb">
+    <div class="cbody">
+      <div id="miniItems"></div>
+      <div class="fee-rows">
+        <div class="fee-line"><span class="ll">Subtotal</span><span class="vl" id="subtotDisp">—</span></div>
+        <div class="fee-line"><span class="ll">Delivery fee</span><span class="vl" id="feeDisp" style="color:var(--ok);">Calculating…</span></div>
+      </div>
+      <div class="tot-row">
+        <span class="ll">Total</span>
+        <span class="vl" id="totDisp">UGX 0</span>
+      </div>
     </div>
   </div>
 </div>
 
 <!-- PLACE ORDER BAR -->
-<div class="order-bar">
-  <button class="order-btn" id="orderBtn" onclick="placeOrder()">
+<div class="obar">
+  <button class="obtn" id="orderBtn" onclick="placeOrder()">
     <div class="spin"></div>
-    <span class="btn-lbl"><i class="fa-solid fa-bolt"></i> Place Order</span>
+    <span class="bl"><i class="fa-solid fa-bolt"></i> Place Order — <span id="btnTot">UGX 0</span></span>
   </button>
+  <div class="obar-hint"><i class="fa-solid fa-shield-halved"></i> Secured · You'll receive a delivery PIN on success</div>
 </div>
 
+<!-- FOOTER NAV -->
 <nav class="fnav">
-  <a href="home.html" class="fnav-lnk"><i class="fa-solid fa-house"></i><span>Menu</span></a>
-  <a href="order-history.html" class="fnav-lnk"><i class="fa-solid fa-receipt"></i><span>Orders</span></a>
-  <a href="cart.html" class="fnav-lnk"><i class="fa-solid fa-bag-shopping"></i><span>Cart</span></a>
-  <a href="profile.html" class="fnav-lnk"><i class="fa-solid fa-user"></i><span>Profile</span></a>
+  <a href="home.html"><i class="fa-solid fa-house"></i><span>Menu</span></a>
+  <a href="order-history.html"><i class="fa-solid fa-receipt"></i><span>Orders</span></a>
+  <a href="cart.html"><i class="fa-solid fa-bag-shopping"></i><span>Cart</span></a>
+  <a href="profile.html"><i class="fa-solid fa-user"></i><span>Profile</span></a>
 </nav>
 
-<div class="toast" id="toast"><i class="fa-solid fa-triangle-exclamation" style="color:var(--warn)"></i><span id="toastMsg"></span></div>
+<div class="toast" id="toast"><span id="toastMsg"></span></div>
 
 <!-- SUCCESS SCREEN -->
-<div class="success-screen" id="successScreen">
-  <div class="suc-anim">✅</div>
-  <h2>Order Placed!</h2>
-  <p>Your order is heading to the kitchen.<br>You'll be notified as it's prepared.</p>
-  <div class="info-card">
-    <div class="info-row"><span class="info-lbl">Order Ref</span><span class="info-val" id="orderRef" style="color:var(--p)">—</span></div>
-    <div class="info-row"><span class="info-lbl">Delivering to</span><span class="info-val" id="deliverTo">—</span></div>
-    <div class="info-row"><span class="info-lbl">Total Paid</span><span class="info-val" id="totalPaid">—</span></div>
+<div class="suc-scr" id="sucScr">
+  <div class="suc-ico"><i class="fa-solid fa-check"></i></div>
+  <h2>Order Placed! 🎉</h2>
+  <p class="sp">Your order is heading to the kitchen.<br>You'll be notified as it's prepared and dispatched.</p>
+  <div class="icard">
+    <div class="irow"><span class="il">Order Ref</span><span class="iv" id="oRef" style="color:var(--p)">—</span></div>
+    <div class="irow"><span class="il">District</span><span class="iv" id="oDistrict">—</span></div>
+    <div class="irow"><span class="il">Delivering to</span><span class="iv" id="oDlv">—</span></div>
+    <div class="irow"><span class="il">Payment</span><span class="iv" id="oPay">—</span></div>
+    <div class="irow"><span class="il">Total</span><span class="iv" id="oTotal" style="color:var(--p)">—</span></div>
   </div>
-  <div class="pin-block">
-    <div class="pin-label">🔐 Delivery PIN — share only on arrival</div>
-    <div class="pin-digits" id="pinVal">0000</div>
-    <div class="pin-hint">Give this PIN to the carrier when your food arrives to confirm delivery. Keep it safe.</div>
+  <div class="pin-blk">
+    <div class="pin-lbl"><i class="fa-solid fa-lock"></i> Delivery PIN — share only on arrival</div>
+    <div class="pin-dig" id="pinVal">0000</div>
+    <div class="pin-hint">Give this PIN to your rider on arrival to confirm delivery. Keep it safe!</div>
   </div>
-  <div class="suc-actions">
-    <a href="order-history.html" class="suc-btn suc-primary"><i class="fa-solid fa-receipt"></i> Track My Order</a>
-    <a href="home.html" class="suc-btn suc-ghost"><i class="fa-solid fa-utensils"></i> Order Something Else</a>
+  <div class="suc-acts">
+    <a href="order-history.html" class="sbtn sp1"><i class="fa-solid fa-receipt"></i> Track My Order</a>
+    <a href="home.html" class="sbtn sg"><i class="fa-solid fa-utensils"></i> Order Something Else</a>
   </div>
 </div>
 
-<!-- Google Maps API -->
+<!-- ============== SCRIPTS ============== -->
 <script>
-// Campus center (Muni University approximate)
-const CAMPUS_CENTER = {lat: 3.5908, lng: 31.6647};
-const BASE_FEE = 1000; // UGX per km
-const MIN_FEE = 500;
+// UGANDA DISTRICTS
+const UG_DISTRICTS = [
+  {n:'Kampala',r:'Central',lat:0.3136,lng:32.5811},
+  {n:'Wakiso',r:'Central',lat:0.4042,lng:32.4597},
+  {n:'Mukono',r:'Central',lat:0.3536,lng:32.7550},
+  {n:'Luwero',r:'Central',lat:0.8451,lng:32.4787},
+  {n:'Kayunga',r:'Central',lat:0.7042,lng:32.8874},
+  {n:'Buikwe',r:'Central',lat:0.3340,lng:32.9800},
+  {n:'Masaka',r:'Central',lat:-0.3333,lng:31.7333},
+  {n:'Rakai',r:'Central',lat:-0.7167,lng:31.4000},
+  {n:'Ssembabule',r:'Central',lat:-0.0667,lng:31.4333},
+  {n:'Kalangala',r:'Central',lat:-0.3167,lng:32.2167},
+  {n:'Mbarara',r:'Western',lat:-0.6072,lng:30.6545},
+  {n:'Bushenyi',r:'Western',lat:-0.5453,lng:30.1918},
+  {n:'Kasese',r:'Western',lat:0.1833,lng:30.0833},
+  {n:'Kabarole',r:'Western',lat:0.6500,lng:30.2500},
+  {n:'Kabale',r:'Western',lat:-1.2493,lng:29.9897},
+  {n:'Ntungamo',r:'Western',lat:-0.8803,lng:30.2644},
+  {n:'Hoima',r:'Western',lat:1.4306,lng:31.3528},
+  {n:'Kibaale',r:'Western',lat:0.9125,lng:31.0986},
+  {n:'Masindi',r:'Western',lat:1.6742,lng:31.7153},
+  {n:'Kyenjojo',r:'Western',lat:0.6167,lng:30.6167},
+  {n:'Muni University',r:'West Nile',lat:3.5908,lng:31.6647},
+  {n:'Gulu',r:'Northern',lat:2.7747,lng:32.2990},
+  {n:'Lira',r:'Northern',lat:2.2499,lng:32.8998},
+  {n:'Arua',r:'West Nile',lat:3.0200,lng:30.9112},
+  {n:'Nebbi',r:'West Nile',lat:2.4800,lng:31.0900},
+  {n:'Yumbe',r:'West Nile',lat:3.4600,lng:31.2500},
+  {n:'Zombo',r:'West Nile',lat:2.5100,lng:30.9100},
+  {n:'Moroto',r:'Karamoja',lat:2.5342,lng:34.6652},
+  {n:'Kitgum',r:'Northern',lat:3.2800,lng:32.8900},
+  {n:'Pader',r:'Northern',lat:2.7700,lng:33.1600},
+  {n:'Apac',r:'Northern',lat:1.9800,lng:32.5400},
+  {n:'Oyam',r:'Northern',lat:2.2500,lng:32.3700},
+  {n:'Jinja',r:'Eastern',lat:0.4250,lng:33.2042},
+  {n:'Tororo',r:'Eastern',lat:0.6940,lng:34.1812},
+  {n:'Mbale',r:'Eastern',lat:1.0800,lng:34.1750},
+  {n:'Soroti',r:'Eastern',lat:1.7147,lng:33.6111},
+  {n:'Kumi',r:'Eastern',lat:1.4604,lng:33.9347},
+  {n:'Kapchorwa',r:'Eastern',lat:1.4000,lng:34.4500},
+  {n:'Pallisa',r:'Eastern',lat:1.1400,lng:33.7100},
+  {n:'Kamuli',r:'Eastern',lat:0.9470,lng:33.1190},
+  {n:'Iganga',r:'Eastern',lat:0.6090,lng:33.4686},
+  {n:'Bugiri',r:'Eastern',lat:0.5688,lng:33.7451},
+  {n:'Butaleja',r:'Eastern',lat:0.9200,lng:33.9600},
+  {n:'Busia',r:'Eastern',lat:0.4600,lng:34.0900},
+];
 
-let map, marker, geocoder, autocomplete;
-let deliveryLat = CAMPUS_CENTER.lat, deliveryLng = CAMPUS_CENTER.lng;
-let deliveryFee = MIN_FEE;
-let vendorLat = null, vendorLng = null;
+const CC = {lat:3.5908,lng:31.6647};
+const BASE_FEE=1000,MIN_FEE=500;
+let map,marker,geocoder,mapReady=false;
+let dLat=CC.lat,dLng=CC.lng,dFee=MIN_FEE;
+let selDistrict=null,selPay_='momo';
+let vendorLat=null,vendorLng=null;
 
-function initGoogleMap(){
-  map = new google.maps.Map(document.getElementById('gmap'), {
-    center: CAMPUS_CENTER,
-    zoom: 16,
-    mapTypeControl: false,
-    streetViewControl: false,
-    fullscreenControl: false,
-    styles:[
-      {featureType:'poi',elementType:'labels',stylers:[{visibility:'off'}]},
-      {featureType:'transit',elementType:'labels',stylers:[{visibility:'off'}]}
-    ]
+// ---- COLLAPSIBLE ----
+function tog(hdId,cbId){
+  const hd=document.getElementById(hdId),cb=document.getElementById(cbId);
+  const open=cb.classList.contains('open');
+  cb.classList.toggle('open',!open);
+  hd.classList.toggle('open',!open);
+}
+
+// ---- DISTRICT ----
+function buildGrid(){
+  const g=document.getElementById('dGrid');
+  const sorted=[...UG_DISTRICTS].sort((a,b)=>a.n.localeCompare(b.n));
+  g.innerHTML=sorted.map(d=>`<div class="d-chip" data-n="${d.n}" data-r="${d.r}" data-lat="${d.lat}" data-lng="${d.lng}" onclick="pickDistrict(this)">${d.n}<br><small style="font-size:.6rem;opacity:.6;">${d.r}</small></div>`).join('');
+}
+
+function filterD(v){
+  const q=v.toLowerCase();
+  document.querySelectorAll('.d-chip').forEach(c=>c.classList.toggle('hid',!c.dataset.n.toLowerCase().includes(q)));
+}
+
+function pickDistrict(chip){
+  selDistrict=chip.dataset.n;
+  const lat=parseFloat(chip.dataset.lat),lng=parseFloat(chip.dataset.lng);
+  document.querySelectorAll('.d-chip').forEach(c=>c.classList.remove('sel'));
+  chip.classList.add('sel');
+  document.getElementById('sbName').textContent=chip.dataset.n;
+  document.getElementById('sbReg').textContent=chip.dataset.r+' Region';
+  document.getElementById('selBanner').classList.add('show');
+  document.getElementById('dGrid').style.display='none';
+  document.getElementById('dSearchWrap').style.display='none';
+  document.getElementById('locBadge2').textContent='Step 2: Pin it';
+  document.getElementById('locBadge2').className='cbadge';
+  const ms=document.getElementById('mapSec');
+  ms.classList.add('show');
+  dLat=lat;dLng=lng;
+  if(!mapReady)initMap(lat,lng);
+  else goToDistrict();
+  updateFee(lat,lng);
+}
+
+function clearDistrict(){
+  selDistrict=null;
+  document.getElementById('selBanner').classList.remove('show');
+  document.getElementById('dGrid').style.display='';
+  document.getElementById('dSearchWrap').style.display='';
+  document.getElementById('mapSec').classList.remove('show');
+  document.getElementById('locBadge').classList.remove('show');
+  document.getElementById('etaStrip').classList.remove('show');
+  document.getElementById('locBadge2').textContent='Required';
+  document.getElementById('locBadge2').className='cbadge req';
+  document.querySelectorAll('.d-chip').forEach(c=>c.classList.remove('sel'));
+}
+
+function goToDistrict(){
+  if(!map||!selDistrict)return;
+  const d=UG_DISTRICTS.find(x=>x.n===selDistrict);
+  if(!d)return;
+  const p=new google.maps.LatLng(d.lat,d.lng);
+  map.panTo(p);map.setZoom(14);
+  marker.setPosition(p);marker.setAnimation(google.maps.Animation.DROP);
+  dLat=d.lat;dLng=d.lng;
+  reverseGeo(d.lat,d.lng);
+  updateFee(d.lat,d.lng);
+}
+
+// ---- MAP ----
+function initMap(cLat,cLng){
+  mapReady=true;
+  const c={lat:cLat||CC.lat,lng:cLng||CC.lng};
+  map=new google.maps.Map(document.getElementById('gmap'),{
+    center:c,zoom:14,mapTypeControl:false,streetViewControl:false,fullscreenControl:true,
+    styles:[{featureType:'poi',elementType:'labels',stylers:[{visibility:'off'}]},{featureType:'transit',elementType:'labels',stylers:[{visibility:'off'}]}]
   });
-
-  geocoder = new google.maps.Geocoder();
-
-  // Custom pin marker
-  marker = new google.maps.Marker({
-    position: CAMPUS_CENTER,
-    map: map,
-    draggable: true,
-    animation: google.maps.Animation.DROP,
-    icon: {
-      path: google.maps.SymbolPath.BACKWARD_CLOSED_ARROW,
-      scale: 8,
-      fillColor: '#FF4D2D',
-      fillOpacity: 1,
-      strokeColor: '#fff',
-      strokeWeight: 2
-    }
+  geocoder=new google.maps.Geocoder();
+  marker=new google.maps.Marker({
+    position:c,map,draggable:true,animation:google.maps.Animation.DROP,
+    icon:{path:google.maps.SymbolPath.CIRCLE,scale:11,fillColor:'#FF4D2D',fillOpacity:1,strokeColor:'#fff',strokeWeight:3}
   });
-
-  updateFee(CAMPUS_CENTER.lat, CAMPUS_CENTER.lng);
-
-  // Drag end
-  marker.addListener('dragend', () => {
-    const pos = marker.getPosition();
-    deliveryLat = pos.lat(); deliveryLng = pos.lng();
-    reverseGeocode(deliveryLat, deliveryLng);
-    updateFee(deliveryLat, deliveryLng);
+  updateFee(c.lat,c.lng);
+  marker.addListener('dragend',()=>{
+    const p=marker.getPosition();dLat=p.lat();dLng=p.lng();
+    reverseGeo(dLat,dLng);updateFee(dLat,dLng);
   });
-
-  // Click on map
-  map.addListener('click', (e) => {
-    const lat = e.latLng.lat(), lng = e.latLng.lng();
+  map.addListener('click',e=>{
+    const lat=e.latLng.lat(),lng=e.latLng.lng();
     marker.setPosition(e.latLng);
     marker.setAnimation(google.maps.Animation.BOUNCE);
-    setTimeout(() => marker.setAnimation(null), 700);
-    deliveryLat = lat; deliveryLng = lng;
-    reverseGeocode(lat, lng);
-    updateFee(lat, lng);
+    setTimeout(()=>marker.setAnimation(null),700);
+    dLat=lat;dLng=lng;reverseGeo(lat,lng);updateFee(lat,lng);
   });
+  reverseGeo(c.lat,c.lng);
+}
 
-  // Autocomplete on location search
-  autocomplete = new google.maps.places.Autocomplete(
-    document.getElementById('locSearchInput'), {
-      componentRestrictions: {country: 'UG'},
-      fields: ['geometry','formatted_address','name']
-    }
-  );
-  autocomplete.addListener('place_changed', () => {
-    const place = autocomplete.getPlace();
-    if(!place.geometry) return;
-    const loc = place.geometry.location;
-    map.panTo(loc);
-    map.setZoom(17);
-    marker.setPosition(loc);
-    marker.setAnimation(google.maps.Animation.DROP);
-    deliveryLat = loc.lat(); deliveryLng = loc.lng();
-    showLocBadge(place.formatted_address || place.name);
-    updateFee(deliveryLat, deliveryLng);
+function reverseGeo(lat,lng){
+  if(!geocoder)return;
+  geocoder.geocode({location:{lat,lng}},(res,st)=>{
+    if(st==='OK'&&res[0])showLocBadge(res[0].formatted_address);
+    else showLocBadge(`${lat.toFixed(5)}, ${lng.toFixed(5)}`);
   });
 }
 
-function reverseGeocode(lat, lng){
-  if(!geocoder) return;
-  geocoder.geocode({location: {lat, lng}}, (results, status) => {
-    if(status === 'OK' && results[0]){
-      showLocBadge(results[0].formatted_address);
-    } else {
-      showLocBadge(`${lat.toFixed(5)}, ${lng.toFixed(5)}`);
-    }
-  });
-}
-
-function showLocBadge(text){
-  document.getElementById('locText').textContent = text;
+function showLocBadge(txt){
+  document.getElementById('locTxt').textContent=txt;
   document.getElementById('locBadge').classList.add('show');
+  document.getElementById('etaStrip').classList.add('show');
+  document.getElementById('locBadge2').textContent='✓ Location set';
+  document.getElementById('locBadge2').className='cbadge ok';
 }
 
-function haversineKm(lat1,lng1,lat2,lng2){
-  const R=6371,dLat=(lat2-lat1)*Math.PI/180,dLng=(lng2-lng1)*Math.PI/180;
-  const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;
+window.useMyLoc=()=>{
+  if(!navigator.geolocation){showToast('Geolocation not supported','error');return;}
+  showToast('Getting your GPS…');
+  navigator.geolocation.getCurrentPosition(pos=>{
+    const lat=pos.coords.latitude,lng=pos.coords.longitude;
+    if(!mapReady)initMap(lat,lng);
+    const p=new google.maps.LatLng(lat,lng);
+    map.panTo(p);map.setZoom(17);
+    marker.setPosition(p);marker.setAnimation(google.maps.Animation.DROP);
+    dLat=lat;dLng=lng;reverseGeo(lat,lng);updateFee(lat,lng);
+    showToast('Location found!','success');
+  },()=>showToast('Could not get location','error'));
+};
+
+function hav(la1,ln1,la2,ln2){
+  const R=6371,dL=(la2-la1)*Math.PI/180,dN=(ln2-ln1)*Math.PI/180;
+  const a=Math.sin(dL/2)**2+Math.cos(la1*Math.PI/180)*Math.cos(la2*Math.PI/180)*Math.sin(dN/2)**2;
   return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
 }
 
-function updateFee(lat, lng){
-  const oLat = vendorLat||CAMPUS_CENTER.lat, oLng = vendorLng||CAMPUS_CENTER.lng;
-  const dist = haversineKm(oLat, oLng, lat, lng);
-  deliveryFee = Math.max(MIN_FEE, Math.round(dist * BASE_FEE / 100) * 100);
-  const feeStr = `UGX ${deliveryFee.toLocaleString()}`;
-  document.getElementById('feeBadge').textContent = feeStr;
-  const disp = document.getElementById('deliveryFeeDisplay');
-  if(disp){
-    disp.textContent = feeStr;
-    disp.style.color = deliveryFee > 2000 ? 'var(--warn)' : 'var(--ok)';
-  }
-  updateTotal();
+function updateFee(lat,lng){
+  const oLat=vendorLat||CC.lat,oLng=vendorLng||CC.lng;
+  const dist=hav(oLat,oLng,lat,lng);
+  dFee=Math.max(MIN_FEE,Math.round(dist*BASE_FEE/100)*100);
+  const fs=`UGX ${dFee.toLocaleString()}`;
+  document.getElementById('feeBadge').textContent=fs;
+  const fd=document.getElementById('feeDisp');
+  if(fd){fd.textContent=`${fs} (${dist.toFixed(1)} km)`;fd.style.color=dFee>3000?'var(--warn)':'var(--ok)';}
+  const eta=Math.round(15+dist*5),etaH=eta+10;
+  const etaEl=document.getElementById('etaTxt');
+  if(etaEl)etaEl.textContent=`${eta}–${etaH} min`;
+  updateTotal();updatePgBar();
 }
 
 function updateTotal(){
-  const cart = getCart();
-  const sub = cart.reduce((s,i)=>s+(i.price*(i.qty||1)),0);
-  document.getElementById('miniTotal').textContent = `UGX ${(sub+deliveryFee).toLocaleString()}`;
+  const cart=getCart();
+  const sub=cart.reduce((s,i)=>s+(i.price*(i.qty||1)),0);
+  const tot=sub+dFee;
+  document.getElementById('totDisp').textContent=`UGX ${tot.toLocaleString()}`;
+  document.getElementById('btnTot').textContent=`UGX ${tot.toLocaleString()}`;
+  document.getElementById('subtotDisp').textContent=`UGX ${sub.toLocaleString()}`;
+}
+window.updateTotal=updateTotal;
+
+// ---- PAYMENT ----
+function selPay(t){
+  selPay_=t;
+  document.getElementById('pMomo').classList.toggle('sel',t==='momo');
+  document.getElementById('pCash').classList.toggle('sel',t==='cash');
+  document.getElementById('momoExt').classList.toggle('show',t==='momo');
 }
 
-window.useMyLocation = () => {
-  if(!navigator.geolocation){showToast('Geolocation not supported');return;}
-  showToast('Getting your location…');
-  navigator.geolocation.getCurrentPosition(pos => {
-    const lat = pos.coords.latitude, lng = pos.coords.longitude;
-    const loc = new google.maps.LatLng(lat, lng);
-    map.panTo(loc); map.setZoom(17);
-    marker.setPosition(loc);
-    marker.setAnimation(google.maps.Animation.DROP);
-    deliveryLat = lat; deliveryLng = lng;
-    reverseGeocode(lat, lng);
-    updateFee(lat, lng);
-  }, () => showToast('Could not get location'));
+// ---- VALIDATION ----
+function vField(inp,errId){
+  const empty=!inp.value.trim();
+  inp.classList.toggle('err',empty);inp.classList.toggle('valid',!empty);
+  document.getElementById(errId).classList.toggle('show',empty);
+  updatePgBar();
+}
+function vPhone(inp){
+  const v=inp.value.replace(/[\s\-]/g,'');
+  const ok=/^[0-9]{9,10}$/.test(v);
+  inp.classList.toggle('err',!ok&&v.length>0);inp.classList.toggle('valid',ok);
+  document.getElementById('phoneErr').classList.toggle('show',!ok&&v.length>0);
+  updatePgBar();
+}
+function updCC(ta){document.getElementById('ccNum').textContent=ta.value.length;}
+
+// ---- PROGRESS BAR ----
+function updatePgBar(){
+  let n=0;
+  if(selDistrict)n++;
+  if(document.getElementById('hostelIn')?.value.trim())n++;
+  if(document.getElementById('phoneIn')?.value.trim().length>=9)n++;
+  document.getElementById('pgBar').style.width=((n/3)*100)+'%';
+}
+
+// ---- THEME ----
+function loadTheme(){
+  const t=localStorage.getItem('nash-theme')||'light';
+  document.documentElement.setAttribute('data-theme',t);
+  document.querySelector('#themeBtn i').className=t==='dark'?'fa-solid fa-sun':'fa-solid fa-moon';
+}
+window.toggleTheme=()=>{
+  const t=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';
+  document.documentElement.setAttribute('data-theme',t);
+  localStorage.setItem('nash-theme',t);
+  document.querySelector('#themeBtn i').className=t==='dark'?'fa-solid fa-sun':'fa-solid fa-moon';
 };
 
-window.resetToDefault = () => {
-  const c = new google.maps.LatLng(CAMPUS_CENTER.lat, CAMPUS_CENTER.lng);
-  map.panTo(c); map.setZoom(16);
-  marker.setPosition(c);
-  deliveryLat = CAMPUS_CENTER.lat; deliveryLng = CAMPUS_CENTER.lng;
-  showLocBadge('Campus Center');
-  updateFee(deliveryLat, deliveryLng);
+// ---- TOAST ----
+window.showToast=function(msg,type=''){
+  const t=document.getElementById('toast');
+  document.getElementById('toastMsg').textContent=msg;
+  t.className='toast'+(type?' '+type:'');
+  t.classList.add('show');clearTimeout(t._t);
+  t._t=setTimeout(()=>t.classList.remove('show'),2800);
 };
 
-window.handleLocSearch = (val) => {
-  if(!val.trim()) document.getElementById('locBadge').classList.remove('show');
-};
+// ---- CART ----
+window.getCart=function(){return JSON.parse(localStorage.getItem('nash_cart')||'[]');};
+window.esc=function(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');};
+
+// INIT DISTRICT GRID + THEME
+buildGrid();
+loadTheme();
+updateTotal();
 </script>
-<script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD-9tSrke72PouQMnMX-a7eZSW0jkFMBWY&libraries=places&callback=initGoogleMap"></script>
 
 <script type="module">
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-const supabase = createClient(
+import{createClient}from'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+const sb=createClient(
   'https://lwpwicajcbcmzkyecnbv.supabase.co',
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx3cHdpY2FqY2JjbXpreWVjbmJ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzNDgxNjAsImV4cCI6MjA5MTkyNDE2MH0.BF2azgoZPOmo4OP9Zo1-QNpXX-EJ23BWQx-lf3GgW68'
 );
 
-let currentUser=null, currentProfile=null, mealDetails={};
+let curUser=null,curProfile=null,mealDet={};
 
-function loadTheme(){const t=localStorage.getItem('nash-theme')||'light';document.documentElement.setAttribute('data-theme',t);document.querySelector('#themeBtn i').className=t==='dark'?'fa-solid fa-sun':'fa-solid fa-moon';}
-window.toggleTheme=()=>{const t=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',t);localStorage.setItem('nash-theme',t);document.querySelector('#themeBtn i').className=t==='dark'?'fa-solid fa-sun':'fa-solid fa-moon';};
+function esc(s){return window.esc(s);}
+function getCart(){return window.getCart();}
+function showToast(m,t){window.showToast(m,t);}
 
 async function init(){
   loadTheme();
-  const {data:{user}}=await supabase.auth.getUser();
+  const{data:{user}}=await sb.auth.getUser();
   if(!user){location.href='index.html';return;}
-  currentUser=user;
+  curUser=user;
   if(!getCart().length){location.href='cart.html';return;}
-  const {data:p}=await supabase.from('profiles').select('full_name,phone,hostel_name,room_number,lat,lng').eq('id',user.id).single();
+  const{data:p}=await sb.from('profiles').select('full_name,phone,hostel_name,room_number,lat,lng').eq('id',user.id).single();
   if(p){
-    currentProfile=p;
-    if(p.hostel_name) document.getElementById('hostelInput').value=p.hostel_name;
-    if(p.room_number) document.getElementById('roomInput').value=String(p.room_number);
-    if(p.phone) document.getElementById('phoneInput').value=p.phone;
+    curProfile=p;
+    if(p.hostel_name)document.getElementById('hostelIn').value=p.hostel_name;
+    if(p.room_number)document.getElementById('roomIn').value=String(p.room_number);
+    if(p.phone)document.getElementById('phoneIn').value=p.phone;
+    if(p.full_name)document.getElementById('nameIn').value=p.full_name;
   }
   await hydrateMeals();
   renderSummary();
@@ -472,9 +784,9 @@ async function init(){
 
 async function hydrateMeals(){
   const cart=getCart();
-  const {data}=await supabase.from('meals').select('id,vendor_id,name,price,profiles!meals_vendor_id_fkey(business_name,lat,lng)').in('id',cart.map(i=>i.id));
-  if(data) data.forEach(m=>{
-    mealDetails[m.id]=m;
+  const{data}=await sb.from('meals').select('id,vendor_id,name,price,profiles!meals_vendor_id_fkey(business_name,lat,lng)').in('id',cart.map(i=>i.id));
+  if(data)data.forEach(m=>{
+    mealDet[m.id]=m;
     if(!window.vendorLat&&m.profiles?.lat){window.vendorLat=m.profiles.lat;window.vendorLng=m.profiles.lng;}
   });
 }
@@ -483,70 +795,99 @@ function renderSummary(){
   const cart=getCart();
   const sub=cart.reduce((s,i)=>s+(i.price*(i.qty||1)),0);
   const cnt=cart.reduce((s,i)=>s+(i.qty||1),0);
-  document.getElementById('summarySubtitle').textContent=`${cnt} item${cnt!==1?'s':''} · UGX ${sub.toLocaleString()}`;
+  document.getElementById('sumSub').textContent=`${cnt} item${cnt!==1?'s':''} · UGX ${sub.toLocaleString()}`;
   document.getElementById('miniItems').innerHTML=cart.map(i=>`
-    <div class="mini-item">
-      <div><div class="mi-name">${esc(i.name)}</div><div class="mi-qty">×${i.qty||1}</div></div>
-      <div class="mi-price">UGX ${((+i.price)*(i.qty||1)).toLocaleString()}</div>
+    <div class="mi">
+      <div><div class="mi-n">${esc(i.name)}</div><div class="mi-q">×${i.qty||1}</div></div>
+      <div class="mi-p">UGX ${((+i.price)*(i.qty||1)).toLocaleString()}</div>
     </div>`).join('');
   window.updateTotal&&window.updateTotal();
 }
 
 window.placeOrder=async()=>{
-  const hostel=document.getElementById('hostelInput').value.trim();
-  const room=document.getElementById('roomInput').value.trim();
-  const phone=document.getElementById('phoneInput').value.trim();
-  const note=document.getElementById('noteInput').value.trim();
-  if(!hostel){showToast('Please enter your hostel or block');return;}
-  if(!room){showToast('Please enter your room number');return;}
-  if(!phone){showToast('Please enter your phone number');return;}
+  const hostel=document.getElementById('hostelIn').value.trim();
+  const room=document.getElementById('roomIn').value.trim();
+  const phone=document.getElementById('phoneIn').value.trim().replace(/[\s\-]/g,'');
+  const note=document.getElementById('noteIn').value.trim();
+  const name=document.getElementById('nameIn').value.trim();
+
+  let hasErr=false;
+  if(!selDistrict){showToast('Please choose your district first','error');hasErr=true;}
+  if(!hostel){document.getElementById('hostelIn').classList.add('err');document.getElementById('hostelErr').classList.add('show');hasErr=true;}
+  if(!room){document.getElementById('roomIn').classList.add('err');document.getElementById('roomErr').classList.add('show');hasErr=true;}
+  if(phone.length<9){document.getElementById('phoneIn').classList.add('err');document.getElementById('phoneErr').classList.add('show');hasErr=true;}
+  if(hasErr){showToast('Please fill all required fields','error');return;}
+
   const cart=getCart();
   if(!cart.length){location.href='cart.html';return;}
+
   let vendorId=null;
-  for(const item of cart){if(mealDetails[item.id]?.vendor_id){vendorId=mealDetails[item.id].vendor_id;break;}}
+  for(const item of cart){if(mealDet[item.id]?.vendor_id){vendorId=mealDet[item.id].vendor_id;break;}}
+
   const sub=cart.reduce((s,i)=>s+(i.price*(i.qty||1)),0);
-  const fee=window.deliveryFee||500;
+  const fee=dFee||MIN_FEE;
   const total=sub+fee;
   const pin=String(Math.floor(1000+Math.random()*9000));
-  const delivLoc=`${hostel}, Room ${room}`;
+  const fullPhone='+256'+phone;
+  const dlvLoc=`${selDistrict} — ${hostel}, Room ${room}`;
+
   const btn=document.getElementById('orderBtn');
   btn.classList.add('loading');btn.disabled=true;
+
   try{
-    const {data:order,error}=await supabase.from('orders').insert([{
-      customer_id:currentUser.id,vendor_id:vendorId,
+    const{data:order,error}=await sb.from('orders').insert([{
+      customer_id:curUser.id,vendor_id:vendorId,
       items:cart.map(i=>({id:i.id,name:i.name,qty:i.qty||1,price:+i.price})),
       total_price:total,order_status:'pending',
-      delivery_location:delivLoc,
-      delivery_lat:window.deliveryLat||null,delivery_lng:window.deliveryLng||null,
+      delivery_location:dlvLoc,
+      delivery_district:selDistrict,
+      delivery_lat:dLat||null,delivery_lng:dLng||null,
       delivery_fee:fee,delivery_pin:pin,
-      customer_phone:phone,special_note:note||null,
+      customer_phone:fullPhone,
+      customer_name:name||curProfile?.full_name||null,
+      payment_method:selPay_,
+      special_note:note||null,
       created_at:new Date().toISOString()
     }]).select().single();
-    if(error) throw error;
-    if(vendorId) await supabase.from('notifications').insert({
+
+    if(error)throw error;
+
+    if(vendorId)await sb.from('notifications').insert({
       user_id:vendorId,title:'🔔 New Order!',
-      message:`New order from ${currentProfile?.full_name||'a customer'} — UGX ${total.toLocaleString()}`,
+      message:`New order from ${name||curProfile?.full_name||'a customer'} in ${selDistrict} — UGX ${total.toLocaleString()}`,
       type:'order',reference_id:order.id
     });
+
     localStorage.removeItem('nash_cart');
-    document.getElementById('orderRef').textContent=order.id.slice(0,8).toUpperCase();
-    document.getElementById('deliverTo').textContent=delivLoc;
-    document.getElementById('totalPaid').textContent=`UGX ${total.toLocaleString()}`;
+    document.getElementById('oRef').textContent=order.id.slice(0,8).toUpperCase();
+    document.getElementById('oDistrict').textContent=selDistrict;
+    document.getElementById('oDlv').textContent=`${hostel}, Room ${room}`;
+    document.getElementById('oPay').textContent=selPay_==='momo'?'📱 Mobile Money':'💵 Cash on Delivery';
+    document.getElementById('oTotal').textContent=`UGX ${total.toLocaleString()}`;
     document.getElementById('pinVal').textContent=pin;
-    document.getElementById('successScreen').classList.add('show');
+    document.getElementById('pgBar').style.width='100%';
+    document.getElementById('sucScr').classList.add('show');
+
   }catch(err){
-    console.error(err);showToast('Something went wrong — please try again');
-  }finally{btn.classList.remove('loading');btn.disabled=false;}
+    console.error('Order error:',err);
+    showToast('Something went wrong — please try again','error');
+  }finally{
+    btn.classList.remove('loading');btn.disabled=false;
+  }
 };
 
-window.getCart=function(){return JSON.parse(localStorage.getItem('nash_cart')||'[]');};
-window.showToast=function(msg){const t=document.getElementById('toast');document.getElementById('toastMsg').textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2600);};
-window.esc=function(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');};
-function esc(s){return window.esc(s);}
-function getCart(){return window.getCart();}
-function showToast(msg){window.showToast(msg);}
-
+function loadTheme(){window.loadTheme&&window.loadTheme();}
 init();
 </script>
+
+<!-- Google Maps loaded LAST, callback=Function.prototype avoids 'callback required' error -->
+<script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD-9tSrke72PouQMnMX-a7eZSW0jkFMBWY&libraries=places&callback=Function.prototype"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch(() => {});
+      });
+    }
+  </script>
 </body>
 </html>

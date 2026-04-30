@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#FF4D2D">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Nash Bites">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="icon" type="image/png" href="icon-192.png">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Nash Bites | My Profile</title>
@@ -1434,5 +1442,12 @@ init();
   <a href="profile.html" class="active"><i class="fa-solid fa-user"></i><span>Profile</span></a>
 </nav>
 
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch(() => {});
+      });
+    }
+  </script>
 </body>
 </html>
