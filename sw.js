@@ -1,6 +1,6 @@
 // Nash Bites Service Worker
-const CACHE_NAME = 'nash-bites-v1';
-const ASSETS = [
+const CACHE_NAME = 'nash-bites-v2';
+const STATIC_ASSETS = [
   './',
   './index.html',
   './home.html',
@@ -10,16 +10,14 @@ const ASSETS = [
   './order-history.html',
   './vendor-dashboard.html',
   './carrier-dashboard.html',
+  './admin.html',
   './manifest.json',
-  './icon-192.png',
-  './icon-512.png',
-  'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Nunito:wght@400;500;600;700;800;900&display=swap',
-  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css'
+  './tent.jpeg'
 ];
 
 self.addEventListener('install', e => {
   e.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS)).then(() => self.skipWaiting())
+    caches.open(CACHE_NAME).then(cache => cache.addAll(STATIC_ASSETS)).then(() => self.skipWaiting())
   );
 });
 
@@ -32,10 +30,8 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
-  // Network-first for API calls, cache-first for assets
   const url = new URL(e.request.url);
   if (url.hostname.includes('supabase') || url.hostname.includes('googleapis.com/storage')) {
-    // Always network for Supabase API
     e.respondWith(fetch(e.request).catch(() => new Response('{"error":"offline"}', {headers:{'Content-Type':'application/json'}})));
     return;
   }

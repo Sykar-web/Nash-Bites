@@ -7,8 +7,8 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Nash Bites">
-  <link rel="apple-touch-icon" href="icon-192.png">
-  <link rel="icon" type="image/png" href="icon-192.png">
+  <link rel="apple-touch-icon" href="tent.jpeg">
+  <link rel="icon" type="image/jpeg" href="tent.jpeg">
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"/>
   <title>Nash Bites | Menu</title>
@@ -530,7 +530,7 @@
 <nav class="topbar">
   <a href="home.html" class="brand">
     <div class="brand-icon">
-      <img src="icon-192.png" alt="Nash Bites">
+    <img src="tent.jpeg" alt="Nash Bites">
     </div>
     <span class="brand-name" id="brandName">Nash Bites</span>
   </a>
@@ -751,7 +751,7 @@ function renderMeals(meals){
       :`<button class="add-btn" id="add-${m.id}"
           onclick="event.stopPropagation();addToCart('${m.id}','${esc(m.name)}',${m.price})"
           ${!avail?'disabled':''}><i class="fa-solid fa-plus"></i> Add</button>`;
-    return `<div class="meal-card" style="animation-delay:${i*35}ms" onclick="openModal('${m.id}')">
+    return `<div class="meal-card" data-meal-id="${m.id}" style="animation-delay:${i*35}ms" onclick="openModal('${m.id}')">
       <div class="meal-img-top">
         ${imgHtml}
         <div class="meal-img-gradient"></div>
@@ -879,7 +879,7 @@ window.addToCart=(id,name,price)=>{
   const cart=getCart();const ex=cart.find(i=>i.id===id);
   if(ex) ex.qty=(ex.qty||1)+1;else cart.push({id,name,price:+price,qty:1});
   saveCart(cart);
-  showToast(`${name} added`);updateCartUI();renderMeals(allMeals);
+  showToast(`${name} added`);updateCartUI();updateCardFooter(id);
 };
 window.removeFromCart=(id)=>{
   const cart=getCart();const ex=cart.find(i=>i.id===id);
@@ -887,8 +887,25 @@ window.removeFromCart=(id)=>{
   ex.qty=(ex.qty||1)-1;
   if(ex.qty<=0) cart.splice(cart.indexOf(ex),1);
   saveCart(cart);
-  updateCartUI();renderMeals(allMeals);
+  updateCartUI();updateCardFooter(id);
 };
+// Update only the footer of a specific meal card — no full re-render = no blink
+function updateCardFooter(id){
+  const m=allMeals.find(x=>x.id===id);if(!m) return;
+  const card=document.querySelector(`[data-meal-id="${id}"]`);if(!card) return;
+  const footer=card.querySelector('.meal-footer');if(!footer) return;
+  const cart=getCart();
+  const cartItem=cart.find(c=>c.id===id);const inCart=!!cartItem;const qty=cartItem?.qty||0;
+  const avail=m.is_available!==false;
+  const footerBtn=inCart
+    ?`<div class="qty-ctrl">
+        <button class="qty-btn minus" onclick="event.stopPropagation();removeFromCart('${id}')" title="Remove one"><i class="fa-solid fa-minus"></i></button>
+        <span class="qty-num">${qty}</span>
+        <button class="qty-btn plus" onclick="event.stopPropagation();addToCart('${id}','${esc(m.name)}',${m.price})" title="Add one"><i class="fa-solid fa-plus"></i></button>
+      </div>`
+    :`<button class="add-btn" onclick="event.stopPropagation();addToCart('${id}','${esc(m.name)}',${m.price})" ${!avail?'disabled':''}><i class="fa-solid fa-plus"></i> Add</button>`;
+  footer.innerHTML=`<div class="meal-price">UGX ${(+m.price).toLocaleString()}</div>${footerBtn}`;
+}
 function updateCartUI(){
   const cart=getCart();const cnt=cart.reduce((s,i)=>s+(i.qty||1),0);const total=cart.reduce((s,i)=>s+(i.price*(i.qty||1)),0);
   const f=document.getElementById('cartFloat');

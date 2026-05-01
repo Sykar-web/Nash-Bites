@@ -7,8 +7,8 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Nash Bites">
-  <link rel="apple-touch-icon" href="icon-192.png">
-  <link rel="icon" type="image/png" href="icon-192.png">
+  <link rel="apple-touch-icon" href="tent.jpeg">
+  <link rel="icon" type="image/png" href="tent.jpeg">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Nash Bites | My Profile</title>
@@ -873,6 +873,13 @@
           </div>
         </div>
         <div class="form-group">
+          <label class="form-label">Phone Number</label>
+          <div class="form-input-wrap">
+            <i class="fa-solid fa-phone field-icon"></i>
+            <input type="tel" class="form-input" id="upgradePhone" placeholder="+256 700 000 000" required>
+          </div>
+        </div>
+        <div class="form-group">
           <label class="form-label">ID / Student Number</label>
           <div class="form-input-wrap">
             <i class="fa-solid fa-id-card field-icon"></i>
@@ -1223,6 +1230,7 @@ async function processToPNG(file) {
 // CHECK ROLES & SHOW DASHBOARDS
 // ============================================
 function checkRoles() {
+  const ADMIN_EMAIL = 'ezrasykar@gmail.com';
   const role = currentProfile.role || 'user';
   const dashCard = document.getElementById('dashboardCard');
   const dashLinks = document.getElementById('dashboardLinks');
@@ -1232,7 +1240,15 @@ function checkRoles() {
   let links = '';
   let showDash = false;
 
-  if (role === 'vendor' || currentProfile.is_vendor) {
+  // Admin dashboard
+  if (currentUser.email === ADMIN_EMAIL) {
+    showDash = true;
+    links += `<a href="admin.html" class="dashboard-link" style="margin-bottom:8px;background:linear-gradient(135deg,#FF4D2D,#e63e20);color:#fff;">
+      <i class="fa-solid fa-shield-halved"></i> Admin Dashboard
+    </a>`;
+  }
+
+  if (currentProfile.is_vendor) {
     showDash = true;
     links += `<a href="vendor-dashboard.html" class="dashboard-link" style="margin-bottom:8px;">
       <i class="fa-solid fa-shop"></i> Open Vendor Dashboard
@@ -1241,9 +1257,14 @@ function checkRoles() {
     vendorBtn.classList.add('active-role');
     vendorBtn.disabled = true;
     document.getElementById('vendorUpgrade').classList.add('applied');
+  } else if (currentProfile.vendor_pending) {
+    vendorBtn.textContent = '⏳ Pending Approval';
+    vendorBtn.classList.add('active-role');
+    vendorBtn.disabled = true;
+    document.getElementById('vendorUpgrade').style.borderColor = 'var(--warning)';
   }
 
-  if (role === 'carrier' || currentProfile.is_carrier) {
+  if (currentProfile.is_carrier) {
     showDash = true;
     links += `<a href="carrier-dashboard.html" class="dashboard-link">
       <i class="fa-solid fa-bicycle"></i> Open Carrier Dashboard
@@ -1252,6 +1273,11 @@ function checkRoles() {
     carrierBtn.classList.add('active-role');
     carrierBtn.disabled = true;
     document.getElementById('carrierUpgrade').classList.add('applied');
+  } else if (currentProfile.carrier_pending) {
+    carrierBtn.textContent = '⏳ Pending Approval';
+    carrierBtn.classList.add('active-role');
+    carrierBtn.disabled = true;
+    document.getElementById('carrierUpgrade').style.borderColor = 'var(--warning)';
   }
 
   if (showDash) {
@@ -1304,37 +1330,43 @@ document.getElementById('upgradeForm').onsubmit = async (e) => {
   const role = document.getElementById('upgradeRole').value;
   const bizName = document.getElementById('upgradeBizName').value.trim();
   const extra = document.getElementById('upgradeExtra').value.trim();
+  const phone = document.getElementById('upgradePhone').value.trim();
   const idNumber = document.getElementById('upgradeId').value.trim();
   hideMsg('upgradeSuccess'); hideMsg('upgradeError');
   setLoading(btn, true);
 
   try {
-    // Update profile role
-    const updates = { role };
-    if (role === 'vendor') {
-      updates.is_vendor = true;
-      updates.business_name = bizName;
-      updates.kitchen_location = extra;
-    } else {
-      updates.is_carrier = true;
-      updates.carrier_name = bizName;
-      updates.vehicle_type = extra;
-    }
-    updates.id_number = idNumber;
+    // Insert approval request into role_requests table
+    const requestData = {
+      user_id: currentUser.id,
+      user_email: currentUser.email,
+      user_name: currentProfile.full_name || currentUser.email,
+      role,
+      business_name: bizName,
+      phone,
+      id_number: idNumber,
+      status: 'pending',
+      created_at: new Date().toISOString()
+    };
+    if (role === 'vendor') requestData.kitchen_location = extra;
+    else requestData.vehicle_type = extra;
 
-    const { error } = await supabase.from('profiles').update(updates).eq('id', currentUser.id);
-    if (error) throw error;
+    const { error: reqErr } = await supabase.from('role_requests').insert(requestData);
+    if (reqErr) throw reqErr;
 
-    currentProfile = { ...currentProfile, ...updates };
-    showMsg('upgradeSuccess', `You're now registered as a ${role}! Redirecting...`);
+    // Mark pending on profile so UI updates
+    const pendingField = role === 'vendor' ? 'vendor_pending' : 'carrier_pending';
+    await supabase.from('profiles').update({ [pendingField]: true, phone }).eq('id', currentUser.id);
+
+    currentProfile[pendingField] = true;
+    showMsg('upgradeSuccess', `✓ Application submitted! Your request is awaiting admin approval.`);
 
     setTimeout(() => {
       closeUpgradeModal();
-      renderProfile();
       checkRoles();
-    }, 2000);
+    }, 2500);
   } catch(err) {
-    showMsg('upgradeError', err.message);
+    showMsg('upgradeError', err.message || 'Could not submit application. Please try again.');
   }
   setLoading(btn, false);
 };

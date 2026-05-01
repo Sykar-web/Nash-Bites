@@ -1,14 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#FF4D2D">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="Nash Bites">
-  <link rel="apple-touch-icon" href="icon-192.png">
-  <link rel="icon" type="image/png" href="icon-192.png">
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
 <title>Nash Bites | Checkout</title>
@@ -158,11 +150,11 @@ textarea.fin{padding-left:13px;resize:none;min-height:76px;line-height:1.5;}
 .momo-ext.show{display:flex;}
 
 /* SUMMARY */
-.mi{display:flex;align-items:flex-start;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--br);}
+.mi{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--br);}
 .mi:last-of-type{border-bottom:none;}
 .mi-n{font-size:.85rem;font-weight:600;}
 .mi-q{font-size:.72rem;color:var(--tm);margin-top:2px;}
-.mi-p{font-size:.85rem;font-weight:700;white-space:nowrap;margin-left:12px;}
+.mi-p{font-size:.85rem;font-weight:700;white-space:nowrap;margin-left:auto;}
 .fee-rows{border-top:1px solid var(--br);margin-top:8px;padding-top:8px;display:flex;flex-direction:column;gap:6px;}
 .fee-line{display:flex;justify-content:space-between;font-size:.83rem;}
 .fee-line .ll{color:var(--t2);}
@@ -269,51 +261,24 @@ textarea.fin{padding-left:13px;resize:none;min-height:76px;line-height:1.5;}
 <div class="sc">
   <div class="ch open" id="locHd" onclick="tog('locHd','locCb')">
     <div class="cico r"><i class="fa-solid fa-map-location-dot"></i></div>
-    <div class="cht" style="flex:1;"><h3>Delivery Location</h3><p>Select district, then pin your exact spot</p></div>
+    <div class="cht" style="flex:1;"><h3>Delivery Location</h3><p>Where should we deliver your order?</p></div>
     <span class="cbadge req" id="locBadge2">Required</span>
     <i class="fa-solid fa-chevron-down cchev"></i>
   </div>
   <div class="cb open" id="locCb">
     <div class="cbody">
-      <!-- District chooser -->
-      <div>
-        <div class="fl" style="margin-bottom:8px;"><i class="fa-solid fa-list" style="font-size:.65rem;"></i> Step 1 — Choose your district <span class="rs">*</span></div>
-        <div class="ds-wrap" style="margin-bottom:10px;" id="dSearchWrap">
-          <i class="sico fa-solid fa-magnifying-glass"></i>
-          <input class="ds-input" id="dFilter" placeholder="Search district e.g. Kampala…" oninput="filterD(this.value)">
+      <div class="fg">
+        <label class="fl">Delivery Address <span class="rs">*</span></label>
+        <div class="fw"><i class="fi fa-solid fa-location-dot"></i>
+          <input class="fin" id="locationIn" placeholder="e.g. Kampala, Ntinda, opposite Shell station" type="text"
+            oninput="onLocationInput(this)">
         </div>
-        <div class="d-grid" id="dGrid"></div>
-        <div class="sel-banner" id="selBanner">
-          <i class="fa-solid fa-location-dot" style="color:var(--p);"></i>
-          <div>
-            <div class="sb-name" id="sbName">—</div>
-            <div class="sb-reg" id="sbReg"></div>
-          </div>
-          <button class="sb-clr" onclick="clearDistrict()" title="Change district"><i class="fa-solid fa-xmark"></i></button>
-        </div>
+        <div class="ferr" id="locationErr"><i class="fa-solid fa-circle-exclamation"></i> Please enter your delivery location</div>
+        <div style="font-size:.72rem;color:var(--tm);margin-top:6px;"><i class="fa-solid fa-circle-info" style="color:var(--p);"></i> Be as specific as possible — include street, landmark or building name.</div>
       </div>
-
-      <!-- Google Map (shown after district chosen) -->
-      <div class="map-sec" id="mapSec">
-        <div class="map-info">
-          <i class="fa-solid fa-circle-info"></i>
-          <p>Step 2 — Tap or drag the red pin on the map to mark your exact delivery spot</p>
-        </div>
-        <div id="gmap"></div>
-        <div class="map-ctrls">
-          <button class="mc-btn" onclick="useMyLoc()"><i class="fa-solid fa-location-crosshairs"></i> Use My GPS</button>
-          <button class="mc-btn" onclick="goToDistrict()"><i class="fa-solid fa-map-pin"></i> District Centre</button>
-        </div>
-        <div class="loc-badge" id="locBadge">
-          <i class="fa-solid fa-location-dot"></i>
-          <span id="locTxt">Location set</span>
-          <span class="fee-tag" id="feeBadge">UGX 0</span>
-        </div>
-        <div class="eta-strip" id="etaStrip">
-          <i class="fa-solid fa-clock"></i>
-          <span>Est. delivery: <strong id="etaTxt">20–35 min</strong></span>
-        </div>
-        <p class="map-note"><i class="fa-solid fa-info-circle"></i> Tap anywhere or drag the pin to set your exact delivery spot. Fee is calculated by distance from the vendor.</p>
+      <div class="loc-badge" id="locBadge" style="display:none;">
+        <i class="fa-solid fa-location-dot"></i>
+        <span id="locTxt">Location set</span>
       </div>
     </div>
   </div>
@@ -460,7 +425,7 @@ textarea.fin{padding-left:13px;resize:none;min-height:76px;line-height:1.5;}
   <p class="sp">Your order is heading to the kitchen.<br>You'll be notified as it's prepared and dispatched.</p>
   <div class="icard">
     <div class="irow"><span class="il">Order Ref</span><span class="iv" id="oRef" style="color:var(--p)">—</span></div>
-    <div class="irow"><span class="il">District</span><span class="iv" id="oDistrict">—</span></div>
+    <div class="irow"><span class="il">Delivery Location</span><span class="iv" id="oDistrict">—</span></div>
     <div class="irow"><span class="il">Delivering to</span><span class="iv" id="oDlv">—</span></div>
     <div class="irow"><span class="il">Payment</span><span class="iv" id="oPay">—</span></div>
     <div class="irow"><span class="il">Total</span><span class="iv" id="oTotal" style="color:var(--p)">—</span></div>
@@ -713,11 +678,24 @@ function updCC(ta){document.getElementById('ccNum').textContent=ta.value.length;
 // ---- PROGRESS BAR ----
 function updatePgBar(){
   let n=0;
-  if(selDistrict)n++;
+  if(document.getElementById('locationIn')?.value.trim())n++;
   if(document.getElementById('hostelIn')?.value.trim())n++;
   if(document.getElementById('phoneIn')?.value.trim().length>=9)n++;
   document.getElementById('pgBar').style.width=((n/3)*100)+'%';
 }
+
+// Location input handler
+window.onLocationInput=function(inp){
+  const v=inp.value.trim();
+  inp.classList.toggle('err',!v);inp.classList.toggle('valid',!!v);
+  document.getElementById('locationErr').classList.toggle('show',!v);
+  const badge2=document.getElementById('locBadge2');
+  if(v){badge2.textContent='✓ Set';badge2.className='cbadge ok';}
+  else{badge2.textContent='Required';badge2.className='cbadge req';}
+  const lb=document.getElementById('locBadge');
+  if(lb){lb.style.display=v?'flex':'none';document.getElementById('locTxt').textContent=v;}
+  updatePgBar();
+};
 
 // ---- THEME ----
 function loadTheme(){
@@ -745,8 +723,7 @@ window.showToast=function(msg,type=''){
 window.getCart=function(){return JSON.parse(localStorage.getItem('nash_cart')||'[]');};
 window.esc=function(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');};
 
-// INIT DISTRICT GRID + THEME
-buildGrid();
+// INIT THEME
 loadTheme();
 updateTotal();
 </script>
@@ -796,15 +773,24 @@ function renderSummary(){
   const sub=cart.reduce((s,i)=>s+(i.price*(i.qty||1)),0);
   const cnt=cart.reduce((s,i)=>s+(i.qty||1),0);
   document.getElementById('sumSub').textContent=`${cnt} item${cnt!==1?'s':''} · UGX ${sub.toLocaleString()}`;
-  document.getElementById('miniItems').innerHTML=cart.map(i=>`
-    <div class="mi">
-      <div><div class="mi-n">${esc(i.name)}</div><div class="mi-q">×${i.qty||1}</div></div>
+  document.getElementById('miniItems').innerHTML=cart.map(i=>{
+    const det=mealDet[i.id];
+    const imgUrl=det?.image_url||'';
+    return `<div class="mi">
+      ${imgUrl?`<img src="${esc(imgUrl)}" alt="${esc(i.name)}" style="width:44px;height:44px;border-radius:10px;object-fit:cover;flex-shrink:0;">`
+              :`<div style="width:44px;height:44px;border-radius:10px;background:var(--inp);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;">🍽️</div>`}
+      <div style="flex:1;min-width:0;">
+        <div class="mi-n">${esc(i.name)}</div>
+        <div class="mi-q">×${i.qty||1}</div>
+      </div>
       <div class="mi-p">UGX ${((+i.price)*(i.qty||1)).toLocaleString()}</div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
   window.updateTotal&&window.updateTotal();
 }
 
 window.placeOrder=async()=>{
+  const locationInput=document.getElementById('locationIn').value.trim();
   const hostel=document.getElementById('hostelIn').value.trim();
   const room=document.getElementById('roomIn').value.trim();
   const phone=document.getElementById('phoneIn').value.trim().replace(/[\s\-]/g,'');
@@ -812,7 +798,7 @@ window.placeOrder=async()=>{
   const name=document.getElementById('nameIn').value.trim();
 
   let hasErr=false;
-  if(!selDistrict){showToast('Please choose your district first','error');hasErr=true;}
+  if(!locationInput){document.getElementById('locationIn').classList.add('err');document.getElementById('locationErr').classList.add('show');hasErr=true;}
   if(!hostel){document.getElementById('hostelIn').classList.add('err');document.getElementById('hostelErr').classList.add('show');hasErr=true;}
   if(!room){document.getElementById('roomIn').classList.add('err');document.getElementById('roomErr').classList.add('show');hasErr=true;}
   if(phone.length<9){document.getElementById('phoneIn').classList.add('err');document.getElementById('phoneErr').classList.add('show');hasErr=true;}
@@ -829,7 +815,7 @@ window.placeOrder=async()=>{
   const total=sub+fee;
   const pin=String(Math.floor(1000+Math.random()*9000));
   const fullPhone='+256'+phone;
-  const dlvLoc=`${selDistrict} — ${hostel}, Room ${room}`;
+  const dlvLoc=`${locationInput} — ${hostel}, Room ${room}`;
 
   const btn=document.getElementById('orderBtn');
   btn.classList.add('loading');btn.disabled=true;
@@ -837,11 +823,10 @@ window.placeOrder=async()=>{
   try{
     const{data:order,error}=await sb.from('orders').insert([{
       customer_id:curUser.id,vendor_id:vendorId,
-      items:cart.map(i=>({id:i.id,name:i.name,qty:i.qty||1,price:+i.price})),
+      items:cart.map(i=>({id:i.id,name:i.name,qty:i.qty||1,price:+i.price,image_url:mealDet[i.id]?.image_url||null})),
       total_price:total,order_status:'pending',
       delivery_location:dlvLoc,
-      delivery_district:selDistrict,
-      delivery_lat:dLat||null,delivery_lng:dLng||null,
+      delivery_district:locationInput,
       delivery_fee:fee,delivery_pin:pin,
       customer_phone:fullPhone,
       customer_name:name||curProfile?.full_name||null,
@@ -854,13 +839,13 @@ window.placeOrder=async()=>{
 
     if(vendorId)await sb.from('notifications').insert({
       user_id:vendorId,title:'🔔 New Order!',
-      message:`New order from ${name||curProfile?.full_name||'a customer'} in ${selDistrict} — UGX ${total.toLocaleString()}`,
+      message:`New order from ${name||curProfile?.full_name||'a customer'} — UGX ${total.toLocaleString()}`,
       type:'order',reference_id:order.id
     });
 
     localStorage.removeItem('nash_cart');
     document.getElementById('oRef').textContent=order.id.slice(0,8).toUpperCase();
-    document.getElementById('oDistrict').textContent=selDistrict;
+    document.getElementById('oDistrict').textContent=locationInput;
     document.getElementById('oDlv').textContent=`${hostel}, Room ${room}`;
     document.getElementById('oPay').textContent=selPay_==='momo'?'📱 Mobile Money':'💵 Cash on Delivery';
     document.getElementById('oTotal').textContent=`UGX ${total.toLocaleString()}`;
@@ -880,14 +865,6 @@ function loadTheme(){window.loadTheme&&window.loadTheme();}
 init();
 </script>
 
-<!-- Google Maps loaded LAST, callback=Function.prototype avoids 'callback required' error -->
-<script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD-9tSrke72PouQMnMX-a7eZSW0jkFMBWY&libraries=places&callback=Function.prototype"></script>
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js').catch(() => {});
-      });
-    }
-  </script>
+
 </body>
 </html>
