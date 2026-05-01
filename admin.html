@@ -6,12 +6,12 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Nash Bites Admin">
-  <link rel="apple-touch-icon" href="tent.jpeg">
-  <link rel="icon" type="image/png" href="tent.jpeg">
+  <link rel="apple-touch-icon" href="tent.jpg">
+  <link rel="icon" type="image/png" href="tent.jpg">
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"/>
   <title>Nash Bites | Admin Dashboard</title>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
     :root{
@@ -30,7 +30,7 @@
       --pl:rgba(255,77,45,.18);--ok2:#052E16;--ng2:#450A0A;--in2:#172554;--warn2:#422006;
     }
     *{margin:0;padding:0;box-sizing:border-box;}
-    body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;transition:background .3s,color .3s;}
+    body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;transition:background .3s,color .3s;}
 
     /* SIDEBAR */
     .sidebar{
@@ -48,7 +48,7 @@
       width:38px;height:38px;border-radius:10px;overflow:hidden;flex-shrink:0;
     }
     .logo-icon img{width:100%;height:100%;object-fit:cover;}
-    .logo-text{font-family:'Syne',sans-serif;font-weight:800;font-size:1rem;}
+    .logo-text{font-family:'Playfair Display',serif;font-weight:900;font-size:1rem;}
     .logo-badge{font-size:.6rem;background:var(--p);color:#fff;padding:1px 7px;border-radius:20px;font-weight:700;margin-left:4px;}
     .nav-section{padding:12px 10px 6px;font-size:.6rem;font-weight:700;color:var(--tm);text-transform:uppercase;letter-spacing:1px;}
     .nav-item{
@@ -76,7 +76,7 @@
       display:flex;align-items:center;justify-content:space-between;
       padding:0 24px;z-index:200;transition:background .3s;
     }
-    .topbar-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1.05rem;}
+    .topbar-title{font-family:'Playfair Display',serif;font-weight:700;font-size:1.05rem;}
     .topbar-right{display:flex;align-items:center;gap:10px;}
     .icon-btn{
       width:36px;height:36px;border-radius:50%;
@@ -100,7 +100,7 @@
     }
     .stat-card:hover{box-shadow:var(--shm);}
     .stat-label{font-size:.72rem;font-weight:700;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;}
-    .stat-val{font-family:'Syne',sans-serif;font-size:1.9rem;font-weight:800;color:var(--tx);margin-bottom:4px;}
+    .stat-val{font-family:'Playfair Display',serif;font-size:1.9rem;font-weight:900;color:var(--tx);margin-bottom:4px;}
     .stat-sub{font-size:.73rem;color:var(--tm);}
     .stat-icon{
       width:40px;height:40px;border-radius:10px;
@@ -118,7 +118,7 @@
       padding:16px 20px;border-bottom:1px solid var(--br);
       display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;
     }
-    .section-title{font-family:'Syne',sans-serif;font-weight:700;font-size:.95rem;display:flex;align-items:center;gap:8px;}
+    .section-title{font-family:'Playfair Display',serif;font-weight:700;font-size:.95rem;display:flex;align-items:center;gap:8px;}
     .section-title i{color:var(--p);}
     .section-body{padding:0;}
 
@@ -170,6 +170,8 @@
     .btn-ng:hover{filter:brightness(.9);}
     .btn-ghost{background:var(--inp);color:var(--t2);border:1px solid var(--br);}
     .btn-ghost:hover{border-color:var(--p);color:var(--p);}
+    .btn-warn{background:var(--warn);color:#fff;}
+    .btn-warn:hover{filter:brightness(.9);}
     .btn-sm{padding:5px 10px;font-size:.72rem;}
 
     /* AVATAR */
@@ -227,7 +229,7 @@
       border:1px solid var(--br);
     }
     @keyframes popIn{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
-    .modal-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1.05rem;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+    .modal-title{font-family:'Playfair Display',serif;font-weight:700;font-size:1.05rem;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
     .modal-actions{display:flex;gap:10px;margin-top:20px;justify-content:flex-end;}
 
     /* MOBILE */
@@ -266,7 +268,7 @@
 <!-- SIDEBAR -->
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-logo">
-    <div class="logo-icon"><img src="tent.jpeg" alt="Nash Bites"></div>
+    <div class="logo-icon"><img src="tent.jpg" alt="Nash Bites"></div>
     <div>
       <div class="logo-text">Nash Bites <span class="logo-badge">Admin</span></div>
     </div>
@@ -375,7 +377,7 @@
       </div>
       <div class="section-body">
         <table class="tbl">
-          <thead><tr><th>Vendor</th><th>Business</th><th>Location</th><th>Status</th><th>Meals</th><th>Actions</th></tr></thead>
+          <thead><tr><th>Vendor</th><th>Business</th><th>Location</th><th>Store</th><th>Meals</th><th>Account</th><th>Actions</th></tr></thead>
           <tbody id="vendorsBody"><tr class="loading-row"><td colspan="6"><i class="fa-solid fa-spinner fa-spin"></i> Loading…</td></tr></tbody>
         </table>
       </div>
@@ -394,7 +396,7 @@
       </div>
       <div class="section-body">
         <table class="tbl">
-          <thead><tr><th>Carrier</th><th>Email</th><th>Vehicle</th><th>Phone</th><th>Status</th><th>Actions</th></tr></thead>
+          <thead><tr><th>Carrier</th><th>Email</th><th>Vehicle</th><th>Phone</th><th>Online</th><th>Account</th><th>Actions</th></tr></thead>
           <tbody id="carriersBody"><tr class="loading-row"><td colspan="6"><i class="fa-solid fa-spinner fa-spin"></i> Loading…</td></tr></tbody>
         </table>
       </div>
@@ -468,6 +470,38 @@
   </div>
 
 </div><!-- end main -->
+
+<!-- EDIT MEAL MODAL -->
+<div class="modal-bg" id="editMealModal">
+  <div class="modal-card" style="max-width:480px;">
+    <div class="modal-title"><i class="fa-solid fa-pen" style="color:var(--p);"></i> Edit Meal</div>
+    <input type="hidden" id="editMealId">
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div>
+        <label style="font-size:.7rem;font-weight:800;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px;">Meal Name</label>
+        <input id="editMealName" class="search-inp" style="width:100%;min-width:unset;" placeholder="e.g. Grilled Chicken">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div>
+          <label style="font-size:.7rem;font-weight:800;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px;">Price (UGX)</label>
+          <input id="editMealPrice" type="number" class="search-inp" style="width:100%;min-width:unset;" placeholder="e.g. 15000">
+        </div>
+        <div>
+          <label style="font-size:.7rem;font-weight:800;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px;">Category</label>
+          <input id="editMealCategory" class="search-inp" style="width:100%;min-width:unset;" placeholder="e.g. Rice, Chicken">
+        </div>
+      </div>
+      <div>
+        <label style="font-size:.7rem;font-weight:800;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px;">Image URL</label>
+        <input id="editMealImage" class="search-inp" style="width:100%;min-width:unset;" placeholder="https://...">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeEditMeal()">Cancel</button>
+      <button class="btn btn-p" onclick="saveMeal()"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button>
+    </div>
+  </div>
+</div>
 
 <!-- CONFIRM MODAL -->
 <div class="modal-bg" id="confirmModal">
@@ -550,10 +584,15 @@ window.loadApprovals=async()=>{
     <td style="font-size:.78rem;">${esc(r.phone||'—')}</td>
     <td style="color:var(--tm);font-size:.75rem;">${fmtDate(r.created_at)}</td>
     <td><div class="action-btns">
-      <button class="btn btn-ok btn-sm" onclick="approveRole('${r.id}','${r.user_id}','${r.role}','${esc(r.business_name||'')}','${esc(r.kitchen_location||r.vehicle_type||'')}','${esc(r.phone||'')}')"><i class="fa-solid fa-check"></i> Approve</button>
+      <button class="btn btn-ok btn-sm" data-req='${JSON.stringify({id:r.id,uid:r.user_id,role:r.role,biz:r.business_name||'',extra:r.kitchen_location||r.vehicle_type||'',phone:r.phone||''}).replace(/'/g,"&#39;")}' onclick="approveRoleBtn(this)"><i class="fa-solid fa-check"></i> Approve</button>
       <button class="btn btn-ng btn-sm" onclick="rejectRole('${r.id}')"><i class="fa-solid fa-xmark"></i> Reject</button>
     </div></td>
   </tr>`).join('');
+};
+
+window.approveRoleBtn=(btn)=>{
+  const d=JSON.parse(btn.getAttribute('data-req').replace(/&#39;/g,"'"));
+  approveRole(d.id,d.uid,d.role,d.biz,d.extra,d.phone);
 };
 
 window.approveRole=async(reqId,userId,role,bizName,extra,phone)=>{
@@ -633,11 +672,31 @@ window.revokeRole=async(userId,role)=>{
   });
 };
 
+window.pauseVendor=async(userId,pause,name)=>{
+  confirm2(`${pause?'Pause':'Resume'} vendor "${name}"? ${pause?'They will not be able to accept orders.':'They will be able to resume operations.'}`,async()=>{
+    const{error}=await sb.from('profiles').update({vendor_paused:pause}).eq('id',userId);
+    if(error){toast('Error updating vendor','err');return;}
+    await sb.from('notifications').insert({user_id:userId,title:pause?'Account Paused':'Account Resumed',message:pause?'Your vendor account has been paused by admin. Contact support for more information.':'Your vendor account has been resumed by admin. You can now accept orders.',type:'system'});
+    toast(pause?`Vendor "${name}" paused`:`Vendor "${name}" resumed`);
+    loadVendors();
+  });
+};
+
+window.pauseCarrier=async(userId,pause,name)=>{
+  confirm2(`${pause?'Pause':'Resume'} carrier "${name}"? ${pause?'They will not be able to accept deliveries.':'They will be able to resume deliveries.'}`,async()=>{
+    const{error}=await sb.from('profiles').update({carrier_paused:pause}).eq('id',userId);
+    if(error){toast('Error updating carrier','err');return;}
+    await sb.from('notifications').insert({user_id:userId,title:pause?'Account Paused':'Account Resumed',message:pause?'Your carrier account has been paused by admin. Contact support for more information.':'Your carrier account has been resumed by admin. You can now accept deliveries.',type:'system'});
+    toast(pause?`Carrier "${name}" paused`:`Carrier "${name}" resumed`);
+    loadCarriers();
+  });
+};
+
 // ─── VENDORS ───
 window.loadVendors=async()=>{
   const body=document.getElementById('vendorsBody');
   body.innerHTML='<tr class="loading-row"><td colspan="6"><i class="fa-solid fa-spinner fa-spin"></i> Loading…</td></tr>';
-  const{data}=await sb.from('profiles').select('id,full_name,email,business_name,kitchen_location,is_online,store_open,created_at').eq('is_vendor',true).order('created_at',{ascending:false});
+  const{data}=await sb.from('profiles').select('id,full_name,email,business_name,kitchen_location,is_online,store_open,vendor_paused,created_at').eq('is_vendor',true).order('created_at',{ascending:false});
   if(!data?.length){body.innerHTML='<tr><td colspan="6" class="tbl-empty"><i class="fa-solid fa-shop"></i><br>No vendors found</td></tr>';return;}
   // Get meal counts per vendor
   const{data:mealCounts}=await sb.from('meals').select('vendor_id').in('vendor_id',data.map(v=>v.id));
@@ -648,7 +707,9 @@ window.loadVendors=async()=>{
     <td style="font-size:.78rem;color:var(--tm);">${esc(v.kitchen_location||'—')}</td>
     <td>${(v.is_online||v.store_open)?'<span class="badge b-ok">Open</span>':'<span class="badge b-gray">Closed</span>'}</td>
     <td><span class="badge b-p">${mcMap[v.id]||0} meals</span></td>
+    <td>${v.vendor_paused?'<span class="badge b-ng">Paused</span>':'<span class="badge b-ok">Active</span>'}</td>
     <td><div class="action-btns">
+      <button class="btn ${v.vendor_paused?'btn-ok':'btn-warn'} btn-sm" onclick="pauseVendor('${v.id}',${!v.vendor_paused},'${esc(v.full_name||'')}')"><i class="fa-solid fa-${v.vendor_paused?'play':'pause'}"></i> ${v.vendor_paused?'Resume':'Pause'}</button>
       <button class="btn btn-ng btn-sm" onclick="revokeRole('${v.id}','vendor')"><i class="fa-solid fa-shop-slash"></i> Revoke</button>
     </div></td>
   </tr>`).join('');
@@ -658,7 +719,7 @@ window.loadVendors=async()=>{
 window.loadCarriers=async()=>{
   const body=document.getElementById('carriersBody');
   body.innerHTML='<tr class="loading-row"><td colspan="6"><i class="fa-solid fa-spinner fa-spin"></i> Loading…</td></tr>';
-  const{data}=await sb.from('profiles').select('id,full_name,email,phone,vehicle_type,is_carrier,carrier_online,created_at').eq('is_carrier',true).order('created_at',{ascending:false});
+  const{data}=await sb.from('profiles').select('id,full_name,email,phone,vehicle_type,is_carrier,carrier_online,carrier_paused,created_at').eq('is_carrier',true).order('created_at',{ascending:false});
   if(!data?.length){body.innerHTML='<tr><td colspan="6" class="tbl-empty"><i class="fa-solid fa-bicycle"></i><br>No carriers found</td></tr>';return;}
   body.innerHTML=data.map(c=>`<tr>
     <td><div style="font-weight:700;">${esc(c.full_name||'—')}</div></td>
@@ -666,7 +727,9 @@ window.loadCarriers=async()=>{
     <td>${esc(c.vehicle_type||'—')}</td>
     <td style="font-size:.78rem;">${esc(c.phone||'—')}</td>
     <td>${c.carrier_online?'<span class="badge b-ok">Online</span>':'<span class="badge b-gray">Offline</span>'}</td>
+    <td>${c.carrier_paused?'<span class="badge b-ng">Paused</span>':'<span class="badge b-ok">Active</span>'}</td>
     <td><div class="action-btns">
+      <button class="btn ${c.carrier_paused?'btn-ok':'btn-warn'} btn-sm" onclick="pauseCarrier('${c.id}',${!c.carrier_paused},'${esc(c.full_name||'')}')"><i class="fa-solid fa-${c.carrier_paused?'play':'pause'}"></i> ${c.carrier_paused?'Resume':'Pause'}</button>
       <button class="btn btn-ng btn-sm" onclick="revokeRole('${c.id}','carrier')"><i class="fa-solid fa-ban"></i> Revoke</button>
     </div></td>
   </tr>`).join('');
@@ -693,6 +756,7 @@ window.loadMeals=async()=>{
       </label>
     </td>
     <td><div class="action-btns">
+      <button class="btn btn-ghost btn-sm" onclick="editMeal('${m.id}','${esc(m.name)}',${m.price},'${esc(m.category||'')}','${esc(m.image_url||'')}')"><i class="fa-solid fa-pen"></i></button>
       <button class="btn btn-ng btn-sm" onclick="deleteMeal('${m.id}','${esc(m.name)}')"><i class="fa-solid fa-trash"></i></button>
     </div></td>
   </tr>`).join('');
@@ -710,6 +774,27 @@ window.deleteMeal=(id,name)=>{
     if(error){toast('Error deleting meal','err');return;}
     toast('Meal deleted');loadMeals();
   });
+};
+
+window.editMeal=(id,name,price,category,imageUrl)=>{
+  document.getElementById('editMealId').value=id;
+  document.getElementById('editMealName').value=name;
+  document.getElementById('editMealPrice').value=price;
+  document.getElementById('editMealCategory').value=category;
+  document.getElementById('editMealImage').value=imageUrl;
+  document.getElementById('editMealModal').classList.add('open');
+};
+window.closeEditMeal=()=>document.getElementById('editMealModal').classList.remove('open');
+window.saveMeal=async()=>{
+  const id=document.getElementById('editMealId').value;
+  const name=document.getElementById('editMealName').value.trim();
+  const price=parseFloat(document.getElementById('editMealPrice').value);
+  const category=document.getElementById('editMealCategory').value.trim();
+  const image_url=document.getElementById('editMealImage').value.trim();
+  if(!name||isNaN(price)){toast('Name and valid price required','err');return;}
+  const{error}=await sb.from('meals').update({name,price,category,image_url}).eq('id',id);
+  if(error){toast('Error saving meal','err');return;}
+  toast('Meal updated');closeEditMeal();loadMeals();
 };
 
 // ─── ORDERS ───

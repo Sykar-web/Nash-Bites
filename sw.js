@@ -12,7 +12,7 @@ const STATIC_ASSETS = [
   './carrier-dashboard.html',
   './admin.html',
   './manifest.json',
-  './tent.jpeg'
+  './tent.jpg'
 ];
 
 self.addEventListener('install', e => {

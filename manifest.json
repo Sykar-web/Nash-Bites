@@ -3,23 +3,26 @@
   "short_name": "Nash Bites",
   "description": "Order fresh food from Nash Bites — fast delivery right to you.",
   "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#FF4D2D",
   "theme_color": "#FF4D2D",
   "icons": [
     {
-      "src": "tent.jpeg",
+      "src": "tent.jpg",
       "sizes": "192x192",
       "type": "image/jpeg",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "tent.jpeg",
+      "src": "tent.jpg",
       "sizes": "512x512",
       "type": "image/jpeg",
-      "purpose": "any maskable"
+      "purpose": "maskable"
     }
   ],
+  "splash_pages": null,
   "categories": ["food", "shopping"],
   "lang": "en"
 }
