@@ -41,7 +41,7 @@
       font-family:'Nunito',sans-serif;
       background:var(--bg);color:var(--text);
       overflow-x:hidden;
-      padding-bottom:calc(var(--footer-h)+24px);
+      padding-bottom:calc(var(--footer-h)+48px);
       transition:background .3s,color .3s;
     }
 
@@ -136,12 +136,47 @@
     }
 
     /* ──────────────────────────────────────
-       MEAL GRID — editorial asymmetric cards
+       CATEGORY SECTIONS + HORIZONTAL SCROLL
     ────────────────────────────────────── */
-    .meal-wrap{padding:0 16px 4px;max-width:1200px;margin:0 auto;}
-    @media(min-width:768px){.meal-wrap{padding:0 30px 4px;}}
+    .meal-wrap{padding:0 0 4px;max-width:100%;}
 
-    .meal-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+    /* Category section block */
+    .cat-section{margin-bottom:28px;}
+    .cat-section-header{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:0 18px 10px;
+    }
+    @media(min-width:768px){.cat-section-header{padding:0 32px 10px;}}
+    .cat-section-title{
+      font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:900;
+      color:var(--text);display:flex;align-items:center;gap:8px;
+    }
+    .cat-section-title::before{
+      content:'';display:inline-block;width:4px;height:18px;
+      border-radius:3px;background:var(--primary);flex-shrink:0;
+    }
+    .cat-section-count{
+      font-size:.68rem;font-weight:800;color:var(--text-muted);
+      background:var(--bg-input);padding:3px 10px;
+      border-radius:20px;border:1px solid var(--border);
+    }
+
+    /* Horizontal scroll row */
+    .meal-row{
+      display:flex;gap:12px;
+      overflow-x:auto;overflow-y:visible;
+      padding:4px 18px 16px;
+      scrollbar-width:thin;scrollbar-color:var(--border) transparent;
+      scroll-snap-type:x mandatory;
+      -webkit-overflow-scrolling:touch;
+    }
+    @media(min-width:768px){.meal-row{padding:4px 32px 16px;gap:16px;}}
+    .meal-row::-webkit-scrollbar{height:4px;}
+    .meal-row::-webkit-scrollbar-track{background:transparent;}
+    .meal-row::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+
+    /* meal-grid kept for search/all-filter fallback grid view */
+    .meal-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 18px;}
     @media(min-width:560px){.meal-grid{grid-template-columns:repeat(2,1fr);gap:14px;}}
     @media(min-width:900px){.meal-grid{grid-template-columns:repeat(3,1fr);gap:16px;}}
     @media(min-width:1200px){.meal-grid{grid-template-columns:repeat(4,1fr);gap:18px;}}
@@ -158,7 +193,15 @@
       transition:transform .35s cubic-bezier(.16,1,.3,1);
       animation:fadeUp .4s ease both;
       position:relative;
+      /* fixed width for horizontal scroll rows */
+      min-width:185px;max-width:185px;
+      scroll-snap-align:start;
+      flex-shrink:0;
     }
+    @media(min-width:480px){.meal-card{min-width:200px;max-width:200px;}}
+    @media(min-width:768px){.meal-card{min-width:220px;max-width:220px;}}
+    /* In grid view (search/All), override fixed width */
+    .meal-grid .meal-card{min-width:0;max-width:none;width:100%;}
     .meal-card:hover{transform:translateY(-4px);}
     @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 
@@ -352,45 +395,37 @@
       display:none;position:fixed;inset:0;
       background:rgba(8,14,28,.55);z-index:4000;
       backdrop-filter:blur(8px);
-      align-items:flex-end;justify-content:center;
+      align-items:stretch;justify-content:flex-end;
     }
     .modal-overlay.open{display:flex;}
-    /* Mobile: sheet from bottom */
+    /* Always slide in from the right */
     .meal-modal{
       background:var(--bg-card);
-      border-radius:26px 26px 0 0;
-      width:100%;max-width:600px;
-      max-height:92vh;overflow-y:auto;
+      border-radius:24px 0 0 24px;
+      width:92%;max-width:480px;
+      max-height:100vh;height:100%;overflow-y:auto;
       position:relative;
-      animation:sheetUp .38s cubic-bezier(.16,1,.3,1);
+      animation:slideFromRight .38s cubic-bezier(.16,1,.3,1);
       scrollbar-width:none;
+      margin:0;
     }
     .meal-modal::-webkit-scrollbar{display:none;}
-    @keyframes sheetUp{from{transform:translateY(70px);opacity:0}to{transform:translateY(0);opacity:1}}
+    @keyframes slideFromRight{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
 
-    /* Desktop: panel from left */
+    /* Desktop: slightly wider panel */
     @media(min-width:768px){
-      .modal-overlay{align-items:stretch;justify-content:flex-start;}
-      .meal-modal{
-        border-radius:0 24px 24px 0;
-        width:420px;max-width:420px;
-        max-height:100vh;height:100%;
-        animation:slideFromRight .38s cubic-bezier(.16,1,.3,1);
-        margin:0;
-      }
+      .meal-modal{width:440px;max-width:440px;}
     }
-    @keyframes slideFromRight{from{transform:translateX(60px);opacity:0}to{transform:translateX(0);opacity:1}}
 
     .meal-modal::before{
       content:'';position:absolute;top:0;left:0;right:0;height:3px;
       background:linear-gradient(90deg,var(--primary),#FF8A65,var(--primary));
       background-size:200%;animation:shimmer 2.5s linear infinite;
-      z-index:5;border-radius:26px 26px 0 0;
+      z-index:5;border-radius:24px 0 0 0;
     }
-    @media(min-width:768px){.meal-modal::before{border-radius:0 24px 0 0;}}
     @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
-    .modal-drag{width:34px;height:4px;border-radius:2px;background:var(--border);margin:14px auto 0;}
-    @media(min-width:768px){.modal-drag{display:none;}}
+    .modal-drag{display:none;}
+    @media(min-width:768px){.meal-modal::before{border-radius:24px 0 0 0;}}
     .modal-close{
       position:absolute;top:15px;right:15px;
       width:34px;height:34px;border-radius:50%;
@@ -502,6 +537,24 @@
     .modal-add:hover{background:var(--primary-dark);transform:translateY(-1px);}
     .modal-add:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none;}
 
+    /* Modal qty controls */
+    .modal-qty-ctrl{
+      display:flex;align-items:center;gap:0;
+      background:var(--bg-input);border-radius:14px;
+      overflow:hidden;border:2px solid var(--primary);
+    }
+    .modal-qty-btn{
+      width:42px;height:46px;border:none;background:transparent;
+      color:var(--primary);cursor:pointer;font-size:1rem;font-weight:900;
+      display:flex;align-items:center;justify-content:center;transition:.15s;
+    }
+    .modal-qty-btn:hover{background:var(--primary);color:#fff;}
+    .modal-qty-btn.minus:hover{background:var(--danger);color:#fff;}
+    .modal-qty-num{
+      min-width:38px;text-align:center;font-size:1.1rem;font-weight:900;
+      color:var(--text);padding:0 4px;
+    }
+
     /* ──────────────────────────────────────
        FOOTER NAV
     ────────────────────────────────────── */
@@ -570,14 +623,15 @@
   <span class="sec-count" id="secCount"></span>
 </div>
 
-<!-- MEAL GRID -->
-<div class="meal-wrap">
-  <div class="meal-grid" id="mealGrid">
+<!-- MEAL SECTIONS -->
+<div class="meal-wrap" id="mealWrap">
+  <!-- category sections rendered by JS -->
+  <div style="padding:0 18px"><div class="meal-grid" id="mealGrid">
     <div class="skel"><div class="skel-img"></div><div class="skel-body"><div class="skel-line"></div><div class="skel-line short"></div><div class="skel-line"></div></div></div>
     <div class="skel"><div class="skel-img"></div><div class="skel-body"><div class="skel-line"></div><div class="skel-line short"></div><div class="skel-line"></div></div></div>
     <div class="skel"><div class="skel-img"></div><div class="skel-body"><div class="skel-line"></div><div class="skel-line short"></div><div class="skel-line"></div></div></div>
     <div class="skel"><div class="skel-img"></div><div class="skel-body"><div class="skel-line"></div><div class="skel-line short"></div><div class="skel-line"></div></div></div>
-  </div>
+  </div></div>
 </div>
 
 <!-- CART FLOAT (desktop only, appears when cart has items) -->
@@ -632,7 +686,9 @@
         <div class="modal-price-lbl">Price</div>
         <div class="modal-price" id="modalPrice">UGX —</div>
       </div>
-      <button class="modal-add" id="modalAddBtn" onclick="addFromModal()"><i class="fa-solid fa-plus"></i> Add to Cart</button>
+      <div id="modalCartControl">
+        <button class="modal-add" id="modalAddBtn" onclick="addFromModal()"><i class="fa-solid fa-plus"></i> Add to Cart</button>
+      </div>
     </div>
   </div>
 </div>
@@ -703,14 +759,14 @@ async function loadMeals(vid){
   const {data,error}=await S.from('meals').select('*').eq('vendor_id',vid).order('created_at',{ascending:false});
   if(error){showError();return;}
   allMeals=data||[];
-  buildCats(allMeals);renderMeals(allMeals);await buildTicker(allMeals);
+  buildCats(allMeals);renderMeals(allMeals,true);await buildTicker(allMeals);
 }
 
 async function loadAllMeals(){
   const {data,error}=await S.from('meals').select('*, profiles!meals_vendor_id_fkey(business_name,is_online,kitchen_location,store_open)').eq('is_available',true).order('created_at',{ascending:false});
   if(error){showError();return;}
   allMeals=(data||[]).filter(m=>m.profiles?.is_online||m.profiles?.store_open);
-  buildCats(allMeals);renderMeals(allMeals);await buildTicker(allMeals);
+  buildCats(allMeals);renderMeals(allMeals,true);await buildTicker(allMeals);
 }
 
 // ── TICKER removed — no-op ──
@@ -723,13 +779,17 @@ function buildCats(meals){
   cats.forEach(c=>{const b=document.createElement('button');b.className='cat-btn';b.textContent=c;b.setAttribute('onclick',`filterCat('${c}',this)`);bar.appendChild(b);});
 }
 
-function renderMeals(meals){
-  const grid=document.getElementById('mealGrid');
+function renderMeals(meals, grouped){
+  const wrap=document.getElementById('mealWrap');
   const cart=getCart();
   document.getElementById('secCount').textContent=`${meals.length} item${meals.length!==1?'s':''}`;
   document.getElementById('secTitle').textContent=vendorProfile?(vendorProfile.business_name||'Menu'):'All Items';
-  if(!meals.length){grid.innerHTML=`<div class="empty"><i class="fa-solid fa-bowl-food"></i><h3>Nothing found</h3><p>Try another category or search term</p></div>`;return;}
-  grid.innerHTML=meals.map((m,i)=>{
+  if(!meals.length){
+    wrap.innerHTML=`<div style="padding:0 18px"><div class="empty"><i class="fa-solid fa-bowl-food"></i><h3>Nothing found</h3><p>Try another category or search term</p></div></div>`;
+    return;
+  }
+  // Build a single card HTML
+  const cardHtml=(m,i)=>{
     const cartItem=cart.find(c=>c.id===m.id);const inCart=!!cartItem;const qty=cartItem?.qty||0;
     const avail=m.is_available!==false;
     const vName=m.profiles?.business_name||'';
@@ -773,19 +833,44 @@ function renderMeals(meals){
         </div>
       </div>
     </div>`;
-  }).join('');
+  };
+
+  if(grouped){
+    // Group by category with fixed order: Breakfast → Lunch → Drinks → rest
+    const ORDER=['Breakfast','Lunch','Drinks'];
+    const allCats=[...new Set(meals.map(m=>m.category||'Other'))];
+    const cats=[
+      ...ORDER.filter(c=>allCats.includes(c)),
+      ...allCats.filter(c=>!ORDER.includes(c))
+    ];
+    wrap.innerHTML=cats.map(cat=>{
+      const catMeals=meals.filter(m=>(m.category||'Other')===cat);
+      return `<div class="cat-section">
+        <div class="cat-section-header">
+          <span class="cat-section-title">${esc(cat)}</span>
+          <span class="cat-section-count">${catMeals.length} item${catMeals.length!==1?'s':''}</span>
+        </div>
+        <div class="meal-row">${catMeals.map((m,i)=>cardHtml(m,i)).join('')}</div>
+      </div>`;
+    }).join('');
+  } else {
+    // Flat grid (search results or single-category filter)
+    wrap.innerHTML=`<div class="meal-grid">${meals.map((m,i)=>cardHtml(m,i)).join('')}</div>`;
+  }
 }
 
 window.filterCat=(cat,btn)=>{
   document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
   if(btn) btn.classList.add('active');
-  renderMeals(cat==='All'?allMeals:allMeals.filter(m=>m.category===cat));
+  const filtered=cat==='All'?allMeals:allMeals.filter(m=>m.category===cat);
+  renderMeals(filtered, cat==='All');
 };
 document.getElementById('mealSearch').addEventListener('input',e=>{
   const t=e.target.value.toLowerCase().trim();
   document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
   document.querySelector('.cat-btn').classList.add('active');
-  renderMeals(allMeals.filter(m=>m.name.toLowerCase().includes(t)||(m.description||'').toLowerCase().includes(t)||(m.category||'').toLowerCase().includes(t)));
+  const filtered=allMeals.filter(m=>m.name.toLowerCase().includes(t)||(m.description||'').toLowerCase().includes(t)||(m.category||'').toLowerCase().includes(t));
+  renderMeals(filtered, !t); // grouped only when search is empty
 });
 
 // ── MODAL ──
@@ -806,9 +891,10 @@ window.openModal=async(id)=>{
   if(m.category) chips.push(`<span class="modal-chip"><i class="fa-solid fa-tag"></i>${esc(m.category)}</span>`);
   if(m.is_available===false) chips.push(`<span class="modal-chip" style="color:var(--danger);border-color:var(--danger)"><i class="fa-solid fa-circle-xmark"></i>Unavailable</span>`);
   document.getElementById('modalChips').innerHTML=chips.join('');
-  document.getElementById('modalAddBtn').disabled=m.is_available===false;
+  document.getElementById('modalAddBtn')?.setAttribute('disabled', currentMeal.is_available===false ? '' : null);
   document.getElementById('modalOverlay').classList.add('open');
   document.body.style.overflow='hidden';
+  updateModalCartControl();
   loadReviews(id);
 };
 window.closeModal=()=>{document.getElementById('modalOverlay').classList.remove('open');document.body.style.overflow='';currentMeal=null;};
@@ -816,10 +902,30 @@ window.handleOverlayClick=e=>{if(e.target===document.getElementById('modalOverla
 window.addFromModal=()=>{
   if(!currentMeal) return;
   addToCart(currentMeal.id,currentMeal.name,currentMeal.price);
-  const btn=document.getElementById('modalAddBtn');
-  btn.innerHTML='<i class="fa-solid fa-check"></i> Added!';btn.style.background='var(--success)';
-  setTimeout(()=>{btn.innerHTML='<i class="fa-solid fa-plus"></i> Add to Cart';btn.style.background='';},1800);
+  updateModalCartControl();
 };
+window.removeFromModal=()=>{
+  if(!currentMeal) return;
+  removeFromCart(currentMeal.id);
+  updateModalCartControl();
+};
+function updateModalCartControl(){
+  if(!currentMeal) return;
+  const cart=getCart();
+  const cartItem=cart.find(c=>c.id===currentMeal.id);
+  const qty=cartItem?.qty||0;
+  const avail=currentMeal.is_available!==false;
+  const ctrl=document.getElementById('modalCartControl');
+  if(qty>0){
+    ctrl.innerHTML=`<div class="modal-qty-ctrl">
+      <button class="modal-qty-btn minus" onclick="removeFromModal()" title="Remove one"><i class="fa-solid fa-minus"></i></button>
+      <span class="modal-qty-num">${qty}</span>
+      <button class="modal-qty-btn plus" onclick="addFromModal()" title="Add one"><i class="fa-solid fa-plus"></i></button>
+    </div>`;
+  } else {
+    ctrl.innerHTML=`<button class="modal-add" id="modalAddBtn" onclick="addFromModal()" ${!avail?'disabled':''}><i class="fa-solid fa-plus"></i> Add to Cart</button>`;
+  }
+}
 
 // ── REVIEWS ──
 async function loadReviews(mealId){
@@ -880,6 +986,7 @@ window.addToCart=(id,name,price)=>{
   if(ex) ex.qty=(ex.qty||1)+1;else cart.push({id,name,price:+price,qty:1});
   saveCart(cart);
   showToast(`${name} added`);updateCartUI();updateCardFooter(id);
+  if(currentMeal?.id===id) updateModalCartControl();
 };
 window.removeFromCart=(id)=>{
   const cart=getCart();const ex=cart.find(i=>i.id===id);
@@ -888,6 +995,7 @@ window.removeFromCart=(id)=>{
   if(ex.qty<=0) cart.splice(cart.indexOf(ex),1);
   saveCart(cart);
   updateCartUI();updateCardFooter(id);
+  if(currentMeal?.id===id) updateModalCartControl();
 };
 // Update only the footer of a specific meal card — no full re-render = no blink
 function updateCardFooter(id){
@@ -914,7 +1022,7 @@ function updateCartUI(){
   document.getElementById('cartFloatLabel').textContent=`${cnt} item${cnt!==1?'s':''} · UGX ${total.toLocaleString()}`;
 }
 function showToast(msg){const t=document.getElementById('toast');document.getElementById('toastMsg').textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2200);}
-function showError(){document.getElementById('mealGrid').innerHTML=`<div class="empty"><i class="fa-solid fa-triangle-exclamation"></i><h3>Couldn't load menu</h3><p>Check your connection and refresh</p></div>`;}
+function showError(){document.getElementById('mealWrap').innerHTML=`<div style="padding:0 18px"><div class="empty"><i class="fa-solid fa-triangle-exclamation"></i><h3>Couldn't load menu</h3><p>Check your connection and refresh</p></div></div>`;}
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 document.addEventListener('keydown',e=>{if(e.key==='Escape') closeModal();});
 init();
