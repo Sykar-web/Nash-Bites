@@ -6,7 +6,6 @@
   "display": "standalone",
   "background_color": "#FF4D2D",
   "theme_color": "#FF4D2D",
-  "orientation": "portrait-primary",
   "icons": [
     {
       "src": "tent.jpeg",
