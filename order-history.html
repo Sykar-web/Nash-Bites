@@ -37,7 +37,7 @@
       --danger-light:#450A0A;--info-light:#172554;--purple-light:#2E1065;
     }
     *{margin:0;padding:0;box-sizing:border-box;font-family:'DM Sans',sans-serif;}
-    body{background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:calc(var(--footer-h) + 24px);transition:background .3s,color .3s;}
+    body{background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:80px;transition:background .3s,color .3s;}
 
     /* ── HEADER ── */
     .page-header{
@@ -191,20 +191,37 @@
     .act-btn-delete:hover{background:#FECACA;}
     .act-btn-disabled{background:var(--bg-input);color:var(--text-muted);cursor:default;opacity:.5;}
 
-    /* ── FOOTER NAV ── */
-    .footer-nav{
-      position:fixed;bottom:0;left:0;right:0;
-      background:var(--bg-card);border-top:1px solid var(--border);
-      display:flex;justify-content:space-around;
-      padding:10px 0 calc(10px + env(safe-area-inset-bottom,0px));
-      border-radius:22px 22px 0 0;
-      box-shadow:0 -6px 24px rgba(0,0,0,.06);
-      z-index:200;transition:background .3s;
-    }
-    .nav-link{text-decoration:none;color:var(--text-muted);display:flex;flex-direction:column;align-items:center;gap:3px;font-size:.67rem;font-weight:600;transition:.2s;}
-    .nav-link i{font-size:1.15rem;}
-    .nav-link.active{color:var(--primary);}
-    .nav-link:hover:not(.active){color:var(--text-secondary);}
+    /* ── FAB BUBBLE NAV ── */
+    .footer-nav{ display:none!important; }
+    .fab-nav{position:fixed;bottom:28px;right:22px;z-index:2000;display:flex;flex-direction:column-reverse;align-items:center;gap:12px;}
+    @media(min-width:768px){.fab-nav{display:none;}}
+    .fab-main{width:56px;height:56px;border-radius:50%;background:var(--primary);color:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.2rem;box-shadow:0 8px 28px rgba(255,77,45,.48);transition:transform .3s cubic-bezier(.16,1,.3,1),background .2s;position:relative;z-index:2;-webkit-tap-highlight-color:transparent;}
+    .fab-main:hover{background:var(--primary-dark);}
+    .fab-main .fab-icon-open,.fab-main .fab-icon-close{transition:opacity .2s,transform .3s cubic-bezier(.16,1,.3,1);position:absolute;}
+    .fab-main .fab-icon-close{opacity:0;transform:rotate(-90deg);}
+    .fab-nav.open .fab-main{transform:rotate(45deg);background:var(--text);}
+    .fab-nav.open .fab-main .fab-icon-open{opacity:0;transform:rotate(90deg);}
+    .fab-nav.open .fab-main .fab-icon-close{opacity:1;transform:rotate(0);}
+    .fab-main::after{content:'';position:absolute;inset:-6px;border-radius:50%;border:2px solid rgba(255,77,45,.25);transform:scale(0);opacity:0;transition:transform .3s,opacity .3s;}
+    .fab-nav.open .fab-main::after{transform:scale(1);opacity:1;}
+    .fab-items{display:flex;flex-direction:column-reverse;align-items:center;gap:10px;pointer-events:none;}
+    .fab-nav.open .fab-items{pointer-events:auto;}
+    .fab-item{display:flex;align-items:center;text-decoration:none;opacity:0;transform:translateY(20px) scale(.7);transition:opacity .28s,transform .28s cubic-bezier(.16,1,.3,1);}
+    .fab-nav.open .fab-item{opacity:1;transform:translateY(0) scale(1);}
+    .fab-nav.open .fab-item:nth-child(1){transition-delay:.03s;}
+    .fab-nav.open .fab-item:nth-child(2){transition-delay:.07s;}
+    .fab-nav.open .fab-item:nth-child(3){transition-delay:.11s;}
+    .fab-label{background:var(--bg-card);color:var(--text);font-size:.7rem;font-weight:800;padding:5px 11px;border-radius:20px;box-shadow:var(--shadow-md);border:1px solid var(--border);white-space:nowrap;margin-right:8px;opacity:0;transform:translateX(6px);transition:opacity .2s .1s,transform .2s .1s;}
+    .fab-nav.open .fab-item:hover .fab-label,.fab-nav.open .fab-item:focus .fab-label{opacity:1;transform:translateX(0);}
+    .fab-circle{width:46px;height:46px;border-radius:50%;background:var(--bg-card);color:var(--text-secondary);display:flex;align-items:center;justify-content:center;font-size:1rem;box-shadow:var(--shadow-md);border:1.5px solid var(--border);transition:background .2s,color .2s,border-color .2s,transform .15s;flex-shrink:0;}
+    .fab-item[data-nav="home"] .fab-circle{color:var(--primary);border-color:#FFCBBB;background:var(--primary-light);}
+    .fab-item[data-nav="home"]:hover .fab-circle{background:var(--primary);color:#fff;border-color:var(--primary);transform:scale(1.08);}
+    .fab-item[data-nav="cart"] .fab-circle{color:#22C55E;border-color:#BBF7D0;background:#F0FDF4;}
+    .fab-item[data-nav="cart"]:hover .fab-circle{background:#22C55E;color:#fff;border-color:#22C55E;transform:scale(1.08);}
+    [data-theme="dark"] .fab-item[data-nav="cart"] .fab-circle{background:#052E16;border-color:#166534;color:#4ADE80;}
+    .fab-item[data-nav="profile"] .fab-circle{color:#F59E0B;border-color:#FDE68A;background:#FFFBEB;}
+    .fab-item[data-nav="profile"]:hover .fab-circle{background:#F59E0B;color:#fff;border-color:#F59E0B;transform:scale(1.08);}
+    [data-theme="dark"] .fab-item[data-nav="profile"] .fab-circle{background:#451A03;border-color:#78350F;color:#FCD34D;}
   </style>
 </head>
 <body>
@@ -230,12 +247,32 @@
   </div>
 </div>
 
-<nav class="footer-nav">
-  <a href="home.html" class="nav-link"><i class="fa-solid fa-house"></i><span>Menu</span></a>
-  <a href="order-history.html" class="nav-link active"><i class="fa-solid fa-receipt"></i><span>Orders</span></a>
-  <a href="cart.html" class="nav-link"><i class="fa-solid fa-bag-shopping"></i><span>Cart</span></a>
-  <a href="profile.html" class="nav-link"><i class="fa-solid fa-user"></i><span>Profile</span></a>
+<!-- FAB BUBBLE NAV — Orders is current page, excluded -->
+<nav class="fab-nav" id="fabNav">
+  <button class="fab-main" onclick="toggleFab()" aria-label="Navigation">
+    <i class="fa-solid fa-grip-dots-vertical fab-icon-open"></i>
+    <i class="fa-solid fa-xmark fab-icon-close"></i>
+  </button>
+  <div class="fab-items">
+    <a href="home.html" class="fab-item" data-nav="home">
+      <span class="fab-label">Menu</span>
+      <div class="fab-circle"><i class="fa-solid fa-house"></i></div>
+    </a>
+    <a href="cart.html" class="fab-item" data-nav="cart">
+      <span class="fab-label">Cart</span>
+      <div class="fab-circle"><i class="fa-solid fa-bag-shopping"></i></div>
+    </a>
+    <a href="profile.html" class="fab-item" data-nav="profile">
+      <span class="fab-label">Profile</span>
+      <div class="fab-circle"><i class="fa-solid fa-user"></i></div>
+    </a>
+  </div>
 </nav>
+<script>
+  function toggleFab(){document.getElementById('fabNav').classList.toggle('open');}
+  function closeFab(){document.getElementById('fabNav').classList.remove('open');}
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeFab();});
+</script>
 
 <script type="module">
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
