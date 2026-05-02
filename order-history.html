@@ -74,25 +74,43 @@
     @keyframes spin{to{transform:rotate(360deg)}}
 
     /* ── ORDER LIST ITEM (expandable) ── */
-    .order-list{display:flex;flex-direction:column;gap:10px;}
+    /* ── ORDER LIST ── */
+    .order-list{display:flex;flex-direction:column;gap:14px;}
     .order-item{
-      background:var(--bg-card);border:1px solid var(--border);
-      border-radius:18px;overflow:hidden;
+      background:var(--bg-card);border:1.5px solid var(--border);
+      border-radius:20px;overflow:hidden;
       transition:border-color .2s,box-shadow .2s;
       box-shadow:var(--shadow-sm);
     }
-    .order-item:hover{border-color:var(--border);box-shadow:var(--shadow-md);}
+    .order-item:hover{box-shadow:var(--shadow-md);}
     .order-item.expanded{border-color:var(--primary);}
 
-    /* Row summary (always visible) */
+    /* ── MEAL IMAGE STRIP (always visible) ── */
+    .order-preview{padding:14px 16px 12px;display:flex;align-items:center;gap:0;cursor:pointer;}
+    .preview-imgs{display:flex;flex-shrink:0;}
+    .preview-img{
+      width:54px;height:54px;border-radius:12px;object-fit:cover;
+      border:2.5px solid var(--bg-card);background:var(--bg-input);
+      flex-shrink:0;margin-right:-12px;
+      box-shadow:0 2px 8px rgba(0,0,0,.12);
+    }
+    .preview-more{
+      width:54px;height:54px;border-radius:12px;
+      background:var(--bg-input);border:2.5px solid var(--bg-card);
+      display:flex;align-items:center;justify-content:center;
+      font-size:.68rem;font-weight:800;color:var(--text-secondary);
+      flex-shrink:0;margin-right:-12px;box-shadow:0 2px 8px rgba(0,0,0,.1);
+    }
+    .preview-info{flex:1;min-width:0;padding-left:22px;}
+    .preview-names{font-size:.84rem;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px;}
+    .preview-vendor{font-size:.71rem;color:var(--text-muted);font-weight:500;}
+
+    /* ── ROW META ── */
     .order-row{
       display:flex;align-items:center;gap:12px;
-      padding:14px 16px;cursor:pointer;
-      user-select:none;
+      padding:0 16px 14px;cursor:pointer;user-select:none;
     }
-    .order-status-dot{
-      width:8px;height:8px;border-radius:50%;flex-shrink:0;
-    }
+    .order-status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
     .dot-pending{background:var(--warning);}
     .dot-preparing,.dot-ready{background:var(--info);}
     .dot-out-for-delivery,.dot-picked_up,.dot-in_transit{background:var(--purple);}
@@ -100,42 +118,38 @@
     .dot-cancelled{background:var(--danger);}
 
     .order-row-main{flex:1;min-width:0;}
-    .order-row-id{font-size:.8rem;font-weight:800;color:var(--text);margin-bottom:2px;}
-    .order-row-meta{font-size:.73rem;color:var(--text-muted);display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+    .order-row-id{font-size:.75rem;font-weight:700;color:var(--text-muted);margin-bottom:2px;font-family:monospace;}
+    .order-row-meta{font-size:.72rem;color:var(--text-muted);display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
     .order-row-meta span{display:flex;align-items:center;gap:3px;}
     .order-row-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;}
-    .order-pill{
-      padding:3px 10px;border-radius:50px;font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.3px;
-    }
+    .order-pill{padding:3px 10px;border-radius:50px;font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.3px;}
     .pill-pending{background:var(--warning-light);color:#B45309;}
     .pill-preparing,.pill-ready{background:var(--info-light);color:#1D4ED8;}
     .pill-out-for-delivery,.pill-picked_up,.pill-in_transit{background:var(--purple-light);color:var(--purple);}
     .pill-delivered{background:var(--success-light);color:#15803D;}
     .pill-cancelled{background:var(--danger-light);color:#DC2626;}
-    .order-total{font-family:'Syne',sans-serif;font-size:.9rem;font-weight:800;color:var(--primary);}
+    .order-total{font-family:'Syne',sans-serif;font-size:.92rem;font-weight:800;color:var(--primary);}
     .chevron{font-size:.75rem;color:var(--text-muted);transition:transform .25s;}
     .order-item.expanded .chevron{transform:rotate(180deg);}
 
-    /* Expanded detail panel */
+    /* ── EXPANDED DETAIL ── */
     .order-detail{
       max-height:0;overflow:hidden;
-      transition:max-height .35s cubic-bezier(.16,1,.3,1);
+      transition:max-height .4s cubic-bezier(.16,1,.3,1);
       border-top:0 solid var(--border);
     }
-    .order-item.expanded .order-detail{
-      max-height:800px;
-      border-top-width:1px;
-    }
+    .order-item.expanded .order-detail{max-height:1000px;border-top-width:1px;}
     .detail-inner{padding:16px;}
 
-    /* items list */
-    .detail-items{display:flex;flex-direction:column;gap:10px;margin-bottom:14px;}
-    .detail-item-row{display:flex;align-items:center;gap:10px;}
-    .item-img{width:42px;height:42px;border-radius:10px;object-fit:cover;background:var(--bg-input);flex-shrink:0;}
+    /* ── ITEM ROWS IN DETAIL ── */
+    .detail-items{display:flex;flex-direction:column;gap:8px;margin-bottom:14px;}
+    .detail-item-row{display:flex;align-items:center;gap:12px;padding:10px;background:var(--bg-input);border-radius:14px;}
+    .item-img{width:58px;height:58px;border-radius:12px;object-fit:cover;background:var(--bg-input);flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,.1);}
+    .item-img-ph{width:58px;height:58px;border-radius:12px;background:var(--primary-light);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.5rem;}
     .item-info{flex:1;min-width:0;}
-    .item-name{font-size:.85rem;font-weight:700;margin-bottom:1px;}
-    .item-qty{font-size:.73rem;color:var(--text-muted);}
-    .item-price{font-size:.85rem;font-weight:700;color:var(--text);flex-shrink:0;}
+    .item-name{font-size:.88rem;font-weight:700;margin-bottom:3px;}
+    .item-qty{font-size:.73rem;color:var(--text-muted);font-weight:500;}
+    .item-price{font-size:.88rem;font-weight:800;color:var(--primary);flex-shrink:0;}
 
     /* info rows */
     .detail-info{background:var(--bg-input);border-radius:12px;padding:12px;margin-bottom:12px;}
@@ -250,12 +264,25 @@ async function init(){
     .subscribe();
 }
 
+// Cache for meal images keyed by meal id
+let mealImageCache={};
+
+async function fetchMealImages(orders){
+  // Collect all unique meal IDs from all orders
+  const ids=new Set();
+  orders.forEach(o=>(Array.isArray(o.items)?o.items:[]).forEach(i=>{if(i.id)ids.add(i.id);}));
+  const missing=[...ids].filter(id=>!mealImageCache[id]);
+  if(!missing.length) return;
+  const {data}=await S.from('meals').select('id,image_url').in('id',missing);
+  (data||[]).forEach(m=>{mealImageCache[m.id]=m.image_url||null;});
+}
+
 async function fetchOrders(){
   const {data,error}=await S.from('orders')
-    .select('*, carrier:profiles!orders_carrier_id_fkey(full_name,phone,avatar_url,vehicle_type)')
+    .select('*, carrier:profiles!orders_carrier_id_fkey(full_name,phone,avatar_url,vehicle_type,transport_mode)')
     .or(`customer_id.eq.${userId},user_id.eq.${userId}`)
     .order('created_at',{ascending:false});
-  if(!error){allOrders=data||[];renderOrders();}
+  if(!error){allOrders=data||[];await fetchMealImages(allOrders);renderOrders();}
   else console.error(error);
 }
 
@@ -306,32 +333,62 @@ function renderOrderItem(o){
   const isCancelable=status==='pending';
   const isActive=['preparing','ready','picked_up','in_transit'].includes(status);
   const shortId=o.id.slice(0,8).toUpperCase();
-
   const statusText=status.replace(/_/g,' ');
 
-  // detail panel HTML
-  const itemsHtml=items.map(i=>`
-    <div class="detail-item-row">
-      <img class="item-img" src="${i.image_url||'https://placehold.co/42x42/F1F5F9/94A3B8?text=🍽'}" onerror="this.src='https://placehold.co/42x42/F1F5F9/94A3B8?text=🍽'">
+  // Resolve image for each item (from cache, item field, or fallback)
+  const resolveImg=(i)=>mealImageCache[i.id]||i.image_url||null;
+
+  // ── Preview strip: up to 3 stacked images + overflow count ──
+  const previewImgs=items.slice(0,3).map(i=>{
+    const src=resolveImg(i);
+    return src
+      ? `<img class="preview-img" src="${esc(src)}" alt="${esc(i.name||'')}" loading="lazy" onerror="this.style.display='none'">`
+      : `<div class="preview-img" style="display:flex;align-items:center;justify-content:center;font-size:1.2rem;background:var(--primary-light);">🍽️</div>`;
+  }).join('');
+  const overflowBadge=items.length>3?`<div class="preview-more">+${items.length-3}</div>`:'';
+  const previewNames=items.slice(0,2).map(i=>esc(i.name||'Item')).join(', ')+(items.length>2?` +${items.length-2} more`:'');
+  const vendorNames=[...new Set(items.map(i=>i.vendor).filter(Boolean))].slice(0,2).join(', ')||'Nash Bites';
+
+  // ── Detail item rows ──
+  const itemsHtml=items.map(i=>{
+    const src=resolveImg(i);
+    const imgEl=src
+      ? `<img class="item-img" src="${esc(src)}" alt="${esc(i.name||'')}" loading="lazy" onerror="this.outerHTML='<div class=\'item-img-ph\'>🍽️</div>'">`
+      : `<div class="item-img-ph">🍽️</div>`;
+    return `<div class="detail-item-row">
+      ${imgEl}
       <div class="item-info">
         <div class="item-name">${esc(i.name||'Item')}</div>
-        <div class="item-qty">${i.qty||1} unit(s)</div>
+        <div class="item-qty">× ${i.qty||1}</div>
       </div>
-      <div class="item-price">UGX ${Number(i.price||0).toLocaleString()}</div>
-    </div>`).join('');
+      <div class="item-price">UGX ${Number((i.price||0)*(i.qty||1)).toLocaleString()}</div>
+    </div>`;
+  }).join('');
+
+  // Resolve carrier avatar — could be a storage path or full URL
+  let carrierAvatarSrc = `https://ui-avatars.com/api/?name=${encodeURIComponent(carrier?.full_name||'C')}&background=22c55e&color=fff&size=80`;
+  if(carrier?.avatar_url){
+    if(carrier.avatar_url.startsWith('http')){
+      carrierAvatarSrc = carrier.avatar_url;
+    } else {
+      // It's a storage path — resolve via Supabase
+      const {data:avatarData} = S.storage.from('avatars').getPublicUrl(carrier.avatar_url);
+      if(avatarData?.publicUrl) carrierAvatarSrc = avatarData.publicUrl;
+    }
+  }
 
   const carrierHtml=isConfirmed&&carrier?`
     <div class="carrier-card">
-      <img class="carrier-avatar" src="${carrier.avatar_url||`https://ui-avatars.com/api/?name=${encodeURIComponent(carrier.full_name||'C')}&background=22c55e&color=fff&size=80`}" onerror="this.src='https://placehold.co/38x38'">
+      <img class="carrier-avatar" src="${carrierAvatarSrc}" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(carrier?.full_name||'C')}&background=22c55e&color=fff&size=80'">
       <div class="carrier-info">
         <div class="carrier-name">${carrier.full_name||'Carrier'}</div>
-        <div class="carrier-vehicle"><i class="fa-solid fa-bicycle"></i> ${carrier.vehicle_type||'On the way'}</div>
+        <div class="carrier-vehicle"><i class="fa-solid fa-bicycle"></i> ${carrier.vehicle_type||carrier.transport_mode||'On the way'}</div>
       </div>
       ${carrier.phone?`<a href="tel:${carrier.phone}" class="carrier-call"><i class="fa-solid fa-phone"></i> Call</a>`:''}
     </div>`:'';
 
   const actionsHtml=`<div class="detail-actions">
-    <a href="https://wa.me/${SUPPORT}?text=Query about Order #${shortId}" class="act-btn act-btn-wa" style="text-decoration:none;"><i class="fab fa-whatsapp"></i> Support</a>
+    <a href="https://wa.me/${SUPPORT}?text=Query about Order %23${shortId}" class="act-btn act-btn-wa" style="text-decoration:none;"><i class="fab fa-whatsapp"></i> Support</a>
     ${isCancelable?`<button class="act-btn act-btn-cancel" onclick="cancelOrder('${o.id}',event)"><i class="fa-solid fa-xmark"></i> Cancel</button>`:''}
     ${isDeletable?`<button class="act-btn act-btn-delete" onclick="deleteOrder('${o.id}',event)"><i class="fa-solid fa-trash"></i> Delete</button>`:''}
     ${isActive&&!isCancelable&&!isDeletable?`<span class="act-btn act-btn-disabled">In progress</span>`:''}
@@ -339,6 +396,16 @@ function renderOrderItem(o){
 
   return `
   <div class="order-item" id="oi-${o.id}">
+    <!-- PREVIEW: images always visible -->
+    <div class="order-preview" onclick="toggleOrder('${o.id}')">
+      <div class="preview-imgs">${previewImgs}${overflowBadge}</div>
+      <div class="preview-info">
+        <div class="preview-names">${previewNames}</div>
+        <div class="preview-vendor"><i class="fa-solid fa-store" style="font-size:.65rem;"></i> ${vendorNames}</div>
+      </div>
+      <i class="fa-solid fa-chevron-down chevron" style="flex-shrink:0;margin-left:8px;"></i>
+    </div>
+    <!-- ROW META -->
     <div class="order-row" onclick="toggleOrder('${o.id}')">
       <div class="order-status-dot ${dotClass(status)}"></div>
       <div class="order-row-main">
@@ -353,8 +420,8 @@ function renderOrderItem(o){
         <span class="order-pill ${pillClass(status)}">${statusText}</span>
         <span class="order-total">UGX ${getTotalAmt(o)}</span>
       </div>
-      <i class="fa-solid fa-chevron-down chevron"></i>
     </div>
+    <!-- EXPANDED DETAIL -->
     <div class="order-detail">
       <div class="detail-inner">
         ${items.length?`<div class="detail-items">${itemsHtml}</div>`:''}
@@ -363,6 +430,7 @@ function renderOrderItem(o){
           ${o.delivery_pin?`<div class="info-row"><span class="info-label">Delivery PIN</span><span class="info-val"><span class="pin-display">${o.delivery_pin}</span></span></div>`:''}
           <div class="info-row"><span class="info-label">Total Paid</span><span class="info-val brand">UGX ${getTotalAmt(o)}</span></div>
           ${o.special_note?`<div class="info-row"><span class="info-label">Notes</span><span class="info-val">${esc(o.special_note)}</span></div>`:''}
+          ${o.special_instructions?`<div class="info-row"><span class="info-label">Instructions</span><span class="info-val">${esc(o.special_instructions)}</span></div>`:''}
         </div>
         ${carrierHtml}
         ${actionsHtml}

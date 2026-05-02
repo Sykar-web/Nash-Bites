@@ -224,7 +224,7 @@
           <div class="form-group">
             <label class="form-label">Phone Number <span class="req">*</span></label>
             <div class="inp-wrap"><i class="fi fa-solid fa-phone"></i>
-              <input class="form-inp" type="tel" id="custPhone" placeholder="+256 700 000 000" autocomplete="tel">
+              <input class="form-inp" type="tel" id="custPhone" placeholder="0771234567" autocomplete="tel">
             </div>
           </div>
           <div class="form-group">
@@ -505,8 +505,14 @@ window.placeOrder=async()=>{
   const phone=document.getElementById('custPhone').value.trim();
   const address=document.getElementById('custAddress').value.trim();
   const note=document.getElementById('custNote').value.trim();
+  // Normalize phone: strip spaces, dashes, +256 prefix → must be 0XXXXXXXXX
+  let cleanPhone=phone.replace(/[\s\-().]/g,'');
+  if(cleanPhone.startsWith('+256')) cleanPhone='0'+cleanPhone.slice(4);
+  else if(cleanPhone.startsWith('256')) cleanPhone='0'+cleanPhone.slice(3);
+
   if(!name){showToast('Please enter your name','err');document.getElementById('custName').focus();return;}
   if(!phone){showToast('Please enter your phone number','err');document.getElementById('custPhone').focus();return;}
+  if(!/^0\d{9}$/.test(cleanPhone)){showToast('Enter a valid Uganda phone number (e.g. 0771234567)','err');document.getElementById('custPhone').focus();return;}
   if(!address&&deliveryType!=='pickup'){showToast('Please enter your delivery address','err');document.getElementById('custAddress').focus();return;}
   if(payMethod==='momo'&&!document.getElementById('momoPhone').value.trim()){showToast('Enter your MTN Mobile Money number','err');return;}
   if(payMethod==='airtel'&&!document.getElementById('airtelPhone').value.trim()){showToast('Enter your Airtel Money number','err');return;}
@@ -523,32 +529,47 @@ window.placeOrder=async()=>{
   const fee=DELIVERY_FEES[deliveryType]||0;
   const total=Math.max(0,subtotal+fee-promoDiscount);
 
+  // Determine vendor_id from first cart item (single-vendor order)
+  const firstMeal=mealDetails[cart[0]?.id];
+  const vendorId=firstMeal?.vendor_id||null;
+
   const orderItems=cart.map(i=>({
     id:i.id,name:i.name,price:i.price,qty:i.qty||1,
     subtotal:i.price*(i.qty||1),
     vendor:mealDetails[i.id]?.profiles?.business_name||''
   }));
 
+  // Build special_instructions from delivery method, payment & note
+  const instrParts=[];
+  instrParts.push(`Delivery: ${deliveryType}`);
+  instrParts.push(`Payment: ${payMethod}`);
+  if(payMethod==='momo') instrParts.push(`MoMo: ${document.getElementById('momoPhone').value.trim()}`);
+  if(payMethod==='airtel') instrParts.push(`Airtel: ${document.getElementById('airtelPhone').value.trim()}`);
+  if(note) instrParts.push(`Note: ${note}`);
+
   const {data:order,error}=await supabase.from('orders').insert({
     user_id:currentUser.id,
+    customer_id:currentUser.id,
+    vendor_id:vendorId,
     customer_name:name,
-    customer_phone:phone,
+    customer_phone:cleanPhone,
     delivery_location:deliveryType==='pickup'?'Self Pickup':address,
-    delivery_note:note,
-    delivery_method:deliveryType,
-    payment_method:payMethod,
+    special_instructions:instrParts.join(' | '),
+    special_note:note||null,
     items:orderItems,
-    subtotal,
     delivery_fee:fee,
-    discount:promoDiscount,
     total_price:total,
+    total_amount:total,
     order_status:'pending',
-    created_at:new Date().toISOString()
+    status:'pending',
+    payment_status:'pending',
+    pick_up_requested:deliveryType==='pickup',
   }).select().single();
 
   if(error){
+    console.error('Order error:',error);
     btn.disabled=false;btn.classList.remove('loading');
-    showToast('Failed to place order. Please try again.','err');
+    showToast(`Failed to place order: ${error.message}`,'err');
     return;
   }
 

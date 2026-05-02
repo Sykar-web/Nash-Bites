@@ -822,7 +822,7 @@ function syncOnlineStatus() {
 async function loadAvailableOrders() {
   const { data, error } = await S
     .from('orders')
-    .select('*, vendor:profiles!orders_vendor_id_fkey(full_name,business_name,kitchen_location,avatar_url), customer:profiles!orders_customer_id_fkey(full_name,hostel_name,room_number)')
+    .select('id,vendor_id,customer_id,items,delivery_fee,delivery_location,order_status,special_instructions,created_at,updated_at, vendor:profiles!orders_vendor_id_fkey(id,full_name,business_name,kitchen_location,avatar_url), customer:profiles!orders_customer_id_fkey(full_name,hostel_name,room_number)')
     .eq('order_status', 'ready')
     .is('carrier_id', null)
     .order('created_at', { ascending: false });
@@ -855,7 +855,7 @@ async function loadMyActiveOrder() {
     .from('orders')
     .select('*, vendor:profiles!orders_vendor_id_fkey(full_name,business_name,kitchen_location,phone), customer:profiles!orders_customer_id_fkey(full_name,phone,hostel_name,room_number)')
     .eq('carrier_id', user.id)
-    .in('order_status', ['picked_up', 'in_transit', 'accepted'])
+    .in('order_status', ['picked_up', 'preparing', 'ready'])
     .order('updated_at', { ascending: false })
     .limit(1);
 
@@ -1060,33 +1060,40 @@ function renderActiveDelivery() {
 }
 
 function updateProgressUI(status) {
-  const steps = ['step1','step2','step3','step4'];
-  const labels = ['slabel1','slabel2','slabel3','slabel4'];
-  const fills = { accepted:'8%', picked_up:'33%', in_transit:'66%', delivered:'100%' };
-  const order_map = { accepted:0, picked_up:1, in_transit:2, delivered:3 };
+  // 3-step flow: Assigned → Picked Up → Delivered
+  const steps  = ['step1','step2','step3'];
+  const labels = ['slabel1','slabel2','slabel3'];
+  const fills  = { ready:'8%', preparing:'8%', picked_up:'50%', delivered:'100%' };
+  const order_map = { ready:0, preparing:0, picked_up:1, delivered:2 };
+  const nextLabels = { ready:'Mark as Picked Up', preparing:'Mark as Picked Up', picked_up:'Mark as Delivered', delivered:'Delivery Complete' };
+
   const idx = order_map[status] ?? 0;
-  const nextLabels = { accepted:'Mark as Picked Up', picked_up:'Mark as In Transit', in_transit:'Mark as Delivered', delivered:'Delivery Complete' };
 
   steps.forEach((id, i) => {
     const el = document.getElementById(id);
+    if (!el) return;
     el.className = 'step-circle';
     if (i < idx) { el.classList.add('completed'); el.innerHTML = '<i class="fa-solid fa-check"></i>'; }
     else if (i === idx) { el.classList.add('current'); }
+    else { el.innerHTML = String(i+1); }
   });
   labels.forEach((id, i) => {
     const el = document.getElementById(id);
+    if (!el) return;
     el.className = 'step-label' + (i === idx ? ' active' : '');
   });
 
-  document.getElementById('activeProgressFill').style.width = fills[status] || '8%';
+  const fillEl = document.getElementById('activeProgressFill');
+  if (fillEl) fillEl.style.width = fills[status] || '8%';
 
   const nextBtn = document.getElementById('nextStatusBtn');
   const nextLabel = document.getElementById('nextStatusLabel');
+  if (!nextBtn) return;
   if (status === 'delivered') {
     nextBtn.style.display = 'none';
   } else {
     nextBtn.style.display = 'flex';
-    nextLabel.textContent = nextLabels[status] || 'Update Status';
+    if (nextLabel) nextLabel.textContent = nextLabels[status] || 'Update Status';
   }
 }
 
@@ -1139,31 +1146,53 @@ window.closeOrderModal = () => {
 // ============ REQUEST PICKUP (sends to vendor for approval) ============
 window.requestPickup = async (orderId) => {
   if (!user) return;
-  if (activeOrder) { alert('You already have an active delivery. Complete it first.'); return; }
+  if (activeOrder) { showToast('You already have an active delivery. Complete it first.', 'warn'); return; }
 
   const order = availableOrders.find(o => o.id === orderId);
-  if (!order) return;
+  if (!order) { showToast('Order not found. Please refresh.', 'err'); return; }
 
-  // Check if request already exists
-  const { data: existing } = await S.from('delivery_requests').select('id,status').eq('order_id', orderId).eq('carrier_id', user.id).single().catch(() => ({ data: null }));
+  // Resolve vendor_id — from order directly or from nested vendor object
+  const vendorId = order.vendor_id || order.vendor?.id || null;
+  if (!vendorId) {
+    showToast('Cannot request pickup: order has no vendor assigned yet.', 'err');
+    return;
+  }
+
+  // Check if a request already exists
+  let existing = null;
+  try {
+    const { data } = await S
+      .from('delivery_requests')
+      .select('id,status')
+      .eq('order_id', orderId)
+      .eq('carrier_id', user.id)
+      .maybeSingle();
+    existing = data;
+  } catch(e) { /* no existing request */ }
+
   if (existing) {
-    alert(`You already ${existing.status === 'pending' ? 'sent a request for' : existing.status} this order.`);
+    showToast(`You already ${existing.status === 'pending' ? 'sent a request for' : existing.status} this order.`, 'warn');
     return;
   }
 
   const { error } = await S.from('delivery_requests').insert({
     order_id: orderId,
     carrier_id: user.id,
-    vendor_id: order.vendor_id,
+    vendor_id: vendorId,
     status: 'pending',
+    message: `${profile.full_name || 'A carrier'} wants to pick up this order.`,
     created_at: new Date().toISOString()
   });
 
-  if (error) { alert('Failed to send request: ' + error.message); return; }
+  if (error) {
+    console.error('requestPickup error:', error);
+    showToast('Failed to send request: ' + error.message, 'err');
+    return;
+  }
 
   // Notify vendor
   await S.from('notifications').insert({
-    user_id: order.vendor_id,
+    user_id: vendorId,
     title: 'Carrier Pickup Request 🚴',
     message: `${profile.full_name || 'A carrier'} wants to pick up Order #${orderId.slice(0,8).toUpperCase()}`,
     type: 'carrier_request',
@@ -1171,7 +1200,8 @@ window.requestPickup = async (orderId) => {
   });
 
   await loadAvailableOrders();
-  alert('✅ Pickup request sent! Waiting for vendor approval.');
+  closeOrderModal();
+  showToast('✅ Pickup request sent! Waiting for vendor approval.');
 };
 
 window.acceptCurrentOrder = async () => {
@@ -1182,7 +1212,7 @@ window.acceptCurrentOrder = async () => {
 };
 
 // ============ ADVANCE DELIVERY STATUS ============
-const statusFlow = { accepted: 'picked_up', picked_up: 'in_transit', in_transit: 'delivered' };
+const statusFlow = { ready: 'picked_up', preparing: 'picked_up', picked_up: 'delivered' };
 
 window.advanceStatus = async () => {
   if (!activeOrder) return;
@@ -1202,7 +1232,7 @@ window.advanceStatus = async () => {
 
 async function updateOrderStatus(newStatus) {
   const updates = { order_status: newStatus, updated_at: new Date().toISOString() };
-  if (newStatus === 'in_transit') updates.picked_up_at = new Date().toISOString();
+  if (newStatus === 'picked_up') updates.picked_up_at = new Date().toISOString();
   if (newStatus === 'delivered') {
     updates.delivered_at = new Date().toISOString();
     updates.delivery_confirmed_at = new Date().toISOString();
@@ -1214,7 +1244,6 @@ async function updateOrderStatus(newStatus) {
   // Notify customer
   const msgMap = {
     picked_up: 'Your order has been picked up and is on its way! 🛵',
-    in_transit: 'Your order is in transit — almost there! 🏃',
     delivered: 'Your order has been delivered! Enjoy your meal! 🎉'
   };
   if (activeOrder.customer_id) {
@@ -1434,7 +1463,7 @@ function setupRealtime() {
       event: 'UPDATE', schema: 'public', table: 'delivery_requests',
       filter: `carrier_id=eq.${user.id}`
     }, payload => {
-      if (payload.new.status === 'accepted') {
+      if (payload.new.status === 'picked_up') {
         loadMyActiveOrder();
         loadAvailableOrders();
       } else {
@@ -1535,6 +1564,27 @@ function loadTheme() {
   const t = localStorage.getItem('nash-theme') || 'light';
   document.documentElement.setAttribute('data-theme', t);
   updateThemeUI(t);
+}
+
+// ============ TOAST ============
+function showToast(msg, type='ok') {
+  let toast = document.getElementById('carrierToast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'carrierToast';
+    toast.style.cssText = 'position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--text);color:#fff;padding:12px 24px;border-radius:50px;font-size:.85rem;font-weight:700;z-index:9999;opacity:0;transition:.3s;pointer-events:none;display:flex;align-items:center;gap:8px;white-space:nowrap;max-width:90vw;';
+    document.body.appendChild(toast);
+  }
+  const colors = { ok:'#22C55E', err:'#EF4444', warn:'#F59E0B' };
+  const icons  = { ok:'fa-circle-check', err:'fa-circle-exclamation', warn:'fa-triangle-exclamation' };
+  toast.innerHTML = `<i class="fa-solid ${icons[type]||icons.ok}" style="color:${colors[type]||colors.ok};"></i> ${msg}`;
+  toast.style.opacity = '1';
+  toast.style.transform = 'translateX(-50%) translateY(0)';
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateX(-50%) translateY(10px)';
+  }, 3000);
 }
 
 // ============ HELPERS ============

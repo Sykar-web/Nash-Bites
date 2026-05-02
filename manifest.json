@@ -6,7 +6,7 @@
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#FF4D2D",
+  "background_color": "#ffffff",
   "theme_color": "#FF4D2D",
   "icons": [
     {
@@ -22,7 +22,6 @@
       "purpose": "maskable"
     }
   ],
-  "splash_pages": null,
   "categories": ["food", "shopping"],
   "lang": "en"
 }
