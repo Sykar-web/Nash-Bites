@@ -21,14 +21,52 @@
       --text:#0D1321;--text-secondary:#5A6A85;--text-muted:#9DADC4;--border:#E4EAF4;
       --success:#22C55E;--danger:#EF4444;
       --shadow-md:0 8px 28px rgba(13,19,33,.11);
+      /* Glass variables */
+      --glass-bg: rgba(255,255,255,0.45);
+      --glass-border: rgba(255,255,255,0.6);
+      --glass-shadow: 0 8px 40px rgba(13,19,33,0.10), 0 1.5px 8px rgba(255,77,45,0.04);
+      --glass-blur: blur(22px) saturate(160%);
     }
     [data-theme="dark"]{
       --bg:#080E1C;--bg-card:#111827;--bg-input:#1A2540;
       --text:#F1F5F9;--text-secondary:#8DA0BC;--text-muted:#4A6080;
       --border:#1E2E48;--primary-light:#2A1510;
+      --glass-bg: rgba(17,24,39,0.48);
+      --glass-border: rgba(255,255,255,0.07);
+      --glass-shadow: 0 8px 40px rgba(0,0,0,0.38), 0 1.5px 8px rgba(255,77,45,0.07);
     }
     *{margin:0;padding:0;box-sizing:border-box;}
-    body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;transition:background .3s,color .3s;}
+
+    /* ── BACKGROUND ── */
+    body{
+      font-family:'Nunito',sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      min-height:100vh;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      padding:20px;
+      transition:background .3s,color .3s;
+      position:relative;
+      overflow:hidden;
+    }
+    /* Soft blobs behind everything */
+    body::before,body::after{
+      content:'';position:fixed;border-radius:50%;pointer-events:none;z-index:0;
+      transition:opacity .3s;
+    }
+    body::before{
+      width:520px;height:520px;
+      top:-120px;right:-140px;
+      background:radial-gradient(circle, rgba(255,77,45,.13) 0%, transparent 70%);
+    }
+    body::after{
+      width:420px;height:420px;
+      bottom:-100px;left:-100px;
+      background:radial-gradient(circle, rgba(255,180,77,.10) 0%, transparent 70%);
+    }
+    [data-theme="dark"] body::before{background:radial-gradient(circle, rgba(255,77,45,.09) 0%, transparent 70%);}
+    [data-theme="dark"] body::after{background:radial-gradient(circle, rgba(255,120,40,.07) 0%, transparent 70%);}
+
     @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
     @keyframes spin{to{transform:rotate(360deg)}}
 
@@ -37,14 +75,11 @@
       position:fixed;inset:0;
       background:#ffffff;
       display:flex;flex-direction:column;align-items:center;justify-content:center;
-      gap:0;
-      z-index:9999;
+      gap:0;z-index:9999;
       transition:opacity .45s ease, transform .45s ease;
     }
-    .splash.hidden{
-      opacity:0;
-      pointer-events:none;
-    }
+    [data-theme="dark"] .splash{background:#080E1C;}
+    .splash.hidden{opacity:0;pointer-events:none;}
     .splash-logo{
       width:92px;height:92px;border-radius:24px;overflow:hidden;
       box-shadow:0 8px 28px rgba(0,0,0,.10);
@@ -54,75 +89,169 @@
     .splash-logo img{width:100%;height:100%;object-fit:cover;display:block;}
     .splash-name{
       font-family:'Playfair Display',serif;font-size:1.85rem;font-weight:900;
-      color:#0D1321;letter-spacing:-.4px;
-      margin-top:20px;
+      color:#0D1321;letter-spacing:-.4px;margin-top:20px;
       opacity:0;transform:translateY(10px);
       animation:splashUp .45s ease .58s forwards;
     }
+    [data-theme="dark"] .splash-name{color:#F1F5F9;}
     .splash-dots{
-      display:flex;align-items:center;gap:7px;
-      margin-top:52px;
-      opacity:0;
-      animation:splashUp .4s ease .95s forwards;
+      display:flex;align-items:center;gap:7px;margin-top:52px;
+      opacity:0;animation:splashUp .4s ease .95s forwards;
     }
     .splash-dot{
-      width:7px;height:7px;border-radius:50%;
-      background:#E4EAF4;
+      width:7px;height:7px;border-radius:50%;background:#E4EAF4;
       animation:dotPulse 1.2s ease-in-out infinite;
     }
     .splash-dot:nth-child(1){animation-delay:0s;}
     .splash-dot:nth-child(2){animation-delay:.2s;}
     .splash-dot:nth-child(3){animation-delay:.4s;}
-    @keyframes splashPop{
-      from{opacity:0;transform:scale(.72);}
-      to{opacity:1;transform:scale(1);}
+    @keyframes splashPop{from{opacity:0;transform:scale(.72);}to{opacity:1;transform:scale(1);}}
+    @keyframes splashUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+    @keyframes dotPulse{0%,100%{background:#E4EAF4;transform:scale(1);}50%{background:#FF4D2D;transform:scale(1.4);}}
+
+    /* ── OFFLINE BANNER ── */
+    .offline-banner{
+      position:fixed;top:0;left:0;right:0;z-index:8888;
+      background:linear-gradient(90deg,#1a1a1a 0%,#2d2d2d 100%);
+      color:#fff;
+      display:flex;align-items:center;justify-content:center;gap:10px;
+      padding:10px 20px;
+      font-size:.82rem;font-weight:700;
+      letter-spacing:.2px;
+      transform:translateY(-100%);
+      transition:transform .35s cubic-bezier(.16,1,.3,1);
     }
-    @keyframes splashUp{
-      from{opacity:0;transform:translateY(10px);}
-      to{opacity:1;transform:translateY(0);}
+    .offline-banner.visible{transform:translateY(0);}
+    .offline-banner i{color:#FF4D2D;font-size:.9rem;}
+    .offline-dot{
+      width:8px;height:8px;border-radius:50%;background:#EF4444;
+      box-shadow:0 0 0 0 rgba(239,68,68,.5);
+      animation:offlinePulse 1.5s ease-in-out infinite;
+      flex-shrink:0;
     }
-    @keyframes dotPulse{
-      0%,100%{background:#E4EAF4;transform:scale(1);}
-      50%{background:#FF4D2D;transform:scale(1.4);}
+    @keyframes offlinePulse{
+      0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.5);}
+      50%{box-shadow:0 0 0 5px rgba(239,68,68,0);}
+    }
+    .back-online{
+      background:linear-gradient(90deg,#052e16,#14532d);
+    }
+    .back-online .offline-dot{background:#22C55E;box-shadow:none;animation:none;}
+
+    /* ── GLASS AUTH BOX ── */
+    .auth-box{
+      display:none;
+      position:relative;z-index:1;
+      background:var(--glass-bg);
+      border-radius:28px;
+      border:1px solid var(--glass-border);
+      padding:36px 32px;
+      width:100%;max-width:420px;
+      box-shadow:var(--glass-shadow);
+      backdrop-filter:var(--glass-blur);
+      -webkit-backdrop-filter:var(--glass-blur);
+      animation:fadeIn .4s ease;
+      /* No opaque bg — invisible/blended */
+    }
+    /* Subtle inner highlight at top edge */
+    .auth-box::before{
+      content:'';position:absolute;inset:0;border-radius:28px;
+      background:linear-gradient(160deg,rgba(255,255,255,.18) 0%,transparent 60%);
+      pointer-events:none;
     }
 
-    /* ── AUTH BOX ── */
-    .auth-box{display:none;background:var(--bg-card);border-radius:24px;border:1px solid var(--border);padding:36px 32px;width:100%;max-width:420px;box-shadow:var(--shadow-md);animation:fadeIn .4s ease;}
     .auth-header{text-align:center;margin-bottom:28px;}
     .auth-logo{width:56px;height:56px;border-radius:16px;overflow:hidden;box-shadow:0 4px 16px rgba(255,77,45,.3);margin:0 auto 12px;}
     .auth-logo img{width:100%;height:100%;object-fit:cover;}
     .auth-title{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:900;margin-bottom:4px;}
     .auth-sub{font-size:.88rem;color:var(--text-muted);font-weight:600;}
-    .tabs{display:flex;gap:4px;background:var(--bg-input);border-radius:12px;padding:4px;margin-bottom:22px;}
+
+    .tabs{display:flex;gap:4px;background:rgba(240,243,249,.55);border-radius:12px;padding:4px;margin-bottom:22px;}
+    [data-theme="dark"] .tabs{background:rgba(26,37,64,.55);}
     .tab-btn{flex:1;padding:10px;border:none;border-radius:9px;background:transparent;color:var(--text-secondary);font-weight:700;font-size:.88rem;cursor:pointer;transition:.2s;font-family:'Nunito',sans-serif;}
-    .tab-btn.active{background:var(--bg-card);color:var(--primary);box-shadow:0 2px 8px rgba(0,0,0,.08);}
+    .tab-btn.active{background:rgba(255,255,255,.82);color:var(--primary);box-shadow:0 2px 8px rgba(0,0,0,.08);}
+    [data-theme="dark"] .tab-btn.active{background:rgba(30,46,72,.82);}
+
     .form-group{margin-bottom:14px;}
     .form-label{display:block;font-size:.72rem;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;}
     .input-wrap{position:relative;}
     .input-wrap i{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:.84rem;pointer-events:none;}
-    .form-input{width:100%;padding:12px 12px 12px 40px;border:1.5px solid var(--border);border-radius:12px;background:var(--bg-input);font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:600;color:var(--text);outline:none;transition:.2s;}
-    .form-input:focus{border-color:var(--primary);background:var(--bg-card);box-shadow:0 0 0 3px rgba(255,77,45,.12);}
+    .form-input{
+      width:100%;padding:12px 12px 12px 40px;
+      border:1.5px solid rgba(228,234,244,.7);
+      border-radius:12px;
+      background:rgba(240,243,249,.55);
+      font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:600;color:var(--text);
+      outline:none;transition:.2s;
+    }
+    [data-theme="dark"] .form-input{
+      background:rgba(26,37,64,.55);
+      border-color:rgba(30,46,72,.7);
+    }
+    .form-input:focus{border-color:var(--primary);background:rgba(255,255,255,.75);box-shadow:0 0 0 3px rgba(255,77,45,.12);}
+    [data-theme="dark"] .form-input:focus{background:rgba(17,24,39,.75);}
     .form-input::placeholder{color:var(--text-muted);}
-    .submit-btn{width:100%;padding:14px;border:none;border-radius:12px;background:var(--primary);color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:.95rem;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 6px 20px rgba(255,77,45,.32);margin-top:4px;}
-    .submit-btn:hover{background:var(--primary-dark);transform:translateY(-1px);}
+    /* Disabled state when offline */
+    .form-input:disabled{opacity:.5;cursor:not-allowed;}
+
+    .submit-btn{
+      width:100%;padding:14px;border:none;border-radius:12px;
+      background:var(--primary);color:#fff;
+      font-family:'Nunito',sans-serif;font-weight:800;font-size:.95rem;
+      cursor:pointer;transition:.2s;
+      display:flex;align-items:center;justify-content:center;gap:8px;
+      box-shadow:0 6px 20px rgba(255,77,45,.32);margin-top:4px;
+    }
+    .submit-btn:hover:not(:disabled){background:var(--primary-dark);transform:translateY(-1px);}
     .submit-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+
+    /* Offline state for button */
+    .submit-btn.offline-state{
+      background:#6B7280;
+      box-shadow:none;
+    }
+
     .msg{padding:10px 14px;border-radius:10px;font-size:.82rem;font-weight:700;margin-top:12px;display:none;align-items:center;gap:8px;}
     .msg.show{display:flex;}
-    .msg.ok{background:var(--primary-light);color:var(--primary);border:1px solid rgba(255,77,45,.2);}
-    .msg.err{background:#FEF2F2;color:var(--danger);border:1px solid #FECACA;}
-    [data-theme="dark"] .msg.err{background:#450A0A;border-color:#991B1B;}
+    .msg.ok{background:rgba(255,240,237,.8);color:var(--primary);border:1px solid rgba(255,77,45,.2);}
+    .msg.err{background:rgba(254,242,242,.85);color:var(--danger);border:1px solid rgba(254,202,202,.8);}
+    .msg.warn{background:rgba(255,251,235,.85);color:#b45309;border:1px solid rgba(253,230,138,.8);}
+    [data-theme="dark"] .msg.err{background:rgba(69,10,10,.7);border-color:rgba(153,27,27,.5);}
+    [data-theme="dark"] .msg.warn{background:rgba(69,52,10,.7);border-color:rgba(153,103,27,.5);color:#fbbf24;}
+
     .forgot-link{text-align:center;margin-top:12px;font-size:.82rem;color:var(--text-muted);}
     .forgot-link a{color:var(--primary);font-weight:700;text-decoration:none;}
     .btn-spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;display:none;}
     .loading .btn-spinner{display:block;}
     .loading .btn-label{display:none;}
-    .theme-toggle{position:fixed;top:16px;right:16px;width:38px;height:38px;border-radius:50%;border:1.5px solid var(--border);background:var(--bg-card);color:var(--text-secondary);cursor:pointer;font-size:.9rem;display:flex;align-items:center;justify-content:center;transition:.2s;}
+
+    .theme-toggle{position:fixed;top:16px;right:16px;width:38px;height:38px;border-radius:50%;border:1.5px solid var(--border);background:var(--glass-bg);backdrop-filter:blur(12px);color:var(--text-secondary);cursor:pointer;font-size:.9rem;display:flex;align-items:center;justify-content:center;transition:.2s;z-index:100;}
     .theme-toggle:hover{border-color:var(--primary);color:var(--primary);}
+
+    /* ── OFFLINE OVERLAY on the form ── */
+    .offline-form-notice{
+      display:none;
+      align-items:center;gap:10px;
+      background:rgba(239,68,68,.08);
+      border:1.5px dashed rgba(239,68,68,.3);
+      border-radius:12px;
+      padding:12px 14px;
+      margin-bottom:14px;
+      font-size:.83rem;font-weight:700;color:var(--danger);
+    }
+    .offline-form-notice.show{display:flex;}
+    .offline-form-notice i{font-size:1rem;flex-shrink:0;}
   </style>
 </head>
 <body>
 
 <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn"><i class="fa-solid fa-moon"></i></button>
+
+<!-- Offline banner at top -->
+<div class="offline-banner" id="offlineBanner">
+  <div class="offline-dot" id="offlineDot"></div>
+  <span id="offlineBannerText">You're offline — check your connection</span>
+</div>
 
 <div class="splash" id="splash">
   <div class="splash-logo"><img src="tent.jpg" alt="Nash Bites"></div>
@@ -146,7 +275,12 @@
     <button class="tab-btn" id="tabSignUp" onclick="switchTab('signup')">Create Account</button>
   </div>
 
+  <!-- Sign In Form -->
   <form id="signinForm" onsubmit="handleSignIn(event)">
+    <div class="offline-form-notice" id="siOfflineNotice">
+      <i class="fa-solid fa-wifi"></i>
+      <span>No internet connection. Please reconnect to sign in.</span>
+    </div>
     <div class="form-group">
       <label class="form-label">Email</label>
       <div class="input-wrap"><i class="fa-solid fa-envelope"></i>
@@ -167,7 +301,12 @@
     <div class="forgot-link"><a href="#" onclick="handleForgot(event)">Forgot password?</a></div>
   </form>
 
+  <!-- Sign Up Form -->
   <form id="signupForm" onsubmit="handleSignUp(event)" style="display:none;">
+    <div class="offline-form-notice" id="suOfflineNotice">
+      <i class="fa-solid fa-wifi"></i>
+      <span>No internet connection. Account creation requires a connection.</span>
+    </div>
     <div class="form-group">
       <label class="form-label">Full Name</label>
       <div class="input-wrap"><i class="fa-solid fa-user"></i>
@@ -204,7 +343,6 @@ const S = createClient(
 async function checkAuth(){
   const {data:{session}} = await S.auth.getSession();
   if(session){ location.replace('home.html'); return; }
-  // Let the splash animations finish, then fade it out
   setTimeout(()=>{
     const splash=document.getElementById('splash');
     splash.classList.add('hidden');
@@ -218,40 +356,72 @@ checkAuth();
 
 window.handleSignIn = async (e) => {
   e.preventDefault();
+  if(!navigator.onLine){
+    showMsg('siMsg','You\'re offline. Please check your internet connection and try again.','err');
+    return;
+  }
   const btn=document.getElementById('siBtn');
   const email=document.getElementById('siEmail').value.trim();
   const pass=document.getElementById('siPass').value;
   setLoading(btn,true); showMsg('siMsg','','');
-  const {error}=await S.auth.signInWithPassword({email,password:pass});
-  if(error){showMsg('siMsg',error.message,'err');setLoading(btn,false);return;}
-  showMsg('siMsg','Signed in! Loading…','ok');
-  setTimeout(()=>location.replace('home.html'),500);
+  try {
+    const {error}=await S.auth.signInWithPassword({email,password:pass});
+    if(error){showMsg('siMsg',error.message,'err');setLoading(btn,false);return;}
+    showMsg('siMsg','Signed in! Loading…','ok');
+    setTimeout(()=>location.replace('home.html'),500);
+  } catch(err) {
+    const msg = !navigator.onLine
+      ? 'Lost connection during sign in. Please reconnect and try again.'
+      : 'Something went wrong. Please try again.';
+    showMsg('siMsg', msg, 'err');
+    setLoading(btn,false);
+  }
 };
 
 window.handleSignUp = async (e) => {
   e.preventDefault();
+  if(!navigator.onLine){
+    showMsg('suMsg','You\'re offline. An internet connection is required to create an account.','err');
+    return;
+  }
   const btn=document.getElementById('suBtn');
   const name=document.getElementById('suName').value.trim();
   const email=document.getElementById('suEmail').value.trim();
   const pass=document.getElementById('suPass').value;
   if(pass.length<8){showMsg('suMsg','Password must be at least 8 characters','err');return;}
   setLoading(btn,true); showMsg('suMsg','','');
-  const {data,error}=await S.auth.signUp({email,password:pass,options:{data:{full_name:name}}});
-  if(error){showMsg('suMsg',error.message,'err');setLoading(btn,false);return;}
-  if(data.user){
-    await S.from('profiles').upsert({id:data.user.id,full_name:name,email,created_at:new Date().toISOString()});
+  try {
+    const {data,error}=await S.auth.signUp({email,password:pass,options:{data:{full_name:name}}});
+    if(error){showMsg('suMsg',error.message,'err');setLoading(btn,false);return;}
+    if(data.user){
+      await S.from('profiles').upsert({id:data.user.id,full_name:name,email,created_at:new Date().toISOString()});
+    }
+    showMsg('suMsg','✓ Account created! Check your email to confirm, then sign in.','ok');
+    setLoading(btn,false);
+  } catch(err) {
+    const msg = !navigator.onLine
+      ? 'Lost connection during sign up. Please reconnect and try again.'
+      : 'Something went wrong. Please try again.';
+    showMsg('suMsg', msg, 'err');
+    setLoading(btn,false);
   }
-  showMsg('suMsg','✓ Account created! Check your email to confirm, then sign in.','ok');
-  setLoading(btn,false);
 };
 
 window.handleForgot = async (e) => {
   e.preventDefault();
+  if(!navigator.onLine){
+    showMsg('siMsg','You\'re offline. Please reconnect to reset your password.','err');
+    return;
+  }
   const email=document.getElementById('siEmail').value.trim();
   if(!email){showMsg('siMsg','Enter your email above first','err');return;}
-  const {error}=await S.auth.resetPasswordForEmail(email);
-  if(error)showMsg('siMsg',error.message,'err');
-  else showMsg('siMsg','✓ Password reset email sent!','ok');
+  try {
+    const {error}=await S.auth.resetPasswordForEmail(email);
+    if(error)showMsg('siMsg',error.message,'err');
+    else showMsg('siMsg','✓ Password reset email sent!','ok');
+  } catch(err) {
+    showMsg('siMsg', !navigator.onLine ? 'You\'re offline. Please reconnect and try again.' : 'Something went wrong.', 'err');
+  }
 };
 
 window.switchTab = (tab) => {
@@ -260,16 +430,90 @@ window.switchTab = (tab) => {
   document.getElementById('tabSignUp').classList.toggle('active',!isSignIn);
   document.getElementById('signinForm').style.display=isSignIn?'':'none';
   document.getElementById('signupForm').style.display=isSignIn?'none':'';
+  // Refresh offline notice for newly visible form
+  updateOfflineUI();
 };
 
 function setLoading(btn,loading){btn.disabled=loading;btn.classList.toggle('loading',loading);}
-function showMsg(id,msg,type){const el=document.getElementById(id);if(!msg){el.classList.remove('show');return;}el.textContent=msg;el.className=`msg ${type} show`;}
+function showMsg(id,msg,type){
+  const el=document.getElementById(id);
+  if(!msg){el.classList.remove('show');return;}
+  el.textContent=msg;
+  el.className=`msg ${type} show`;
+}
 </script>
+
 <script>
-function loadTheme(){const t=localStorage.getItem('nash-theme')||'light';document.documentElement.setAttribute('data-theme',t);document.querySelector('#themeBtn i').className=t==='dark'?'fa-solid fa-sun':'fa-solid fa-moon';}
-window.toggleTheme=()=>{const t=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',t);localStorage.setItem('nash-theme',t);document.querySelector('#themeBtn i').className=t==='dark'?'fa-solid fa-sun':'fa-solid fa-moon';};
+/* ── THEME ── */
+function loadTheme(){
+  const t=localStorage.getItem('nash-theme')||'light';
+  document.documentElement.setAttribute('data-theme',t);
+  document.querySelector('#themeBtn i').className=t==='dark'?'fa-solid fa-sun':'fa-solid fa-moon';
+}
+window.toggleTheme=()=>{
+  const t=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';
+  document.documentElement.setAttribute('data-theme',t);
+  localStorage.setItem('nash-theme',t);
+  document.querySelector('#themeBtn i').className=t==='dark'?'fa-solid fa-sun':'fa-solid fa-moon';
+};
 loadTheme();
-if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));}
+
+/* ── OFFLINE DETECTION ── */
+function updateOfflineUI(){
+  const isOffline = !navigator.onLine;
+  const banner = document.getElementById('offlineBanner');
+  const dot = document.getElementById('offlineDot');
+  const bannerText = document.getElementById('offlineBannerText');
+
+  // Top banner
+  banner.classList.toggle('visible', isOffline || window._wasOffline);
+
+  if(isOffline){
+    banner.classList.remove('back-online');
+    dot.style.background='#EF4444';
+    bannerText.textContent="You're offline — check your internet connection";
+    window._wasOffline = true;
+  } else if(window._wasOffline){
+    // Briefly show "back online" then hide
+    banner.classList.add('back-online');
+    dot.style.background='#22C55E';
+    bannerText.textContent="✓ You're back online!";
+    setTimeout(()=>{
+      banner.classList.remove('visible');
+      window._wasOffline = false;
+    }, 2800);
+  }
+
+  // Per-form inline offline notices
+  const siNotice = document.getElementById('siOfflineNotice');
+  const suNotice = document.getElementById('suOfflineNotice');
+  if(siNotice) siNotice.classList.toggle('show', isOffline);
+  if(suNotice) suNotice.classList.toggle('show', isOffline);
+
+  // Disable/enable submit buttons
+  ['siBtn','suBtn'].forEach(id=>{
+    const btn = document.getElementById(id);
+    if(!btn) return;
+    if(isOffline){
+      btn.classList.add('offline-state');
+      btn.disabled = true;
+    } else {
+      btn.classList.remove('offline-state');
+      btn.disabled = false;
+    }
+  });
+}
+
+window._wasOffline = !navigator.onLine;
+window.addEventListener('online', updateOfflineUI);
+window.addEventListener('offline', updateOfflineUI);
+// Run once immediately in case page loads offline
+updateOfflineUI();
+
+/* ── SERVICE WORKER ── */
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+}
 </script>
 </body>
 </html>
