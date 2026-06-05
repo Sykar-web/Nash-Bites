@@ -7,7 +7,7 @@
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#ffffff",
-  "theme_color": "#FF4D2D",
+  "theme_color":  "#ffffff",
   "icons": [
     {
       "src": "tent.jpg",
