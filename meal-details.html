@@ -245,20 +245,22 @@ loadTheme();
 // ── FAVORITES ──
 function getFavs(){return JSON.parse(localStorage.getItem('nash_favs')||'[]');}
 function saveFavs(f){localStorage.setItem('nash_favs',JSON.stringify(f));}
-window.toggleFav=(id,btn,e)=>{
-  if(e) e.stopPropagation();
-  let favs=getFavs();const idx=favs.indexOf(id);
-  if(idx>=0){favs.splice(idx,1);btn.classList.remove('saved');btn.querySelector('i').className='fa-regular fa-heart';showToast('Removed from favorites');}
-  else{favs.push(id);btn.classList.add('saved');btn.querySelector('i').className='fa-solid fa-heart';showToast('Saved to favorites ♥');}
-  saveFavs(favs);
-  // sync all hearts for this meal
-  document.querySelectorAll(`.fav-btn-${id}`).forEach(b=>{
-    const saved=!favs.includes(id)||favs.includes(id);
-    b.classList.toggle('saved',favs.includes(id));
-    b.querySelector('i').className=favs.includes(id)?'fa-solid fa-heart':'fa-regular fa-heart';
-  });
+window.toggleFav = async (id, btn, e) => {
+  if (e) e.stopPropagation();
+  const { data: existing } = await S.from('favorites')
+    .select('id').eq('meal_id', id).eq('user_id', currentUser.id).maybeSingle();
+  if (existing) {
+    await S.from('favorites').delete().eq('id', existing.id);
+    btn.classList.remove('saved');
+    btn.querySelector('i').className = 'fa-regular fa-heart';
+    showToast('Removed from favorites');
+  } else {
+    await S.from('favorites').insert({ meal_id: id, user_id: currentUser.id });
+    btn.classList.add('saved');
+    btn.querySelector('i').className = 'fa-solid fa-heart';
+    showToast('Saved to favorites ♥');
+  }
 };
-
 // ── RECENTLY VIEWED ──
 function getRecent(){return JSON.parse(localStorage.getItem('nash_recent')||'[]');}
 function addRecent(id){

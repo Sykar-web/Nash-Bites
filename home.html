@@ -453,24 +453,22 @@ function clearSlowTimer(){clearTimeout(slowTimer);}
 // ── FAVORITES (localStorage) ──
 function getFavs(){return JSON.parse(localStorage.getItem('nash_favs')||'[]');}
 function saveFavs(f){localStorage.setItem('nash_favs',JSON.stringify(f));}
-window.toggleFav=(id, btn, e)=>{
-  if(e) e.stopPropagation();
-  let favs=getFavs();
-  const idx=favs.indexOf(id);
-  if(idx>=0){
-    favs.splice(idx,1);
+window.toggleFav = async (id, btn, e) => {
+  if (e) e.stopPropagation();
+  const { data: existing } = await S.from('favorites')
+    .select('id').eq('meal_id', id).eq('user_id', currentUser.id).maybeSingle();
+  if (existing) {
+    await S.from('favorites').delete().eq('id', existing.id);
     btn.classList.remove('saved');
-    btn.querySelector('i').className='fa-regular fa-heart';
+    btn.querySelector('i').className = 'fa-regular fa-heart';
     showToast('Removed from favorites');
   } else {
-    favs.push(id);
+    await S.from('favorites').insert({ meal_id: id, user_id: currentUser.id });
     btn.classList.add('saved');
-    btn.querySelector('i').className='fa-solid fa-heart';
+    btn.querySelector('i').className = 'fa-solid fa-heart';
     showToast('Saved to favorites ♥');
   }
-  saveFavs(favs);
 };
-
 async function init(){
   const {data:{user}}=await S.auth.getUser();
   if(!user){location.href='index.html';return;}
