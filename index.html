@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
-  <link rel="manifest" href="manifest.json">
+  <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#FF4D2D">
+  <meta name="msapplication-TileColor" content="#FF4D2D">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -512,7 +513,35 @@ updateOfflineUI();
 
 /* ── SERVICE WORKER ── */
 if('serviceWorker' in navigator){
-  window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+  window.addEventListener('load', async () => {
+    try {
+      const reg = await navigator.serviceWorker.register('./sw.js', { scope: './' });
+
+      // When a new SW activates and sends SW_UPDATED, reload so the fresh version is used
+      navigator.serviceWorker.addEventListener('message', e => {
+        if(e.data && e.data.type === 'SW_UPDATED'){
+          // Only hard-reload if no user interaction is in progress
+          if(!document.querySelector('.submit-btn.loading')){
+            window.location.reload();
+          }
+        }
+      });
+
+      // If a new SW is waiting, tell it to skip waiting immediately
+      reg.addEventListener('updatefound', () => {
+        const newSW = reg.installing;
+        if(newSW){
+          newSW.addEventListener('statechange', () => {
+            if(newSW.state === 'installed' && navigator.serviceWorker.controller){
+              newSW.postMessage({ type: 'SKIP_WAITING' });
+            }
+          });
+        }
+      });
+    } catch(err) {
+      // SW registration failed silently — app still works
+    }
+  });
 }
 </script>
 </body>
