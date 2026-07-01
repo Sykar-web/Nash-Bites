@@ -37,7 +37,7 @@
       --shadow-md:0 8px 28px rgba(0,0,0,.3);
       --shadow-card:0 4px 20px rgba(0,0,0,.22);
     }
-    *{margin:0;padding:0;box-sizing:border-box;}
+    *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
     body{
       font-family:'Nunito',sans-serif;
       background:var(--bg);color:var(--text);
@@ -45,6 +45,7 @@
       padding-bottom:calc(var(--footer-h) + 32px);
       transition:background .3s,color .3s;
     }
+    button,a{outline:none;}
 
     /* ── TOPBAR ── */
     .topbar{
@@ -357,9 +358,6 @@
 
     /* Modal — kept for detail page navigation (no longer used as popup) */
     .modal-overlay{display:none;}
-    *{
-      -webkit-tap-highlight-color:transparent;
-    }
   </style>
 </head>
 <body>

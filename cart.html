@@ -37,7 +37,7 @@
       --shadow-md:0 8px 28px rgba(0,0,0,.3);
       --shadow-card:0 4px 20px rgba(0,0,0,.22);
     }
-    *{margin:0;padding:0;box-sizing:border-box;}
+    *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
     body{
       font-family:'Nunito',sans-serif;
       background:var(--bg);color:var(--text);
@@ -45,38 +45,24 @@
       padding-bottom:calc(var(--footer-h) + 32px);
       transition:background .3s,color .3s;
     }
+    button,a{outline:none;}
 
-    /* ── HEADER ── */
-    .hdr{
-      background:var(--bg-card);border-bottom:1px solid var(--border);
+    /* ── TOPBAR (shared) ── */
+    .topbar{
       position:sticky;top:0;z-index:200;
+      background:var(--bg-card);
+      border-bottom:1px solid var(--border);
       padding:0 18px;height:62px;
       display:flex;align-items:center;justify-content:space-between;
-      transition:background .3s;box-shadow:var(--shadow-sm);
+      transition:background .3s;
+      box-shadow:var(--shadow-sm);
     }
-    @media(min-width:768px){.hdr{padding:0 32px;height:68px;}}
-    @media(min-width:1024px){.hdr{padding:0 40px;}}
-    .hdr-inner{width:100%;max-width:1400px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;}
-    .hdr-left{display:flex;align-items:center;gap:10px;}
-    .back-btn{
-      width:36px;height:36px;border-radius:50%;
-      background:var(--bg-input);border:1.5px solid var(--border);
-      color:var(--text-secondary);display:flex;align-items:center;justify-content:center;
-      cursor:pointer;font-size:.82rem;transition:.2s;
-    }
-    .back-btn:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-light);}
-    .brand{display:flex;align-items:center;gap:9px;text-decoration:none;}
-    .brand-icon{width:34px;height:34px;border-radius:10px;overflow:hidden;flex-shrink:0;box-shadow:0 3px 10px rgba(255,77,45,.3);}
+    @media(min-width:768px){.topbar{padding:0 32px;height:68px;}}
+    .brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
+    .brand-icon{width:38px;height:38px;border-radius:12px;overflow:hidden;box-shadow:0 4px 12px rgba(255,77,45,.35);flex-shrink:0;}
     .brand-icon img{width:100%;height:100%;object-fit:cover;display:block;}
-    .brand-name{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:900;color:var(--text);letter-spacing:-.3px;}
-    .hdr-right{display:flex;gap:8px;align-items:center;}
-    .icon-btn{
-      width:36px;height:36px;border-radius:50%;
-      background:var(--bg-input);border:1.5px solid var(--border);
-      color:var(--text-secondary);display:flex;align-items:center;justify-content:center;
-      cursor:pointer;font-size:.82rem;transition:.2s;
-    }
-    .icon-btn:hover{border-color:var(--primary);color:var(--primary);}
+    .brand-name{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:900;color:var(--text);letter-spacing:-0.3px;}
+    .topbar-right{display:flex;align-items:center;gap:8px;}
     .clear-pill{
       background:var(--danger-light);color:var(--danger);
       border:1.5px solid #FECACA;font-size:.7rem;font-weight:800;
@@ -413,21 +399,15 @@
 <body>
 
 <!-- HEADER -->
-<div class="hdr">
-  <div class="hdr-inner">
-    <div class="hdr-left">
-      
-      <a href="home.html" class="brand">
-        <div class="brand-icon"><img src="tent.png" alt="Nash Bites"></div>
-        <span class="brand-name">My Cart</span>
-      </a>
-    </div>
-    <div class="hdr-right">
-      
-      <button class="clear-pill" id="clearBtn" onclick="clearCart()" style="display:none">Clear all</button>
-    </div>
+<nav class="topbar">
+  <a href="home.html" class="brand">
+    <div class="brand-icon"><img src="tent.png" alt="Nash Bites"></div>
+    <span class="brand-name">My Cart</span>
+  </a>
+  <div class="topbar-right">
+    <button class="clear-pill" id="clearBtn" onclick="clearCart()" style="display:none">Clear all</button>
   </div>
-</div>
+</nav>
 
 <!-- PAGE BODY -->
 <div class="page-wrap">
