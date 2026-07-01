@@ -2,7 +2,7 @@
 <html lang="en" data-theme="light">
 <head>
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#FF4D2D">
+  <meta name="theme-color" content="#FFFFFF">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -46,17 +46,6 @@
     .hdr-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:900;color:var(--text);}
     .icon-btn{width:36px;height:36px;border-radius:50%;background:var(--bg-input);border:1.5px solid var(--border);color:var(--text-secondary);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.82rem;transition:.2s;}
     .icon-btn:hover{border-color:var(--primary);color:var(--primary);}
-
-    .steps-bar{background:var(--bg-card);border-bottom:1px solid var(--border);padding:14px 18px;display:flex;align-items:center;}
-    @media(min-width:768px){.steps-bar{padding:14px 32px;}}
-    .step{display:flex;align-items:center;gap:7px;flex:1;}
-    .step-num{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:900;flex-shrink:0;background:var(--bg-input);color:var(--text-muted);border:2px solid var(--border);transition:.3s;}
-    .step.active .step-num{background:var(--primary);color:#fff;border-color:var(--primary);}
-    .step.done .step-num{background:var(--success);color:#fff;border-color:var(--success);}
-    .step-label{font-size:.72rem;font-weight:800;color:var(--text-muted);white-space:nowrap;transition:.3s;}
-    .step.active .step-label{color:var(--primary);}
-    .step.done .step-label{color:var(--success);}
-    .step-line{flex:1;height:2px;background:var(--border);margin:0 8px;border-radius:2px;}
 
     .layout{max-width:900px;margin:0 auto;padding:20px 16px;display:grid;grid-template-columns:1fr;gap:16px;}
     @media(min-width:768px){.layout{padding:28px 32px;grid-template-columns:1fr 360px;align-items:start;}}
@@ -237,24 +226,6 @@
     </div>
   </div>
  </div>
-
-<!-- STEPS -->
-<div class="steps-bar">
-  <div class="step active">
-    <div class="step-num">1</div>
-    <div class="step-label">Delivery</div>
-  </div>
-  <div class="step-line"></div>
-  <div class="step active">
-    <div class="step-num">2</div>
-    <div class="step-label">Payment</div>
-  </div>
-  <div class="step-line"></div>
-  <div class="step active">
-    <div class="step-num">3</div>
-    <div class="step-label">Review</div>
-  </div>
-</div>
 
 <!-- LAYOUT -->
 <div class="layout" id="mainLayout">
@@ -490,6 +461,7 @@ function saveCart(c){localStorage.setItem('nash_cart',JSON.stringify(c));}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
 async function init(){
+  loadTheme();
   const {data:{user}}=await supabase.auth.getUser();
   if(!user){location.href='index.html';return;}
   currentUser=user;

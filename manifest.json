@@ -9,7 +9,7 @@
   "display_override": ["window-controls-overlay", "standalone"],
   "orientation": "portrait",
   "background_color": "#ffffff",
-  "theme_color": "#FF4D2D",
+  "theme_color": "#FFFFFF",
   "icons": [
     {
       "src": "tent.png",
