@@ -192,7 +192,7 @@
     .act-btn-disabled{background:var(--bg-input);color:var(--text-muted);cursor:default;opacity:.5;}
 
     /* ── FAB BUBBLE NAV ── */
-    .footer-nav{ display:none!important; }
+   /* .footer-nav{ display:none!important; }
     .fab-nav{position:fixed;bottom:28px;right:22px;z-index:2000;display:flex;flex-direction:column-reverse;align-items:center;gap:12px;}
     @media(min-width:768px){.fab-nav{display:none;}}
     .fab-main{width:56px;height:56px;border-radius:50%;background:var(--primary);color:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.2rem;box-shadow:0 8px 28px rgba(255,77,45,.48);transition:transform .3s cubic-bezier(.16,1,.3,1),background .2s;position:relative;z-index:2;-webkit-tap-highlight-color:transparent;}
@@ -222,6 +222,59 @@
     .fab-item[data-nav="profile"] .fab-circle{color:#F59E0B;border-color:#FDE68A;background:#FFFBEB;}
     .fab-item[data-nav="profile"]:hover .fab-circle{background:#F59E0B;color:#fff;border-color:#F59E0B;transform:scale(1.08);}
     [data-theme="dark"] .fab-item[data-nav="profile"] .fab-circle{background:#451A03;border-color:#78350F;color:#FCD34D;}
+  */
+    /* ── FOOTER NAV (mobile) ── */
+    .footer-nav{
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+    height:72px;
+    background:var(--bg-card);
+    border-top:1px solid var(--border);
+    display:flex;
+    justify-content:space-around;
+    align-items:center;
+    z-index:2000;
+    box-shadow:0 -4px 20px rgba(0,0,0,.08);
+}
+
+.footer-item{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-decoration:none;
+    color:var(--text-muted);
+    font-size:.7rem;
+    font-weight:700;
+    gap:4px;
+    position:relative;
+}
+
+.footer-item i{
+    font-size:1.1rem;
+}
+
+.footer-item.active{
+    color:var(--primary);
+}
+
+.footer-badge{
+    position:absolute;
+    top:10px;
+    right:25%;
+    min-width:16px;
+    height:16px;
+    border-radius:50%;
+    background:var(--primary);
+    color:#fff;
+    font-size:.55rem;
+    display:none;
+    align-items:center;
+    justify-content:center;
+}
   </style>
 </head>
 <body>
@@ -248,7 +301,7 @@
 </div>
 
 <!-- FAB BUBBLE NAV — Orders is current page, excluded -->
-<nav class="fab-nav" id="fabNav">
+<!-- <nav class="fab-nav" id="fabNav">
   <button class="fab-main" onclick="toggleFab()" aria-label="Navigation">
     <i class="fa-solid fa-grip-dots-vertical fab-icon-open"></i>
     <i class="fa-solid fa-xmark fab-icon-close"></i>
@@ -268,6 +321,34 @@
     </a>
   </div>
 </nav>
+-->
+<!-- FOOTER NAV -->
+ <nav class="footer-nav">
+
+  <a href="home.html" class="footer-item">
+    <i class="fa-solid fa-utensils"></i>
+    <span>Menu</span>
+  </a>
+
+  <a href="cart.html" class="footer-item">
+    <i class="fa-solid fa-bag-shopping"></i>
+    <span>Cart</span>
+    <span id="footerCartBadge" class="footer-badge"></span>
+  </a>
+
+  <a href="order-history.html" class="footer-item active">
+    <i class="fa-solid fa-receipt"></i>
+    <span>Orders</span>
+  </a>
+
+  <a href="profile.html" class="footer-item">
+    <i class="fa-solid fa-user"></i>
+    <span>Profile</span>
+  </a>
+
+</nav>
+
+<nav class="footer-nav" style="display:none!important"></nav>
 <script>
   function toggleFab(){document.getElementById('fabNav').classList.toggle('open');}
   function closeFab(){document.getElementById('fabNav').classList.remove('open');}
