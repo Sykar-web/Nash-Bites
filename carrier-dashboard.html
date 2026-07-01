@@ -95,8 +95,9 @@
     .page-content.active { display:block; }
 
     /* STATS */
-    .stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:28px; }
-    .stat-card { background:var(--bg-card); border-radius:var(--radius); border:1px solid var(--border); padding:20px 24px; transition:all 0.3s; position:relative; overflow:hidden; }
+    .stats-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; padding: 10px;}*/
+    /*.stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:28px; }*/
+    .stat-card { background:var(--bg-card); border-radius:var(--radius); border:1px solid var(--border); padding:16px 20px; transition:all 0.3s; position:relative; overflow:hidden; }
     .stat-card:hover { transform:translateY(-3px); box-shadow:var(--shadow-md); }
     .stat-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; border-radius:3px 3px 0 0; }
     .stat-card.earnings::before { background:var(--success); }
@@ -427,11 +428,6 @@
     </div>
   </div>
   <div class="topbar-right">
-    <button class="topbar-btn" onclick="toggleTheme()" id="themeBtn" title="Toggle theme"><i class="fa-solid fa-moon"></i></button>
-    <button class="topbar-btn" onclick="toggleNotifications()" title="Notifications">
-      <i class="fa-solid fa-bell"></i>
-      <span class="topbar-badge" id="notifCount" style="display:none;">0</span>
-    </button>
     <img src="https://ui-avatars.com/api/?name=C&background=FF4D2D&color=fff&size=80" class="carrier-avatar" id="topAvatar" style="width:38px;height:38px;cursor:pointer;" onclick="window.location.href='profile.html'" alt="">
   </div>
 </header>
@@ -1637,10 +1633,22 @@ function updateThemeUI(t) {
   if (dt) dt.classList.toggle('active', t === 'dark');
 }
 
-function loadTheme() {
+/*function loadTheme() {
   const t = localStorage.getItem('nash-theme') || 'light';
   document.documentElement.setAttribute('data-theme', t);
   updateThemeUI(t);
+}*/
+function loadTheme() {
+    const theme = localStorage.getItem("nash-theme") || "light";
+    document.documentElement.setAttribute("data-theme", theme);
+
+    const icon = document.querySelector("#themeBtn i");
+
+    if (icon) {
+        icon.className = theme === "dark"
+            ? "fa-solid fa-sun"
+            : "fa-solid fa-moon";
+    }
 }
 
 // ============ TOAST ============

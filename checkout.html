@@ -680,9 +680,21 @@ init();
 </script>
 
 <script>
-function loadTheme(){const t=localStorage.getItem('nash-theme')||'light';document.documentElement.setAttribute('data-theme',t);document.querySelector('#themeBtn i').className=t==='dark'?'fa-solid fa-sun':'fa-solid fa-moon';}
+/*function loadTheme(){const t=localStorage.getItem('nash-theme')||'light';document.documentElement.setAttribute('data-theme',t);document.querySelector('#themeBtn i').className=t==='dark'?'fa-solid fa-sun':'fa-solid fa-moon';}
 window.toggleTheme=()=>{const t=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',t);localStorage.setItem('nash-theme',t);document.querySelector('#themeBtn i').className=t==='dark'?'fa-solid fa-sun':'fa-solid fa-moon';};
-loadTheme();
+loadTheme();*/
+function loadTheme() {
+    const theme = localStorage.getItem("nash-theme") || "light";
+    document.documentElement.setAttribute("data-theme", theme);
+
+    const icon = document.querySelector("#themeBtn i");
+
+    if (icon) {
+        icon.className = theme === "dark"
+            ? "fa-solid fa-sun"
+            : "fa-solid fa-moon";
+    }
+}
 if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));}
 </script>
 </body>

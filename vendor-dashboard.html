@@ -69,7 +69,7 @@
 
     /* ── STATS ── */
     .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
-    .stat-card{background:var(--bg-card);border-radius:var(--radius);border:1px solid var(--border);padding:20px 24px;transition:all .3s;position:relative;overflow:hidden}
+    .stat-card{background:var(--bg-card);border-radius:var(--radius);border:1px solid var(--border);padding:10px 16px;transition:all .3s;position:relative;overflow:hidden}
     .stat-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-md)}
     .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:3px 3px 0 0}
     .stat-card.rev::before{background:var(--success)}.stat-card.ord::before{background:var(--primary)}.stat-card.pend::before{background:var(--warning)}.stat-card.rate::before{background:var(--purple)}
@@ -375,12 +375,11 @@
     <div><div class="page-title" id="pageTitle">Dashboard</div><div class="page-sub" id="pageSub">Store overview</div></div>
   </div>
   <div class="topbar-right">
-    <button class="top-btn" onclick="toggleTheme()" id="themeBtn"><i class="fa-solid fa-moon"></i></button>
-    <button class="top-btn" onclick="toggleNotifs()">
-      <i class="fa-solid fa-bell"></i>
-      <span class="top-badge" id="notifCount" style="display:none">0</span>
-    </button>
-    <img src="" class="vendor-avatar" id="topAvatar" alt="Vendor" style="cursor:pointer" onclick="location.href='profile.html'">
+    <a class="top-btn" href="profile.html" id="profileBtn" title="Profile">
+      <i class="fa-solid fa-user" id="profileFallback"></i>
+      <img src="" class="vendor-avatar"alt="" id="profileAv" style="display:none" onclick="location.href='profile.html'">
+    </a>
+    <!-- <img src="" class="vendor-avatar" id="topAvatar" alt="Vendor" style="cursor:pointer" onclick="location.href='profile.html'">-->
   </div>
 </header>
 
@@ -614,7 +613,19 @@ let pendingImageFile = null;
 
 // ── Init ─────────────────────────────────────────────────────────────────────
 async function init() {
-  loadTheme();
+  //loadTheme();
+  loadTheme() {
+    const theme = localStorage.getItem("nash-theme") || "light";
+    document.documentElement.setAttribute("data-theme", theme);
+
+    const icon = document.querySelector("#themeBtn i");
+
+    if (icon) {
+        icon.className = theme === "dark"
+            ? "fa-solid fa-sun"
+            : "fa-solid fa-moon";
+    }
+  }
   try {
     const { data: { user: authUser } } = await S.auth.getUser();
     if (!authUser) { location.href = 'index.html'; return; }
