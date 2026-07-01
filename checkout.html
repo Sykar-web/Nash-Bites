@@ -167,6 +167,62 @@
     .pill-btn{padding:12px 24px;border:none;border-radius:50px;background:var(--primary);color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:.88rem;cursor:pointer;box-shadow:0 4px 14px rgba(255,77,45,.3);}
 
     .sec-hd{font-size:.7rem;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;}
+  
+      /* ── FOOTER NAV (mobile) ── */
+    .footer-nav{
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+    height:72px;
+    background:var(--bg-card);
+    border-top:1px solid var(--border);
+    display:flex;
+    justify-content:space-around;
+    align-items:center;
+    z-index:2000;
+    box-shadow:0 -4px 20px rgba(0,0,0,.08);
+}
+
+.footer-item{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-decoration:none;
+    color:var(--text-muted);
+    font-size:.7rem;
+    font-weight:700;
+    gap:4px;
+    position:relative;
+}
+
+.footer-item i{
+    font-size:1.1rem;
+}
+
+.footer-item.active{
+    color:var(--primary);
+}
+
+.footer-badge{
+    position:absolute;
+    top:10px;
+    right:25%;
+    min-width:16px;
+    height:16px;
+    border-radius:50%;
+    background:var(--primary);
+    color:#fff;
+    font-size:.55rem;
+    display:none;
+    align-items:center;
+    justify-content:center;
+}
+    *{
+      -webkit-tap-highlight-color:transparent;
+    }
   </style>
 </head>
 <body>
@@ -180,8 +236,7 @@
       <span class="hdr-title">Checkout</span>
     </div>
   </div>
-  <button class="icon-btn" onclick="toggleTheme()" id="themeBtn"><i class="fa-solid fa-moon"></i></button>
-</div>
+ </div>
 
 <!-- STEPS -->
 <div class="steps-bar">
@@ -390,6 +445,33 @@
 
 <!-- TOAST -->
 <div class="toast" id="toast"><i class="fa-solid fa-circle-check"></i><span id="toastMsg"></span></div>
+
+<!-- FOOTER NAV (mobile) -->
+<nav class="footer-nav">
+
+  <a href="home.html" class="footer-item">
+    <i class="fa-solid fa-utensils"></i>
+    <span>Menu</span>
+  </a>
+
+  <a href="cart.html" class="footer-item active">
+    <i class="fa-solid fa-bag-shopping"></i>
+    <span>Cart</span>
+    <span id="footerCartBadge" class="footer-badge"></span>
+  </a>
+
+  <a href="order-history.html" class="footer-item">
+    <i class="fa-solid fa-receipt"></i>
+    <span>Orders</span>
+  </a>
+
+  <a href="profile.html" class="footer-item">
+    <i class="fa-solid fa-user"></i>
+    <span>Profile</span>
+  </a>
+
+</nav>
+<nav class="footer-nav" style="display:none!important"></nav>
 
 <script type="module">
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';

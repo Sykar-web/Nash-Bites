@@ -591,6 +591,10 @@
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-track { background: var(--bg); }
     ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+     *{
+      -webkit-tap-highlight-color:transparent;
+    }
   </style>
 </head>
 <body>
@@ -598,17 +602,6 @@
 <!-- TOP BAR -->
 <nav class="top-bar">
   <a href="home.html" class="top-bar-logo">Nash Bites</a>
-  <div class="top-bar-actions">
-    <button class="icon-btn" onclick="toggleTheme()" id="themeBtn">
-      <i class="fa-solid fa-moon"></i>
-    </button>
-    <button class="icon-btn" title="Notifications">
-      <i class="fa-solid fa-bell"></i>
-      <span class="notif-dot" id="notifDot" style="display:none;"></span>
-    </button>
-    <img src="https://ui-avatars.com/api/?name=User&background=FF4D2D&color=fff&size=80"
-         alt="avatar" class="nav-avatar" id="navAvatar">
-  </div>
 </nav>
 
 <div class="scroll-root">

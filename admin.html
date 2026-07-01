@@ -324,6 +324,9 @@
     .toggle-sw input:checked+.slider{background:var(--ok);}
     .toggle-sw .slider::before{content:'';position:absolute;width:16px;height:16px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.3s;}
     .toggle-sw input:checked+.slider::before{transform:translateX(18px);}
+   *{
+      -webkit-tap-highlight-color:transparent;
+    }
   </style>
 </head>
 <body>
@@ -583,6 +586,32 @@
 
 <div class="toast" id="toast"><i class="fa-solid fa-check"></i><span id="toastMsg"></span></div>
 
+<!-- FOOTER NAV (mobile) -->
+<nav class="footer-nav">
+
+  <a href="home.html" class="footer-item">
+    <i class="fa-solid fa-utensils"></i>
+    <span>Menu</span>
+  </a>
+
+  <a href="cart.html" class="footer-item">
+    <i class="fa-solid fa-bag-shopping"></i>
+    <span>Cart</span>
+    <span id="footerCartBadge" class="footer-badge"></span>
+  </a>
+
+  <a href="order-history.html" class="footer-item">
+    <i class="fa-solid fa-receipt"></i>
+    <span>Orders</span>
+  </a>
+
+  <a href="profile.html" class="footer-item active">
+    <i class="fa-solid fa-user"></i>
+    <span>Profile</span>
+  </a>
+
+</nav>
+<nav class="footer-nav" style="display:none!important"></nav>
 <script type="module">
 import{createClient}from'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 const sb=createClient(
